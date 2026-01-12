@@ -41,6 +41,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.RobotBase;
 import java.util.function.Supplier;
@@ -310,6 +311,12 @@ public final class Constants {
 
         public static final LinearVelocity LINEAR_VEL_DEADBAND = MetersPerSecond.of(0.02);
         public static final AngularVelocity ANGLULAR_VEL_DEADBAND = DegreesPerSecond.of(1);
+
+        // Characterization
+        public static final Time FF_START_DELAY = Seconds.of(2.0);
+        public static final Velocity<VoltageUnit> FF_RAMP_RATE = Volts.of(0.1).per(Second);
+        public static final AngularVelocity FF_WHEEL_RADIUS_MAX_VELOCITY = RadiansPerSecond.of(0.25);
+        public static final AngularAcceleration FF_WHEEL_RADIUS_RAMP_RATE = RadiansPerSecondPerSecond.of(0.05);
     }
 
     public static class TurretConstants {}

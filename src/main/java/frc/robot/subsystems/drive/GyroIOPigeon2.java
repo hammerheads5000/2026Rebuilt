@@ -16,26 +16,27 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import frc.robot.generated.TunerConstants;
+import frc.robot.Constants;
+import frc.robot.Constants.SwerveConstants;
 import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */
 public class GyroIOPigeon2 implements GyroIO {
-    private final Pigeon2 pigeon = new Pigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, TunerConstants.kCANBus);
+    private final Pigeon2 pigeon = new Pigeon2(SwerveConstants.PIGEON_ID, Constants.CAN_FD_BUS);
     private final StatusSignal<Angle> yaw = pigeon.getYaw();
     private final Queue<Double> yawPositionQueue;
     private final Queue<Double> yawTimestampQueue;
     private final StatusSignal<AngularVelocity> yawVelocity = pigeon.getAngularVelocityZWorld();
 
     public GyroIOPigeon2() {
-        if (TunerConstants.DrivetrainConstants.Pigeon2Configs != null) {
-            pigeon.getConfigurator().apply(TunerConstants.DrivetrainConstants.Pigeon2Configs);
+        if (SwerveConstants.PIGEON_CONFIGS != null) {
+            pigeon.getConfigurator().apply(SwerveConstants.PIGEON_CONFIGS);
         } else {
             pigeon.getConfigurator().apply(new Pigeon2Configuration());
         }
 
         pigeon.getConfigurator().setYaw(0.0);
-        yaw.setUpdateFrequency(Drive.ODOMETRY_FREQUENCY);
+        yaw.setUpdateFrequency(SwerveConstants.ODOMETRY_UPDATE_FREQ);
         yawVelocity.setUpdateFrequency(50.0);
         pigeon.optimizeBusUtilization();
         yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();

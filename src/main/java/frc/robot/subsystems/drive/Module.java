@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -14,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import org.littletonrobotics.junction.Logger;
@@ -75,8 +78,8 @@ public class Module {
     }
 
     /** Runs the module with the specified output while controlling to zero degrees. */
-    public void runCharacterization(double output) {
-        io.setDriveOpenLoop(output);
+    public void runCharacterization(Voltage output) {
+        io.setDriveOpenLoop(output.in(Volts));
         io.setTurnPosition(Rotation2d.kZero);
     }
 
