@@ -33,7 +33,6 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -353,7 +352,12 @@ public final class Constants {
     }
 
     public static class FieldConstants {
-        public static final Pose3d HUB = new Pose3d();
+        public static final Distance FIELD_LENGTH = Inches.of(650.12);
+        public static final Distance FIELD_WIDTH = Inches.of(316.64);
+
+        public static final Distance ALLIANCE_ZONE = Inches.of(156.06);
+
+        public static final Translation3d HUB = new Translation3d(Inches.of(181.56), FIELD_WIDTH.div(2), Inches.of(72));
     }
 
     private Constants() {}
