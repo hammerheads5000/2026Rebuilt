@@ -360,7 +360,23 @@ public final class Constants {
         public static final Distance SHOOT_RADIUS = Inches.of(1);
     }
 
-    public static class IntakeConstants {}
+    public static class IntakeConstants {
+        public static final int LEFT_RACK_ID = 0;
+        public static final int RIGHT_RACK_ID = 0;
+        public static final int LEFT_SPIN_ID = 0;
+        public static final int RIGHT_SPIN_ID = 0;
+
+        private static final ControlConstants RACK_BASE_CONSTANTS =
+                new ControlConstants().withFeedforward(0.1, 0).withPID(1, 0, 0).withProfile(2, 5);
+        public static final TunableControlConstants RACK_TUNABLE_CONSTANTS =
+                new TunableControlConstants("Intake/Rack", RACK_BASE_CONSTANTS);
+
+        public static final Distance STOW_POS = Inches.of(0);
+        public static final Distance DEPLOY_POS = Inches.of(17);
+        public static final Voltage SPIN_VOLTAGE = Volts.of(3);
+
+        public static final LinearVelocity MIN_SWITCH_ROBOT_VELOCITY = MetersPerSecond.of(0.5);
+    }
 
     public static class IndexerConstants {}
 
