@@ -44,6 +44,8 @@ public class TunableControls {
         double maxInput;
         double minInput;
 
+        public ControlConstants() {}
+
         public ControlConstants(ControlConstants constants) {
             this.kP = constants.kP;
             this.kI = constants.kI;
@@ -67,7 +69,7 @@ public class TunableControls {
 
         /**
          * Sets the PID constants.
-         * 
+         *
          * @param kP proportional gain (units of output per unit error)
          * @param kI integral gain (units of output per unit accumulated error)
          * @param kD derivative gain (units of output per unit error per second)
@@ -82,7 +84,7 @@ public class TunableControls {
 
         /**
          * Sets the feedforward constants.
-         * 
+         *
          * @param kV output to give for a velocity of 1 unit per second
          * @param kA output to give for an acceleration of 1 unit per second squared
          * @return this ControlConstants object for chaining
@@ -95,7 +97,7 @@ public class TunableControls {
 
         /**
          * Sets the "physical" feedforward constants.
-         * 
+         *
          * @param kS output to overcome static friction
          * @param kG output to counteract gravity
          * @return this ControlConstants object for chaining
@@ -109,7 +111,7 @@ public class TunableControls {
         /**
          * Sets the trapezoidal motion profile parameters. Will also set the controller
          * to be profiled.
-         * 
+         *
          * @param maxVel maximum velocity (units per second)
          * @param maxAcc maximum acceleration (units per second squared)
          * @return this ControlConstants object for chaining
@@ -123,7 +125,7 @@ public class TunableControls {
 
         /**
          * Sets whether the controller is set up to be profiled.
-         * 
+         *
          * @param profiled whether the controller is profiled. Automatically set to true
          *                 when {@link #withProfile(double, double)} is called.
          * @return this ControlConstants object for chaining
@@ -135,10 +137,10 @@ public class TunableControls {
 
         /**
          * Sets the position tolerance for the controller.
-         * 
+         *
          * @param tolerance position tolerance
          * @return this ControlConstants object for chaining
-         * 
+         *
          * @see #withTolerance(double, double)
          */
         public ControlConstants withTolerance(double tolerance) {
@@ -148,7 +150,7 @@ public class TunableControls {
 
         /**
          * Sets the tolerances for the controller.
-         * 
+         *
          * @param tolerance    position tolerance
          * @param velTolerance velocity tolerance
          * @return this ControlConstants object for chaining
@@ -162,7 +164,7 @@ public class TunableControls {
 
         /**
          * Sets the I-Zone (where to use integral control) for the controller.
-         * 
+         *
          * @param iZone maximum error for which integral control is applied
          * @return this ControlConstants object for chaining
          */
@@ -173,7 +175,7 @@ public class TunableControls {
 
         /**
          * Sets the integral range (limiting integral output) for the controller.
-         * 
+         *
          * @param iMin minimum accumulated error
          * @param iMax maximum accumulated error
          * @return this ControlConstants object for chaining
@@ -186,7 +188,7 @@ public class TunableControls {
 
         /**
          * Sets the period for the controller.
-         * 
+         *
          * @param period period in seconds (default 0.02s)
          * @return this ControlConstants object for chaining
          */
@@ -199,7 +201,7 @@ public class TunableControls {
          * Sets the controller to be continuous over the given input range. Primarily
          * used for angular control. (e.g. 0 and 359 degrees should be considered
          * adjacent)
-         * 
+         *
          * @param minInput minimum input value
          * @param maxInput maximum input value
          * @return this ControlConstants object for chaining
@@ -227,8 +229,8 @@ public class TunableControls {
          * Creates a new {@link ProfiledPIDController} with the configured constants.
          */
         public ProfiledPIDController getProfiledPIDController() {
-            ProfiledPIDController controller = new ProfiledPIDController(kP, kI, kD,
-                    new TrapezoidProfile.Constraints(maxVel, maxAcc));
+            ProfiledPIDController controller =
+                    new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(maxVel, maxAcc));
             controller.setTolerance(tolerance);
             controller.setIntegratorRange(iMin, iMax);
             controller.setIZone(iZone);
@@ -288,7 +290,7 @@ public class TunableControls {
         /**
          * Creates a new TunableControlConstants object, initializing the tunable
          * numbers with the values from the given {@link ControlConstants}.
-         * 
+         *
          * @param key       base NetworkTables key for the {@link LoggedTunableNumber}s.
          *                  Should <i>not</i> end with a slash.
          * @param constants initial ControlConstants to copy values from
@@ -318,21 +320,21 @@ public class TunableControls {
         /**
          * Returns an array of all {@link LoggedTunableNumber}s in this
          * TunableControlConstants.
-         * 
+         *
          * @return array of all LoggedTunableNumbers in the order of: kP, kI, kD,
          *         tolerance,
          *         velTolerance, iZone, iMin, iMax, kV, kA, kS, kG, maxVel, maxAcc
          */
         public LoggedTunableNumber[] getAllTunableNumbers() {
             return new LoggedTunableNumber[] {
-                    kP, kI, kD, tolerance, velTolerance, iZone, iMin, iMax, kV, kA, kS, kG, maxVel, maxAcc
+                kP, kI, kD, tolerance, velTolerance, iZone, iMin, iMax, kV, kA, kS, kG, maxVel, maxAcc
             };
         }
 
         /**
          * Creates a new {@link PIDController} (not {@link TunablePIDController}) with
          * the configured constants.
-         * 
+         *
          * @see {@link TunablePIDController} for creating a tunable PID controller.
          */
         public PIDController getPIDController() {
@@ -347,7 +349,7 @@ public class TunableControls {
         /**
          * Creates a new {@link ProfiledPIDController} (not
          * {@link TunableProfiledController}) with the configured constants.
-         * 
+         *
          * @see {@link TunableProfiledController} for creating a tunable profiled PID
          *      controller.
          */
@@ -363,7 +365,7 @@ public class TunableControls {
 
         /**
          * Creates a new {@link ElevatorFeedforward} with the configured constants.
-         * 
+         *
          * <p>
          * Note: This is not necessary when using a {@link TunableProfiledController}.
          */
@@ -373,7 +375,7 @@ public class TunableControls {
 
         /**
          * Creates a new {@link SimpleMotorFeedforward} with the configured constants.
-         * 
+         *
          * <p>
          * Note: This is not necessary when using a {@link TunableProfiledController}.
          */
@@ -386,7 +388,7 @@ public class TunableControls {
      * Wrapper around WPILib's {@link PIDController} that updates the controller
      * with runtime-tunable parameters provided by a
      * {@link TunableControlConstants}.
-     * 
+     *
      * <p>
      * <i>Note: For motion profiling, use {@link TunableProfiledController}.</i>
      */
@@ -397,7 +399,7 @@ public class TunableControls {
         /**
          * Creates a new TunablePIDController with the given
          * {@link TunableControlConstants}.
-         * 
+         *
          * @param tunableParams The {@link TunableControlConstants} to configure this
          *                      controller.
          */
@@ -501,7 +503,7 @@ public class TunableControls {
          * @param measurement The current measurement of the process variable.
          * @param goal        The new goal of the controller.
          * @return The next controller output.
-         * 
+         *
          * @see PIDController#calculate(double, double)
          */
         public double calculate(double measurement, double goal) {
@@ -513,7 +515,7 @@ public class TunableControls {
          *
          * @param measurement The current measurement of the process variable.
          * @return The next controller output.
-         * 
+         *
          * @see PIDController#calculate(double)
          */
         public double calculate(double measurement) {
@@ -522,7 +524,7 @@ public class TunableControls {
 
         /**
          * Resets the previous error and the integral term.
-         * 
+         *
          * @see PIDController#reset()
          */
         public void reset() {
@@ -535,7 +537,7 @@ public class TunableControls {
      * controller using runtime-tunable values provided by a
      * {@link TunableControlConstants}. It also includes feedforward control
      * (defined by kS, kV, kA, kG).
-     * 
+     *
      * <p>
      * <i>Note: For non-motion-profiled control, use
      * {@link TunablePIDController}.</i>
@@ -549,7 +551,7 @@ public class TunableControls {
         /**
          * Creates a new TunableProfiledController with the given
          * {@link TunableControlConstants}.
-         * 
+         *
          * @param tunableParams The {@link TunableControlConstants} to configure this
          *                      controller.
          */
@@ -694,7 +696,7 @@ public class TunableControls {
          * @param measurement The current measurement of the process variable.
          * @param goal        The new goal of the controller.
          * @return The next controller output.
-         * 
+         *
          * @see ProfiledPIDController#calculate(double, double)
          * @see #calculateFeedforward()
          */
@@ -707,7 +709,7 @@ public class TunableControls {
          *
          * @param measurement The current measurement of the process variable.
          * @return The next controller output.
-         * 
+         *
          * @see ProfiledPIDController#calculate(double)
          * @see #calculateFeedforward()
          */
@@ -717,7 +719,7 @@ public class TunableControls {
 
         /**
          * Resets the previous error and the integral term.
-         * 
+         *
          * @see ProfiledPIDController#reset(double, double)
          */
         public void reset(double measuredPos, double measuredVel) {
@@ -727,12 +729,11 @@ public class TunableControls {
 
         /**
          * Resets the previous error and the integral term.
-         * 
+         *
          * @see ProfiledPIDController#reset(double)
          */
         public void reset(double measuredPos) {
             reset(measuredPos, 0);
         }
     }
-
 }

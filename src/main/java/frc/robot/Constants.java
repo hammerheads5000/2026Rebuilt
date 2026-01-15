@@ -43,6 +43,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.util.TunableControls.ControlConstants;
+import frc.robot.util.TunableControls.TunableControlConstants;
 import java.util.function.Supplier;
 
 /**
@@ -318,7 +320,38 @@ public final class Constants {
         public static final AngularAcceleration FF_WHEEL_RADIUS_RAMP_RATE = RadiansPerSecondPerSecond.of(0.05);
     }
 
-    public static class TurretConstants {}
+    public static class TurretConstants {
+        public static final int TURN_ID = 0;
+        public static final int FLYWHEEL_ID = 0;
+        public static final int SHOOT_ID = 0;
+        public static final int ENCODER_ID = 0;
+
+        private static final ControlConstants TURN_BASE_CONSTANTS = new ControlConstants()
+                .withContinuous(-Math.PI, Math.PI)
+                .withFeedforward(0.1, 0)
+                .withPID(1, 0, 0)
+                .withProfile(10, 20);
+
+        private static final ControlConstants FLYWHEEL_BASE_CONSTANTS =
+                new ControlConstants().withPID(1, 0, 0.1).withProfile(30, 100); // acts as ramp rate limiter
+
+        private static final ControlConstants SHOOT_BASE_CONSTANTS =
+                new ControlConstants().withPID(1, 0, 0.1).withProfile(30, 100); // acts as ramp rate limiter
+
+        public static final TunableControlConstants TURN_TUNABLE_CONSTANTS =
+                new TunableControlConstants("Turret/Turn", TURN_BASE_CONSTANTS);
+        public static final TunableControlConstants FLYWHEEL_TUNABLE_CONSTANTS =
+                new TunableControlConstants("Turret/Flywheel", FLYWHEEL_BASE_CONSTANTS);
+        public static final TunableControlConstants SHOOT_TUNABLE_CONSTANTS =
+                new TunableControlConstants("Turret/Shoot", SHOOT_BASE_CONSTANTS);
+
+        public static final Distance DISTANCE_ABOVE_FUNNEL = Inches.of(30); // how high to clear the funnel
+
+        public static final Transform3d ROBOT_TO_TURRET_TRANSFORM =
+                new Transform3d(new Translation3d(Inches.of(8), Inches.zero(), Inches.of(18)), Rotation3d.kZero);
+        public static final Distance FLYWHEEL_RADIUS = Inches.of(2);
+        public static final Distance SHOOT_RADIUS = Inches.of(1);
+    }
 
     public static class IntakeConstants {}
 
@@ -358,6 +391,8 @@ public final class Constants {
         public static final Distance ALLIANCE_ZONE = Inches.of(156.06);
 
         public static final Translation3d HUB = new Translation3d(Inches.of(181.56), FIELD_WIDTH.div(2), Inches.of(72));
+        public static final Distance FUNNEL_RADIUS = Inches.of(21);
+        public static final Distance FUNNEL_HEIGHT = Inches.of(20);
     }
 
     private Constants() {}
