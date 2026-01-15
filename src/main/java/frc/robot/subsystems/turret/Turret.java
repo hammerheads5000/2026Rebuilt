@@ -15,6 +15,7 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -31,8 +32,11 @@ public class Turret extends SubsystemBase {
     private final Supplier<Pose2d> poseSupplier;
 
     private final TunableProfiledController turnController;
+    private final TunableProfiledController hoodController;
     private final TunableProfiledController flywheelController;
     private final TunableProfiledController shootController;
+
+    Translation3d target = FieldConstants.HUB;
 
     public Turret(TurretIO io, Supplier<Pose2d> poseSupplier) {
         this.io = io;
@@ -40,6 +44,7 @@ public class Turret extends SubsystemBase {
         this.poseSupplier = poseSupplier;
 
         turnController = new TunableProfiledController(TURN_TUNABLE_CONSTANTS);
+        hoodController = new TunableProfiledController(HOOD_TUNABLE_CONSTANTS);
         flywheelController = new TunableProfiledController(FLYWHEEL_TUNABLE_CONSTANTS);
         shootController = new TunableProfiledController(SHOOT_TUNABLE_CONSTANTS);
     }
@@ -48,14 +53,14 @@ public class Turret extends SubsystemBase {
         Pose2d turret = new Pose3d(poseSupplier.get())
                 .transformBy(ROBOT_TO_TURRET_TRANSFORM)
                 .toPose2d();
-        Translation2d hub = FieldConstants.HUB.toTranslation2d();
+        Translation2d hub = target.toTranslation2d();
         return Meters.of(Math.hypot(turret.getX() - hub.getX(), turret.getY() - hub.getY()));
     }
 
     // see https://www.desmos.com/calculator/ezjqolho6g
     private Pair<LinearVelocity, Angle> calculateShot() {
         double x_dist = getDistanceToHub().in(Meters);
-        double y_dist = FieldConstants.HUB.getZ() - ROBOT_TO_TURRET_TRANSFORM.getZ();
+        double y_dist = target.getZ() - ROBOT_TO_TURRET_TRANSFORM.getZ();
         double g = 9.81;
         double r = FieldConstants.FUNNEL_RADIUS.in(Meters);
         double h = FieldConstants.FUNNEL_HEIGHT.in(Meters);
@@ -79,6 +84,17 @@ public class Turret extends SubsystemBase {
         return RadiansPerSecond.of(vel.in(MetersPerSecond) / radius.in(Meters));
     }
 
+    private Angle calculateAzimuthAngle() {
+        Pose2d robot = poseSupplier.get();
+        Translation2d turret = new Pose3d(robot)
+                .transformBy(ROBOT_TO_TURRET_TRANSFORM)
+                .toPose2d()
+                .getTranslation();
+
+        Translation2d direction = target.toTranslation2d().minus(turret);
+        return direction.getAngle().minus(robot.getRotation()).getMeasure();
+    }
+
     @Override
     public void periodic() {
         io.updateInputs(inputs);
@@ -86,11 +102,15 @@ public class Turret extends SubsystemBase {
 
         var shot = calculateShot();
         LinearVelocity vel = shot.getFirst();
-        Angle angle = shot.getSecond();
+        Angle hoodAngle = shot.getSecond();
+        Angle azimuthAngle = calculateAzimuthAngle();
+        turnController.setGoal(azimuthAngle.in(Radians));
+        hoodController.setGoal(hoodAngle.in(Radians));
         flywheelController.setGoal(linearToAngularVelocity(vel, FLYWHEEL_RADIUS).in(RadiansPerSecond));
         shootController.setGoal(linearToAngularVelocity(vel, SHOOT_RADIUS).in(RadiansPerSecond));
 
         io.setTurnOutput(Volts.of(turnController.calculate(inputs.turnPosition.in(Radians))));
+        io.setHoodOutput(Volts.of(hoodController.calculate(inputs.hoodPosition.in(Radians))));
         io.setFlywheelOutput(Volts.of(flywheelController.calculate(inputs.flywheelSpeed.in(RadiansPerSecond))));
         io.setShooterOutput(Volts.of(shootController.calculate(inputs.shootSpeed.in(RadiansPerSecond))));
     }

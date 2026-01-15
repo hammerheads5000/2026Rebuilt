@@ -25,6 +25,11 @@ public interface TurretIO {
         public Angle turnPosition = Radians.zero();
         public AngularVelocity turnVelocity = RadiansPerSecond.zero();
 
+        public boolean hoodMotorConnected = false;
+        public Current hoodCurrent = Amps.zero();
+        public Angle hoodPosition = Radians.zero();
+        public AngularVelocity hoodVelocity = RadiansPerSecond.zero();
+
         public boolean flywheelMotorConnected = false;
         public Current flywheelCurrent = Amps.zero();
         public AngularVelocity flywheelSpeed = RadiansPerSecond.zero();
@@ -40,11 +45,15 @@ public interface TurretIO {
 
     public default void setTurnOutput(Voltage out) {}
 
+    public default void setHoodOutput(Voltage out) {}
+
     public default void setFlywheelOutput(Voltage out) {}
 
     public default void setShooterOutput(Voltage out) {}
 
     public default void stopTurn() {}
+
+    public default void stopHood() {}
 
     public default void stopFlywheel() {}
 

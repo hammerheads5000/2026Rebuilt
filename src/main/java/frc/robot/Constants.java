@@ -322,24 +322,31 @@ public final class Constants {
 
     public static class TurretConstants {
         public static final int TURN_ID = 0;
+        public static final int HOOD_ID = 0;
         public static final int FLYWHEEL_ID = 0;
         public static final int SHOOT_ID = 0;
         public static final int ENCODER_ID = 0;
 
-        private static final ControlConstants TURN_BASE_CONSTANTS = new ControlConstants()
-                .withContinuous(-Math.PI, Math.PI)
+        private static final ControlConstants TURN_BASE_CONSTANTS =
+                new ControlConstants().withFeedforward(0.1, 0).withPID(1, 0, 0).withProfile(10, 20);
+
+        private static final ControlConstants HOOD_BASE_CONSTANTS =
+                new ControlConstants().withFeedforward(0.1, 0).withPID(1, 0, 0).withProfile(10, 20);
+
+        private static final ControlConstants FLYWHEEL_BASE_CONSTANTS = new ControlConstants()
                 .withFeedforward(0.1, 0)
-                .withPID(1, 0, 0)
-                .withProfile(10, 20);
+                .withPID(1, 0, 0.1)
+                .withProfile(30, 100); // acts as ramp rate limiter
 
-        private static final ControlConstants FLYWHEEL_BASE_CONSTANTS =
-                new ControlConstants().withPID(1, 0, 0.1).withProfile(30, 100); // acts as ramp rate limiter
-
-        private static final ControlConstants SHOOT_BASE_CONSTANTS =
-                new ControlConstants().withPID(1, 0, 0.1).withProfile(30, 100); // acts as ramp rate limiter
+        private static final ControlConstants SHOOT_BASE_CONSTANTS = new ControlConstants()
+                .withFeedforward(0.1, 0)
+                .withPID(1, 0, 0.1)
+                .withProfile(30, 100); // acts as ramp rate limiter
 
         public static final TunableControlConstants TURN_TUNABLE_CONSTANTS =
                 new TunableControlConstants("Turret/Turn", TURN_BASE_CONSTANTS);
+        public static final TunableControlConstants HOOD_TUNABLE_CONSTANTS =
+                new TunableControlConstants("Turret/Hood", HOOD_BASE_CONSTANTS);
         public static final TunableControlConstants FLYWHEEL_TUNABLE_CONSTANTS =
                 new TunableControlConstants("Turret/Flywheel", FLYWHEEL_BASE_CONSTANTS);
         public static final TunableControlConstants SHOOT_TUNABLE_CONSTANTS =
