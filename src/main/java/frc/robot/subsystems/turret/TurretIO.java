@@ -7,10 +7,8 @@ package frc.robot.subsystems.turret;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
@@ -33,12 +31,10 @@ public interface TurretIO {
         public boolean flywheelMotorConnected = false;
         public Current flywheelCurrent = Amps.zero();
         public AngularVelocity flywheelSpeed = RadiansPerSecond.zero();
-        public AngularAcceleration flywheelAcceleration = RadiansPerSecondPerSecond.zero();
 
         public boolean shootMotorConnected = false;
         public Current shootCurrent = Amps.zero();
         public AngularVelocity shootSpeed = RadiansPerSecond.zero();
-        public AngularAcceleration shootAcceleration = RadiansPerSecondPerSecond.zero();
     }
 
     public default void updateInputs(TurretIOInputs inputs) {}
@@ -49,7 +45,7 @@ public interface TurretIO {
 
     public default void setFlywheelOutput(Voltage out) {}
 
-    public default void setShooterOutput(Voltage out) {}
+    public default void setShootOutput(Voltage out) {}
 
     public default void stopTurn() {}
 
