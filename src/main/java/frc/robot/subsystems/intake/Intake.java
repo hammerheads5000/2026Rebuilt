@@ -33,6 +33,9 @@ public class Intake extends SubsystemBase {
     private Trigger deployRightTrigger =
             new Trigger(this::travelingRight).and(() -> isDeployed).debounce(0.2);
 
+    private final IntakeVisualizer measuredVisualizer = new IntakeVisualizer("Intake/Measured");
+    private final IntakeVisualizer setpointVisualizer = new IntakeVisualizer("Intake/Setpoint");
+
     /** Creates a new Intake. */
     public Intake(IntakeIO leftIO, IntakeIO rightIO, Supplier<ChassisSpeeds> chassisSpeedsSupplier) {
         this.leftIO = leftIO;
@@ -101,5 +104,10 @@ public class Intake extends SubsystemBase {
 
         leftIO.setRackOutput(Volts.of(leftController.calculate(leftInputs.rackPosition.in(Meters))));
         rightIO.setRackOutput(Volts.of(rightController.calculate(rightInputs.rackPosition.in(Meters))));
+
+        measuredVisualizer.setLeftPosition(leftInputs.rackPosition);
+        measuredVisualizer.setRightPosition(rightInputs.rackPosition);
+        setpointVisualizer.setLeftPosition(Meters.of(leftController.getSetpoint().position));
+        setpointVisualizer.setRightPosition(Meters.of(rightController.getSetpoint().position));
     }
 }

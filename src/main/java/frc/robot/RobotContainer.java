@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.DriveCharacterization;
 import frc.robot.commands.TeleopDrive;
@@ -21,6 +22,14 @@ import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIO;
+import frc.robot.subsystems.turret.TurretIOSim;
+import frc.robot.subsystems.turret.TurretIOTalonFX;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -32,6 +41,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
     // Subsystems
     private final Drive drive;
+    private final Intake intake;
+    private final Turret turret;
 
     // Controller
     private final CommandXboxController controller = new CommandXboxController(0);
@@ -47,32 +58,17 @@ public class RobotContainer {
         switch (Constants.CURRENT_MODE) {
             case REAL:
                 // Real robot, instantiate hardware IO implementations
-                // ModuleIOTalonFX is intended for modules with TalonFX drive, TalonFX turn, and
-                // a CANcoder
                 drive = new Drive(
                         new GyroIOPigeon2(),
                         new ModuleIOTalonFX(SwerveConstants.FrontLeft.MODULE_CONSTANTS),
                         new ModuleIOTalonFX(SwerveConstants.FrontRight.MODULE_CONSTANTS),
                         new ModuleIOTalonFX(SwerveConstants.BackLeft.MODULE_CONSTANTS),
                         new ModuleIOTalonFX(SwerveConstants.BackRight.MODULE_CONSTANTS));
-
-                // The ModuleIOTalonFXS implementation provides an example implementation for
-                // TalonFXS controller connected to a CANdi with a PWM encoder. The
-                // implementations
-                // of ModuleIOTalonFX, ModuleIOTalonFXS, and ModuleIOSpark (from the Spark
-                // swerve
-                // template) can be freely intermixed to support alternative hardware
-                // arrangements.
-                // Please see the AdvantageKit template documentation for more information:
-                // https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template#custom-module-implementations
-                //
-                // drive =
-                // new Drive(
-                // new GyroIOPigeon2(),
-                // new ModuleIOTalonFXS(TunerConstants.FrontLeft),
-                // new ModuleIOTalonFXS(TunerConstants.FrontRight),
-                // new ModuleIOTalonFXS(TunerConstants.BackLeft),
-                // new ModuleIOTalonFXS(TunerConstants.BackRight));
+                intake = new Intake(
+                        new IntakeIOTalonFX(IntakeConstants.LEFT_RACK_ID, IntakeConstants.LEFT_SPIN_ID),
+                        new IntakeIOTalonFX(IntakeConstants.RIGHT_RACK_ID, IntakeConstants.RIGHT_SPIN_ID),
+                        drive::getChassisSpeeds);
+                turret = new Turret(new TurretIOTalonFX(), drive::getPose);
                 break;
 
             case SIM:
@@ -83,12 +79,16 @@ public class RobotContainer {
                         new ModuleIOSim(SwerveConstants.FrontRight.MODULE_CONSTANTS),
                         new ModuleIOSim(SwerveConstants.BackLeft.MODULE_CONSTANTS),
                         new ModuleIOSim(SwerveConstants.BackRight.MODULE_CONSTANTS));
+                intake = new Intake(new IntakeIOSim(), new IntakeIOSim(), drive::getChassisSpeeds);
+                turret = new Turret(new TurretIOSim(), drive::getPose);
                 break;
 
             default:
                 // Replayed robot, disable IO implementations
                 drive = new Drive(
                         new GyroIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
+                intake = new Intake(new IntakeIO() {}, new IntakeIO() {}, drive::getChassisSpeeds);
+                turret = new Turret(new TurretIO() {}, drive::getPose);
                 break;
         }
 
