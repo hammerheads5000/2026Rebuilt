@@ -32,9 +32,9 @@ public interface IntakeIO {
 
     public default void updateInputs(IntakeIOInputs inputs) {}
 
-    public default void setRackOutput(Voltage volts) {}
+    public default void setRackOutput(Voltage out) {}
 
-    public default void setSpinOutput(Voltage volts) {}
+    public default void setSpinOutput(Voltage out) {}
 
     public default void stopRack() {}
 

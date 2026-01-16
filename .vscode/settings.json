@@ -66,8 +66,13 @@
     "[json]": {
         "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
     },
+    "java.format.enabled": true,
     "[java]": {
-        "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle"
+        "spotlessGradle.format.enable": true,
+        "editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.spotlessGradle": "explicit"
+        }
     },
     "java.format.settings.url": "eclipse-formatter.xml",
     "spotlessGradle.diagnostics.enable": true,
