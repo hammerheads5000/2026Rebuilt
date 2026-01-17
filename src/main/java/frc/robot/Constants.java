@@ -327,21 +327,25 @@ public final class Constants {
         public static final int SHOOT_ID = 0;
         public static final int ENCODER_ID = 0;
 
-        private static final ControlConstants TURN_BASE_CONSTANTS =
-                new ControlConstants().withFeedforward(0.1, 0).withPID(1, 0, 0).withProfile(10, 20);
+        private static final ControlConstants TURN_BASE_CONSTANTS = new ControlConstants()
+                .withFeedforward(0.4, 0)
+                .withPID(0.1, 0, 0)
+                .withProfile(20, 20);
 
-        private static final ControlConstants HOOD_BASE_CONSTANTS =
-                new ControlConstants().withFeedforward(0.1, 0).withPID(1, 0, 0).withProfile(10, 20);
+        private static final ControlConstants HOOD_BASE_CONSTANTS = new ControlConstants()
+                .withFeedforward(0.4, 0)
+                .withPID(0.1, 0, 0)
+                .withProfile(20, 20);
 
         private static final ControlConstants FLYWHEEL_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.1, 0)
-                .withPID(1, 0, 0.1)
-                .withProfile(30, 100); // acts as ramp rate limiter
+                .withFeedforward(0.4, 0)
+                .withPID(0.3, 0, 0.1)
+                .withProfile(70, 100); // acts as ramp rate limiter
 
         private static final ControlConstants SHOOT_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.1, 0)
-                .withPID(1, 0, 0.1)
-                .withProfile(30, 100); // acts as ramp rate limiter
+                .withFeedforward(0.4, 0)
+                .withPID(0.3, 0, 0.1)
+                .withProfile(70, 100); // acts as ramp rate limiter
 
         public static final TunableControlConstants TURN_TUNABLE_CONSTANTS =
                 new TunableControlConstants("Turret/Turn", TURN_BASE_CONSTANTS);
@@ -367,12 +371,12 @@ public final class Constants {
         public static final int RIGHT_SPIN_ID = 0;
 
         private static final ControlConstants RACK_BASE_CONSTANTS =
-                new ControlConstants().withFeedforward(0.1, 0).withPID(1, 0, 0).withProfile(2, 5);
+                new ControlConstants().withFeedforward(1.65, 0).withPID(1, 0, 0).withProfile(10, 10);
         public static final TunableControlConstants RACK_TUNABLE_CONSTANTS =
                 new TunableControlConstants("Intake/Rack", RACK_BASE_CONSTANTS);
 
         public static final Distance STOW_POS = Inches.of(0);
-        public static final Distance DEPLOY_POS = Inches.of(17);
+        public static final Distance DEPLOY_POS = Inches.of(8);
         public static final Voltage SPIN_VOLTAGE = Volts.of(3);
 
         public static final LinearVelocity MIN_SWITCH_ROBOT_VELOCITY = MetersPerSecond.of(0.5);
@@ -413,8 +417,11 @@ public final class Constants {
 
         public static final Distance ALLIANCE_ZONE = Inches.of(156.06);
 
-        public static final Translation3d HUB = new Translation3d(Inches.of(181.56), FIELD_WIDTH.div(2), Inches.of(72));
-        public static final Distance FUNNEL_RADIUS = Inches.of(21);
+        public static final Translation3d HUB_BLUE =
+                new Translation3d(Inches.of(181.56), FIELD_WIDTH.div(2), Inches.of(52));
+        public static final Translation3d HUB_RED =
+                new Translation3d(FIELD_LENGTH.minus(Inches.of(181.56)), FIELD_WIDTH.div(2), Inches.of(52));
+        public static final Distance FUNNEL_RADIUS = Inches.of(24);
         public static final Distance FUNNEL_HEIGHT = Inches.of(20);
     }
 

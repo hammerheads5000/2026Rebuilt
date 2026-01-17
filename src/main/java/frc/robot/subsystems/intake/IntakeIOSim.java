@@ -18,11 +18,11 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 public class IntakeIOSim implements IntakeIO {
     private final DCMotor rackMotor = DCMotor.getKrakenX44Foc(1);
     private final ElevatorSim rackSim = new ElevatorSim(
-            LinearSystemId.createElevatorSystem(rackMotor, 0.2, 0.02, 2), rackMotor, 0, 0.4, false, 0, 0.03);
+            LinearSystemId.createElevatorSystem(rackMotor, 0.2, 0.02, 2), rackMotor, 0, 0.4, false, 0, 0.0003, 0.0003);
 
     private final DCMotor spinMotor = DCMotor.getKrakenX44Foc(1);
     private final DCMotorSim spinMotorSim =
-            new DCMotorSim(LinearSystemId.createDCMotorSystem(spinMotor, 0.0005, 3), spinMotor, 0.1);
+            new DCMotorSim(LinearSystemId.createDCMotorSystem(spinMotor, 0.0005, 3), spinMotor, 0.01, 0.005);
 
     /** Creates a new IntakeIOSim. */
     public IntakeIOSim() {}

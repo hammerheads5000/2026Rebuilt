@@ -11,11 +11,13 @@ import static frc.robot.Constants.IntakeConstants.*;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.util.TunableControls.TunableProfiledController;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
     private final IntakeIO leftIO;
@@ -34,8 +36,8 @@ public class Intake extends SubsystemBase {
     private Trigger deployRightTrigger =
             new Trigger(this::travelingRight).and(() -> isDeployed).debounce(0.2);
 
-    private final IntakeVisualizer measuredVisualizer = new IntakeVisualizer("Intake/Measured");
-    private final IntakeVisualizer setpointVisualizer = new IntakeVisualizer("Intake/Setpoint");
+    private final IntakeVisualizer measuredVisualizer = new IntakeVisualizer("Measured", Color.kGreen);
+    // private final IntakeVisualizer setpointVisualizer = new IntakeVisualizer("Setpoint", Color.kBlue);
 
     /** Creates a new Intake. */
     public Intake(IntakeIO leftIO, IntakeIO rightIO, Supplier<ChassisSpeeds> chassisSpeedsSupplier) {
@@ -111,12 +113,17 @@ public class Intake extends SubsystemBase {
         leftIO.updateInputs(leftInputs);
         rightIO.updateInputs(rightInputs);
 
+        Logger.processInputs("Left Intake", leftInputs);
+        Logger.processInputs("Right Intake", rightInputs);
+
         leftIO.setRackOutput(Volts.of(leftController.calculate(leftInputs.rackPosition.in(Meters))));
         rightIO.setRackOutput(Volts.of(rightController.calculate(rightInputs.rackPosition.in(Meters))));
 
         measuredVisualizer.setLeftPosition(leftInputs.rackPosition);
         measuredVisualizer.setRightPosition(rightInputs.rackPosition);
-        setpointVisualizer.setLeftPosition(Meters.of(leftController.getSetpoint().position));
-        setpointVisualizer.setRightPosition(Meters.of(rightController.getSetpoint().position));
+        // setpointVisualizer.setLeftPosition(Meters.of(leftController.getSetpoint().position));
+        // setpointVisualizer.setRightPosition(Meters.of(rightController.getSetpoint().position));
+        Logger.recordOutput("Left Setpoint", leftController.getSetpoint().position, Meters);
+        Logger.recordOutput("Right Setpoint", rightController.getSetpoint().position, Meters);
     }
 }

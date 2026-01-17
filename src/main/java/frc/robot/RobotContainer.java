@@ -68,7 +68,7 @@ public class RobotContainer {
                         new IntakeIOTalonFX(IntakeConstants.LEFT_RACK_ID, IntakeConstants.LEFT_SPIN_ID),
                         new IntakeIOTalonFX(IntakeConstants.RIGHT_RACK_ID, IntakeConstants.RIGHT_SPIN_ID),
                         drive::getChassisSpeeds);
-                turret = new Turret(new TurretIOTalonFX(), drive::getPose);
+                turret = new Turret(new TurretIOTalonFX(), drive::getPose, drive::getChassisSpeeds);
                 break;
 
             case SIM:
@@ -80,7 +80,7 @@ public class RobotContainer {
                         new ModuleIOSim(SwerveConstants.BackLeft.MODULE_CONSTANTS),
                         new ModuleIOSim(SwerveConstants.BackRight.MODULE_CONSTANTS));
                 intake = new Intake(new IntakeIOSim(), new IntakeIOSim(), drive::getChassisSpeeds);
-                turret = new Turret(new TurretIOSim(), drive::getPose);
+                turret = new Turret(new TurretIOSim(), drive::getPose, drive::getChassisSpeeds);
                 break;
 
             default:
@@ -88,7 +88,7 @@ public class RobotContainer {
                 drive = new Drive(
                         new GyroIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
                 intake = new Intake(new IntakeIO() {}, new IntakeIO() {}, drive::getChassisSpeeds);
-                turret = new Turret(new TurretIO() {}, drive::getPose);
+                turret = new Turret(new TurretIO() {}, drive::getPose, drive::getChassisSpeeds);
                 break;
         }
 
