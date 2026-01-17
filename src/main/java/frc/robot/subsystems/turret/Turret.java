@@ -113,5 +113,9 @@ public class Turret extends SubsystemBase {
         io.setHoodOutput(Volts.of(hoodController.calculate(inputs.hoodPosition.in(Radians))));
         io.setFlywheelOutput(Volts.of(flywheelController.calculate(inputs.flywheelSpeed.in(RadiansPerSecond))));
         io.setShootOutput(Volts.of(shootController.calculate(inputs.shootSpeed.in(RadiansPerSecond))));
+
+        Logger.recordOutput("Turret/Velocity", vel);
+        Logger.recordOutput("Turret/Hood Angle", hoodAngle);
+        Logger.recordOutput("Turret/Azimuth Angle", azimuthAngle);
     }
 }

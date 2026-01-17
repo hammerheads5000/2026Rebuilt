@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -49,8 +50,12 @@ public class Intake extends SubsystemBase {
 
         this.chassisSpeedsSupplier = chassisSpeedsSupplier;
 
-        this.deployLeftTrigger.onTrue(deployLeft());
-        this.deployRightTrigger.onTrue(deployRight());
+        // this.deployLeftTrigger.onTrue(deployLeft());
+        // this.deployRightTrigger.onTrue(deployRight());
+
+        SmartDashboard.putData(deployLeft());
+        SmartDashboard.putData(deployRight());
+        SmartDashboard.putData(stow());
     }
 
     private boolean travelingLeft() {
@@ -63,38 +68,42 @@ public class Intake extends SubsystemBase {
 
     public Command deploy() {
         return this.runOnce(() -> isDeployed = true)
-                .andThen(deployLeft().onlyIf(() -> !travelingLeft() && !travelingRight()));
+                .andThen(deployLeft().onlyIf(() -> !travelingLeft() && !travelingRight()))
+                .withName("Deploy intake");
     }
 
     private Command deployLeft() {
         return this.runOnce(() -> {
-            leftController.setGoal(DEPLOY_POS.in(Meters));
-            rightController.setGoal(STOW_POS.in(Meters));
+                    leftController.setGoal(DEPLOY_POS.in(Meters));
+                    rightController.setGoal(STOW_POS.in(Meters));
 
-            leftIO.setSpinOutput(SPIN_VOLTAGE);
-            rightIO.stopSpin();
-        });
+                    leftIO.setSpinOutput(SPIN_VOLTAGE);
+                    rightIO.stopSpin();
+                })
+                .withName("Deploy Left Intake");
     }
 
     private Command deployRight() {
         return this.runOnce(() -> {
-            leftController.setGoal(STOW_POS.in(Meters));
-            rightController.setGoal(DEPLOY_POS.in(Meters));
+                    leftController.setGoal(STOW_POS.in(Meters));
+                    rightController.setGoal(DEPLOY_POS.in(Meters));
 
-            leftIO.stopSpin();
-            rightIO.setSpinOutput(SPIN_VOLTAGE);
-        });
+                    leftIO.stopSpin();
+                    rightIO.setSpinOutput(SPIN_VOLTAGE);
+                })
+                .withName("Deploy Right Intake");
     }
 
     public Command stow() {
         return this.runOnce(() -> {
-            isDeployed = false;
-            leftController.setGoal(STOW_POS.in(Meters));
-            rightController.setGoal(STOW_POS.in(Meters));
+                    isDeployed = false;
+                    leftController.setGoal(STOW_POS.in(Meters));
+                    rightController.setGoal(STOW_POS.in(Meters));
 
-            leftIO.stopSpin();
-            rightIO.stopSpin();
-        });
+                    leftIO.stopSpin();
+                    rightIO.stopSpin();
+                })
+                .withName("Stow intakes");
     }
 
     @Override
