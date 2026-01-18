@@ -28,11 +28,11 @@ public class IntakeVisualizer {
 
     public IntakeVisualizer(String name, Color color) {
         leftRoot = mechanism.getRoot(name + " Left", 0.85, 0.4);
-        leftIntake = leftRoot.append(new LoggedMechanismLigament2d(
-                "Left Intake", Inches.of(17), Degrees.of(180 + 20), 3, new Color8Bit(color)));
+        rightIntake = leftRoot.append(new LoggedMechanismLigament2d(
+                "Right Intake", Inches.of(17), Degrees.of(180 + 20), 3, new Color8Bit(color)));
         rightRoot = mechanism.getRoot(name + " Right", 0.65, 0.4);
-        rightIntake = rightRoot.append(
-                new LoggedMechanismLigament2d("Right Intake", Inches.of(17), Degrees.of(-20), 3, new Color8Bit(color)));
+        leftIntake = rightRoot.append(
+                new LoggedMechanismLigament2d("Left Intake", Inches.of(17), Degrees.of(-20), 3, new Color8Bit(color)));
     }
 
     public void setLeftPosition(Distance pos) {

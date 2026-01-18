@@ -328,14 +328,14 @@ public final class Constants {
         public static final int ENCODER_ID = 0;
 
         private static final ControlConstants TURN_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.4, 0)
-                .withPID(0.1, 0, 0)
-                .withProfile(20, 20);
+                .withFeedforward(0.083, 0)
+                .withPID(8.0, 0, 0.2)
+                .withProfile(100, 100);
 
         private static final ControlConstants HOOD_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.4, 0)
-                .withPID(0.1, 0, 0)
-                .withProfile(20, 20);
+                .withFeedforward(0.083, 0)
+                .withPID(8.0, 0, 0.2)
+                .withProfile(100, 100);
 
         private static final ControlConstants FLYWHEEL_BASE_CONSTANTS = new ControlConstants()
                 .withFeedforward(0.4, 0)
@@ -380,6 +380,10 @@ public final class Constants {
         public static final Voltage SPIN_VOLTAGE = Volts.of(3);
 
         public static final LinearVelocity MIN_SWITCH_ROBOT_VELOCITY = MetersPerSecond.of(0.5);
+
+        public static final double VEL_MULTIPLIER = 70.0; // multiplies goal velocity for targetting
+        public static final double VEL_POWER = 0.3; // raises goal velocity to power
+        public static final LinearVelocity BASE_VEL = InchesPerSecond.of(50); // added to final velocity
     }
 
     public static class IndexerConstants {}

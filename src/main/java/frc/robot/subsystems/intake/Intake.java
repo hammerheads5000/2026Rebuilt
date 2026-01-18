@@ -30,7 +30,7 @@ public class Intake extends SubsystemBase {
 
     private final Supplier<ChassisSpeeds> chassisSpeedsSupplier;
 
-    private boolean isDeployed = false;
+    private boolean isDeployed = true;
     private Trigger deployLeftTrigger =
             new Trigger(this::travelingLeft).and(() -> isDeployed).debounce(0.2);
     private Trigger deployRightTrigger =
@@ -52,8 +52,8 @@ public class Intake extends SubsystemBase {
 
         this.chassisSpeedsSupplier = chassisSpeedsSupplier;
 
-        // this.deployLeftTrigger.onTrue(deployLeft());
-        // this.deployRightTrigger.onTrue(deployRight());
+        this.deployLeftTrigger.onTrue(deployLeft());
+        this.deployRightTrigger.onTrue(deployRight());
 
         SmartDashboard.putData(deployLeft());
         SmartDashboard.putData(deployRight());

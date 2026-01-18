@@ -6,14 +6,20 @@ package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
+import static edu.wpi.first.units.Units.InchesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.Constants.IntakeConstants.BASE_VEL;
+import static frc.robot.Constants.IntakeConstants.VEL_MULTIPLIER;
+import static frc.robot.Constants.IntakeConstants.VEL_POWER;
 import static frc.robot.Constants.TurretConstants.*;
 
-import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,6 +30,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -39,6 +46,7 @@ public class Turret extends SubsystemBase {
     private final TurretIO io;
     private final TurretIOInputsAutoLogged inputs;
     private final Supplier<Pose2d> poseSupplier;
+    private final Supplier<ChassisSpeeds> fieldSpeedsSupplier;
 
     private final TunableProfiledController turnController;
     private final TunableProfiledController hoodController;
@@ -46,16 +54,17 @@ public class Turret extends SubsystemBase {
     private final TunableProfiledController shootController;
 
     @AutoLogOutput
-    Translation3d target = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+    Translation3d currentTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
             ? FieldConstants.HUB_BLUE
             : FieldConstants.HUB_RED;
 
     private final TurretVisualizer turretVisualizer;
 
-    public Turret(TurretIO io, Supplier<Pose2d> poseSupplier, Supplier<ChassisSpeeds> chassisSpeedsSupplier) {
+    public Turret(TurretIO io, Supplier<Pose2d> poseSupplier, Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
         this.io = io;
         this.inputs = new TurretIOInputsAutoLogged();
         this.poseSupplier = poseSupplier;
+        this.fieldSpeedsSupplier = fieldSpeedsSupplier;
 
         turnController = new TunableProfiledController(TURN_TUNABLE_CONSTANTS);
         hoodController = new TunableProfiledController(HOOD_TUNABLE_CONSTANTS);
@@ -65,42 +74,53 @@ public class Turret extends SubsystemBase {
         turretVisualizer = new TurretVisualizer(
                 () -> new Pose3d(poseSupplier
                                 .get()
-                                .rotateAround(poseSupplier.get().getTranslation(), new Rotation2d(inputs.turnPosition)))
+                                .rotateAround(
+                                        poseSupplier.get().getTranslation(), new Rotation2d(turnController.getGoal())))
                         .transformBy(ROBOT_TO_TURRET_TRANSFORM),
-                chassisSpeedsSupplier);
+                fieldSpeedsSupplier);
 
         SmartDashboard.putData(this.runOnce(() -> turretVisualizer.launchFuel(
-                        angularToLinearVelocity(inputs.flywheelSpeed, FLYWHEEL_RADIUS), inputs.hoodPosition))
+                        angularToLinearVelocity(RadiansPerSecond.of(flywheelController.getGoal()), FLYWHEEL_RADIUS),
+                        Radians.of(hoodController.getGoal())))
                 .withName("Launch Fuel"));
+
+        SmartDashboard.putData("Turret/Turn Controller", turnController.getProfiledPIDController());
+        SmartDashboard.putData("Turret/Hood Controller", hoodController.getProfiledPIDController());
+        SmartDashboard.putData("Turret/Flywheel Controller", flywheelController.getProfiledPIDController());
+        SmartDashboard.putData("Turret/Shoot Controller", shootController.getProfiledPIDController());
     }
 
-    private Distance getDistanceToHub(Pose2d robot) {
+    private Distance getDistanceToTarget(Pose2d robot, Translation3d target) {
         Pose2d turret = new Pose3d(robot).transformBy(ROBOT_TO_TURRET_TRANSFORM).toPose2d();
-        Translation2d hub = target.toTranslation2d();
-        return Meters.of(Math.hypot(turret.getX() - hub.getX(), turret.getY() - hub.getY()));
+        Translation2d target2d = target.toTranslation2d();
+        return Meters.of(Math.hypot(turret.getX() - target2d.getX(), turret.getY() - target2d.getY()));
     }
 
-    // see https://www.desmos.com/calculator/ezjqolho6g
-    private Pair<LinearVelocity, Angle> calculateShot(Pose2d robot) {
-        double x_dist = getDistanceToHub(robot).in(Inches);
-        double y_dist = target.getMeasureZ().minus(ROBOT_TO_TURRET_TRANSFORM.getMeasureZ()).in(Inches);
-        double g = 316;
-        double r = FieldConstants.FUNNEL_RADIUS.in(Inches);
-        double h = FieldConstants.FUNNEL_HEIGHT.plus(DISTANCE_ABOVE_FUNNEL).in(Inches);
-        double A1 = x_dist * x_dist;
-        double B1 = x_dist;
-        double D1 = y_dist;
-        double A2 = -x_dist * x_dist + (x_dist - r) * (x_dist - r);
-        double B2 = -r;
-        double D2 = h;
-        double Bm = -B2 / B1;
-        double A3 = Bm * A1 + A2;
-        double D3 = Bm * D1 + D2;
-        double a = D3 / A3;
-        double b = (D1 - A1 * a) / B1;
-        double theta = Math.atan(b);
-        double v0 = Math.sqrt(-g / (2 * a * (Math.cos(theta)) * (Math.cos(theta))));
-        return Pair.of(InchesPerSecond.of(v0), Radians.of(theta));
+    private LinearVelocity calculateLinearVelocity(Distance distanceToTarget) {
+        double velocity =
+                BASE_VEL.in(InchesPerSecond) + VEL_MULTIPLIER * Math.pow(distanceToTarget.in(Inches), VEL_POWER);
+        return InchesPerSecond.of(velocity);
+    }
+
+    // see https://www.desmos.com/geometry/l4edywkmha
+    private Angle calculateAngle(Pose2d robot, LinearVelocity velocity, Translation3d target) {
+        double g = MetersPerSecondPerSecond.of(9.81).in(InchesPerSecondPerSecond);
+        double vel = velocity.in(InchesPerSecond);
+        double x_dist = getDistanceToTarget(robot, target).in(Inches);
+        double y_dist = target.getMeasureZ()
+                .minus(ROBOT_TO_TURRET_TRANSFORM.getMeasureZ())
+                .in(Inches);
+        double angle = Math.atan(
+                ((vel * vel) + Math.sqrt(Math.pow(vel, 4) - g * (g * x_dist * x_dist + 2 * y_dist * vel * vel)))
+                        / (g * x_dist));
+        return Radians.of(angle);
+    }
+
+    private Time calculateTimeToHit(Pose2d robot, LinearVelocity velocity, Angle hoodAngle, Distance distance) {
+        double vel = velocity.in(MetersPerSecond);
+        double angle = hoodAngle.in(Radians);
+        double x_dist = distance.in(Meters);
+        return Seconds.of(x_dist / (vel * Math.cos(angle)));
     }
 
     private AngularVelocity linearToAngularVelocity(LinearVelocity vel, Distance radius) {
@@ -111,31 +131,57 @@ public class Turret extends SubsystemBase {
         return MetersPerSecond.of(vel.in(RadiansPerSecond) * radius.in(Meters));
     }
 
-    private Angle calculateAzimuthAngle(Pose2d robot) {
-        Translation2d turret = new Pose3d(robot)
+    private Angle calculateAzimuthAngle(Pose2d turret, Translation3d target) {
+        Translation2d turretTranslation = new Pose3d(turret)
                 .transformBy(ROBOT_TO_TURRET_TRANSFORM)
                 .toPose2d()
                 .getTranslation();
 
-        Translation2d direction = target.toTranslation2d().minus(turret);
-        return direction.getAngle().minus(robot.getRotation()).getMeasure();
+        Translation2d direction = target.toTranslation2d().minus(turretTranslation);
+
+        return Radians.of(MathUtil.inputModulus(
+                direction.getAngle().minus(turret.getRotation()).getRadians(), 0, 2 * Math.PI));
+    }
+
+    private Translation3d predictTargetPos(Pose2d turret, ChassisSpeeds fieldSpeeds, Time timeToHit) {
+        double predictedX = currentTarget.getX() - fieldSpeeds.vxMetersPerSecond * timeToHit.in(Seconds);
+        double predictedY = currentTarget.getY() - fieldSpeeds.vyMetersPerSecond * timeToHit.in(Seconds);
+        double predictedZ = currentTarget.getZ();
+
+        return new Translation3d(predictedX, predictedY, predictedZ);
     }
 
     @Override
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Turret", inputs);
-        target = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+        currentTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
                 ? FieldConstants.HUB_BLUE
                 : FieldConstants.HUB_RED;
 
         Pose2d robot = poseSupplier.get();
+        ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
 
-        var shot = calculateShot(robot);
-        LinearVelocity vel = shot.getFirst();
-        Angle hoodAngle = shot.getSecond();
-        Angle azimuthAngle = calculateAzimuthAngle(robot);
-        turnController.setGoal(azimuthAngle.in(Radians));
+        // Make initial guess trajectory assuming robot is stationary
+        Distance distanceToTarget = getDistanceToTarget(robot, currentTarget);
+        LinearVelocity vel = calculateLinearVelocity(distanceToTarget);
+        Angle hoodAngle = calculateAngle(robot, vel, currentTarget);
+
+        Time timeToHit = calculateTimeToHit(robot, vel, hoodAngle, distanceToTarget);
+        Translation3d predictedTarget = predictTargetPos(robot, fieldSpeeds, timeToHit);
+        hoodAngle = calculateAngle(robot, vel, predictedTarget);
+        distanceToTarget = getDistanceToTarget(robot, predictedTarget);
+        // vel = calculateLinearVelocity(distanceToTarget);
+        // Predict target position and recalculate trajectory
+        for (int i = 0; i < 3; i++) {
+            timeToHit = calculateTimeToHit(robot, vel, hoodAngle, distanceToTarget);
+            predictedTarget = predictTargetPos(robot, fieldSpeeds, timeToHit);
+            hoodAngle = calculateAngle(robot, vel, predictedTarget);
+            distanceToTarget = getDistanceToTarget(robot, predictedTarget);
+        }
+        Angle azimuthAngle = calculateAzimuthAngle(robot, predictedTarget);
+        AngularVelocity azimuthVelocity = RadiansPerSecond.of(-fieldSpeeds.omegaRadiansPerSecond);
+        turnController.setGoal(azimuthAngle.in(Radians), azimuthVelocity.in(RadiansPerSecond));
         hoodController.setGoal(hoodAngle.in(Radians));
         flywheelController.setGoal(linearToAngularVelocity(vel, FLYWHEEL_RADIUS).in(RadiansPerSecond));
         shootController.setGoal(linearToAngularVelocity(vel, SHOOT_RADIUS).in(RadiansPerSecond));
@@ -157,8 +203,10 @@ public class Turret extends SubsystemBase {
         Logger.recordOutput("Turret/Hood Voltage", hoodVoltage);
         Logger.recordOutput("Turret/Flywheel Voltage", flywheelVoltage);
         Logger.recordOutput("Turret/Shoot Voltage", shootVoltage);
+        Logger.recordOutput("Turret/Azimuth Angle", azimuthAngle);
         Logger.recordOutput(
-                "Turret/Azimuth Angle",
+                "Turret/Azimuth Visualizer",
                 new Pose2d(robot.getTranslation(), new Rotation2d(azimuthAngle).plus(robot.getRotation())));
+        Logger.recordOutput("Turret/Predicted Target", predictedTarget);
     }
 }

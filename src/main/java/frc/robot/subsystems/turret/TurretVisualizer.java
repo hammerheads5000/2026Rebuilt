@@ -4,21 +4,17 @@
 
 package frc.robot.subsystems.turret;
 
-import static edu.wpi.first.units.Units.Degree;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.InchesPerSecond;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import java.util.ArrayList;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 /** Add your docs here. */
@@ -27,16 +23,18 @@ public class TurretVisualizer {
     private ArrayList<Translation3d> fuelVelocities = new ArrayList<Translation3d>();
     private Translation3d[] trajectory = new Translation3d[50];
     private Supplier<Pose3d> poseSupplier;
-    private Supplier<ChassisSpeeds> chassisSpeedsSupplier;
 
-    public TurretVisualizer(Supplier<Pose3d> poseSupplier, Supplier<ChassisSpeeds> chassisSpeedsSupplier) {
+    @AutoLogOutput
+    private Supplier<ChassisSpeeds> fieldSpeedsSupplier;
+
+    public TurretVisualizer(Supplier<Pose3d> poseSupplier, Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
         this.poseSupplier = poseSupplier;
-        this.chassisSpeedsSupplier = chassisSpeedsSupplier;
+        this.fieldSpeedsSupplier = fieldSpeedsSupplier;
     }
 
     private Translation3d launchVel(LinearVelocity vel, Angle angle) {
         Pose3d robot = poseSupplier.get();
-        ChassisSpeeds chassisSpeeds = chassisSpeedsSupplier.get();
+        ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
 
         double horizontalVel = Math.cos(angle.in(Radians)) * vel.in(MetersPerSecond);
         double verticalVel = Math.sin(angle.in(Radians)) * vel.in(MetersPerSecond);
@@ -45,8 +43,8 @@ public class TurretVisualizer {
         double yVel =
                 horizontalVel * Math.sin(robot.getRotation().toRotation2d().getRadians());
 
-        xVel += chassisSpeeds.vxMetersPerSecond;
-        yVel += chassisSpeeds.vyMetersPerSecond;
+        xVel += fieldSpeeds.vxMetersPerSecond;
+        yVel += fieldSpeeds.vyMetersPerSecond;
 
         return new Translation3d(xVel, yVel, verticalVel);
     }

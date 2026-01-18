@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 public class TurretIOSim implements TurretIO {
     private final DCMotor turnMotor = DCMotor.getKrakenX44Foc(1);
     private final SingleJointedArmSim turnSim =
-            new SingleJointedArmSim(turnMotor, 5, 0.005, 0.1, 0, 2 * Math.PI, false, 0, 0.0002, 0.0002);
+            new SingleJointedArmSim(turnMotor, 2, 0.001, 0.1, 0, 2 * Math.PI, false, 0, 0.0, 0.0);
 
     private final DCMotor hoodMotor = DCMotor.getKrakenX44Foc(1);
     private final SingleJointedArmSim hoodSim =

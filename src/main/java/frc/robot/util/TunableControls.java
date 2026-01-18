@@ -604,6 +604,15 @@ public class TunableControls {
         }
 
         /**
+         * Returns the underlying {@link ProfiledPIDController}. Only use if you know what you are doing!
+         *
+         * @return The ProfiledPIDController of this controller.
+         */
+        public ProfiledPIDController getProfiledPIDController() {
+            return profiledPIDController;
+        }
+
+        /**
          * Returns the accumulated error used in the integral calculation of this
          * controller.
          *
@@ -618,11 +627,21 @@ public class TunableControls {
          * Sets the goal for the ProfiledPIDController.
          *
          * @param goal The desired goal.
+         * @param goalVel The desired goal velocity.
          */
-        public void setGoal(double goal) {
-            profiledPIDController.setGoal(goal);
+        public void setGoal(double goal, double goalVel) {
+            profiledPIDController.setGoal(new TrapezoidProfile.State(goal, goalVel));
             previousVelocity = profiledPIDController.getSetpoint().velocity;
             updateParams();
+        }
+
+        /**
+         * Sets the goal for the ProfiledPIDController.
+         *
+         * @param goal The desired goal.
+         */
+        public void setGoal(double goal) {
+            setGoal(goal, 0);
         }
 
         /**

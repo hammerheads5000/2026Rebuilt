@@ -76,5 +76,6 @@
     },
     "java.format.settings.url": "eclipse-formatter.xml",
     "spotlessGradle.diagnostics.enable": true,
-    "palantir-java-format.repoPath": "C:\\Users\\ndtec\\Downloads\\palantir-java-format"
+    "wpilib.selectDefaultSimulateExtension": true,
+    "wpilib.skipSelectSimulateExtension": false
 }
