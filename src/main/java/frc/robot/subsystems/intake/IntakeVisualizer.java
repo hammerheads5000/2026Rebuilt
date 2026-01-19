@@ -6,11 +6,16 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
@@ -27,19 +32,37 @@ public class IntakeVisualizer {
     private final LoggedMechanismLigament2d rightIntake;
 
     public IntakeVisualizer(String name, Color color) {
-        leftRoot = mechanism.getRoot(name + " Left", 0.85, 0.4);
+        leftRoot = mechanism.getRoot(name + " Left", 0.75 + 0.118, 0.4);
         rightIntake = leftRoot.append(new LoggedMechanismLigament2d(
-                "Right Intake", Inches.of(17), Degrees.of(180 + 20), 3, new Color8Bit(color)));
-        rightRoot = mechanism.getRoot(name + " Right", 0.65, 0.4);
-        leftIntake = rightRoot.append(
-                new LoggedMechanismLigament2d("Left Intake", Inches.of(17), Degrees.of(-20), 3, new Color8Bit(color)));
+                "Right Intake", Inches.of(17), Degrees.of(180 + 21), 3, new Color8Bit(color)));
+        rightRoot = mechanism.getRoot(name + " Right", 0.75 - 0.118, 0.4);
+        leftIntake = rightRoot.append(new LoggedMechanismLigament2d(
+                "Left Intake", Inches.of(19.1), Degrees.of(-21), 3, new Color8Bit(color)));
     }
 
     public void setLeftPosition(Distance pos) {
-        leftIntake.setLength(pos.plus(Inches.of(17)));
+        leftIntake.setLength(pos.plus(Inches.of(19.1)));
+        Logger.recordOutput(
+                "Intake/Left Pose",
+                new Pose3d(
+                        0,
+                        pos.in(Meters)
+                                * Math.cos(Degrees.of(leftIntake.getAngle()).in(Radians)),
+                        pos.in(Meters)
+                                * Math.sin(Degrees.of(leftIntake.getAngle()).in(Radians)),
+                        Rotation3d.kZero));
     }
 
     public void setRightPosition(Distance pos) {
-        rightIntake.setLength(pos.plus(Inches.of(17)));
+        rightIntake.setLength(pos.plus(Inches.of(19.1)));
+        Logger.recordOutput(
+                "Intake/Right Pose",
+                new Pose3d(
+                        0,
+                        pos.in(Meters)
+                                * Math.cos(Degrees.of(rightIntake.getAngle()).in(Radians)),
+                        pos.in(Meters)
+                                * Math.sin(Degrees.of(rightIntake.getAngle()).in(Radians)),
+                        Rotation3d.kZero));
     }
 }

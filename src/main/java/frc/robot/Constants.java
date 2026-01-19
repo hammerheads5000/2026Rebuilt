@@ -356,12 +356,13 @@ public final class Constants {
         public static final TunableControlConstants SHOOT_TUNABLE_CONSTANTS =
                 new TunableControlConstants("Turret/Shoot", SHOOT_BASE_CONSTANTS);
 
-        public static final Distance DISTANCE_ABOVE_FUNNEL = Inches.of(30); // how high to clear the funnel
-
+        public static final Distance DISTANCE_ABOVE_FUNNEL = Inches.of(20); // how high to clear the funnel
+        public static final Distance APEX = Inches.of(130);
         public static final Transform3d ROBOT_TO_TURRET_TRANSFORM =
-                new Transform3d(new Translation3d(Inches.of(8), Inches.zero(), Inches.of(18)), Rotation3d.kZero);
+                new Transform3d(new Translation3d(Inches.zero(), Inches.zero(), Inches.of(18)), Rotation3d.kZero);
         public static final Distance FLYWHEEL_RADIUS = Inches.of(2);
         public static final Distance SHOOT_RADIUS = Inches.of(1);
+        public static final int LOOKAHEAD_ITERATIONS = 3;
     }
 
     public static class IntakeConstants {
@@ -376,7 +377,7 @@ public final class Constants {
                 new TunableControlConstants("Intake/Rack", RACK_BASE_CONSTANTS);
 
         public static final Distance STOW_POS = Inches.of(0);
-        public static final Distance DEPLOY_POS = Inches.of(8);
+        public static final Distance DEPLOY_POS = Inches.of(10.875);
         public static final Voltage SPIN_VOLTAGE = Volts.of(3);
 
         public static final LinearVelocity MIN_SWITCH_ROBOT_VELOCITY = MetersPerSecond.of(0.5);
@@ -422,11 +423,11 @@ public final class Constants {
         public static final Distance ALLIANCE_ZONE = Inches.of(156.06);
 
         public static final Translation3d HUB_BLUE =
-                new Translation3d(Inches.of(181.56), FIELD_WIDTH.div(2), Inches.of(52));
+                new Translation3d(Inches.of(181.56), FIELD_WIDTH.div(2), Inches.of(56.4));
         public static final Translation3d HUB_RED =
-                new Translation3d(FIELD_LENGTH.minus(Inches.of(181.56)), FIELD_WIDTH.div(2), Inches.of(52));
+                new Translation3d(FIELD_LENGTH.minus(Inches.of(181.56)), FIELD_WIDTH.div(2), Inches.of(56.4));
         public static final Distance FUNNEL_RADIUS = Inches.of(24);
-        public static final Distance FUNNEL_HEIGHT = Inches.of(20);
+        public static final Distance FUNNEL_HEIGHT = Inches.of(72 - 56.4);
     }
 
     private Constants() {}

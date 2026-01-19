@@ -8,13 +8,13 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import java.util.ArrayList;
 import java.util.function.Supplier;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 /** Add your docs here. */
@@ -23,8 +23,6 @@ public class TurretVisualizer {
     private ArrayList<Translation3d> fuelVelocities = new ArrayList<Translation3d>();
     private Translation3d[] trajectory = new Translation3d[50];
     private Supplier<Pose3d> poseSupplier;
-
-    @AutoLogOutput
     private Supplier<ChassisSpeeds> fieldSpeedsSupplier;
 
     public TurretVisualizer(Supplier<Pose3d> poseSupplier, Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
@@ -100,5 +98,9 @@ public class TurretVisualizer {
         }
 
         Logger.recordOutput("Turret/Trajectory", trajectory);
+    }
+
+    public void update3dPose(Angle azimuthAngle) {
+        Logger.recordOutput("Turret/TurretPose", new Pose3d(0, 0, 0, new Rotation3d(0, 0, azimuthAngle.in(Radians))));
     }
 }
