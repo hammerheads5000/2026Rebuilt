@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.Robot;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -83,8 +84,10 @@ public class Drive extends SubsystemBase {
         // Usage reporting for swerve template
         HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);
 
-        // Start odometry thread
-        PhoenixOdometryThread.getInstance().start();
+        if (Robot.isReal()) {
+            // Start odometry thread
+            PhoenixOdometryThread.getInstance().start();
+        }
 
         // Configure SysId
         sysId = new SysIdRoutine(

@@ -39,6 +39,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.*;
@@ -46,6 +47,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.util.TunableControls.ControlConstants;
 import frc.robot.util.TunableControls.TunableControlConstants;
 import java.util.function.Supplier;
+import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.GyroSimulation;
 
 /**
  * This class defines the runtime mode used by AdvantageKit. The mode is always
@@ -100,8 +103,8 @@ public final class Constants {
 
         public static final AngularVelocity MAX_MODULE_ROT_SPEED = RotationsPerSecond.of(5);
 
-        private static final Distance MODULE_DISTANCE_Y = Inches.of(23); // left to right
-        private static final Distance MODULE_DISTANCE_X = Inches.of(21); // front to back
+        public static final Distance MODULE_DISTANCE_Y = Inches.of(23); // left to right
+        public static final Distance MODULE_DISTANCE_X = Inches.of(21); // front to back
 
         private static final Slot0Configs STEER_GAINS = new Slot0Configs()
                 .withKP(20)
@@ -130,13 +133,13 @@ public final class Constants {
 
         private static final Current SLIP_CURRENT = Amps.of(80.0); // NEEDS TUNING
 
-        private static final TalonFXConfiguration DRIVE_CONFIGS = new TalonFXConfiguration()
+        public static final TalonFXConfiguration DRIVE_CONFIGS = new TalonFXConfiguration()
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withStatorCurrentLimit(Amps.of(120))
                         .withStatorCurrentLimitEnable(true))
                 .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
 
-        private static final TalonFXConfiguration STEER_CONFIGS = new TalonFXConfiguration()
+        public static final TalonFXConfiguration STEER_CONFIGS = new TalonFXConfiguration()
                 .withCurrentLimits(new CurrentLimitsConfigs()
                         .withStatorCurrentLimit(Amps.of(60))
                         .withStatorCurrentLimitEnable(true))
@@ -154,18 +157,25 @@ public final class Constants {
         // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
         private static final double COUPLE_RATIO = 4.58;
 
-        private static final double DRIVE_GEAR_RATIO = 7.03; // 7.03:1
-        private static final double STEER_GEAR_RATIO = 287.0 / 11; // 287:11
-        private static final Distance WHEEL_RADIUS = Inches.of(1.985);
+        public static final double DRIVE_GEAR_RATIO = 7.03; // 7.03:1
+        public static final double STEER_GEAR_RATIO = 287.0 / 11; // 287:11
+        public static final Distance WHEEL_RADIUS = Inches.of(1.985);
 
         public static final int PIGEON_ID = 1;
 
+        // Simulation
         // SIMULATION inertia
-        private static final MomentOfInertia STEER_INERTIA = KilogramSquareMeters.of(0.01);
-        private static final MomentOfInertia DRIVE_INERTIA = KilogramSquareMeters.of(0.01);
+        public static final MomentOfInertia STEER_INERTIA = KilogramSquareMeters.of(0.01);
+        public static final MomentOfInertia DRIVE_INERTIA = KilogramSquareMeters.of(0.01);
         // SIMULATION voltage necessary to overcome friction
-        private static final Voltage STEER_FRICTION_VOLTAGE = Volts.of(0.2);
-        private static final Voltage DRIVE_FRICTION_VOLTAGE = Volts.of(0.2);
+        public static final Voltage STEER_FRICTION_VOLTAGE = Volts.of(0.2);
+        public static final Voltage DRIVE_FRICTION_VOLTAGE = Volts.of(0.2);
+
+        public static final Mass ROBOT_MASS = Pounds.of(130);
+        public static final DCMotor DRIVE_MOTOR_MODEL = DCMotor.getKrakenX60(1);
+        public static final DCMotor STEER_MOTOR_MODEL = DCMotor.getKrakenX60(1);
+        public static final double WHEEL_COEFFICIENT_OF_FRICTION = 1.5;
+        public static final Supplier<GyroSimulation> GYRO_SIMULATION = COTS.ofPigeon2();
 
         public static final SwerveDrivetrainConstants DRIVETRAIN_CONSTANTS = new SwerveDrivetrainConstants()
                 .withCANBusName(CAN_FD_BUS.getName())
@@ -304,6 +314,7 @@ public final class Constants {
             new Translation2d(SwerveConstants.BackRight.X_POS, SwerveConstants.BackRight.Y_POS),
         };
 
+        public static final int SIM_TICKS_PER_PERIOD = 1;
         public static final Frequency ODOMETRY_UPDATE_FREQ = Hertz.of(250); // 0 Hz = default 250 Hz for CAN FD
         public static final Matrix<N3, N1> ODOMETRY_STD_DEV = VecBuilder.fill(0.02, 0.02, 0.01);
 
