@@ -65,6 +65,11 @@ public class Turret extends SubsystemBase {
                         .transformBy(ROBOT_TO_TURRET_TRANSFORM),
                 fieldSpeedsSupplier);
 
+        this.setDefaultCommand(turretVisualizer.repeatedlyLaunchFuel(
+                () -> TurretCalculator.angularToLinearVelocity(inputs.flywheelSpeed, FLYWHEEL_RADIUS),
+                () -> inputs.hoodPosition,
+                this));
+
         SmartDashboard.putData(this.runOnce(() -> turretVisualizer.launchFuel(
                         TurretCalculator.angularToLinearVelocity(
                                 RadiansPerSecond.of(flywheelController.getGoal()), FLYWHEEL_RADIUS),

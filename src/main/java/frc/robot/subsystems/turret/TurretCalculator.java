@@ -95,13 +95,17 @@ public class TurretCalculator {
     }
 
     // see https://www.desmos.com/calculator/ezjqolho6g
-    public static ShotData calculateShotFromFunnelClearance(Pose2d robot, Translation3d target) {
-        double x_dist = getDistanceToTarget(robot, target).in(Inches);
-        double y_dist = target.getMeasureZ()
+    public static ShotData calculateShotFromFunnelClearance(
+            Pose2d robot, Translation3d actualTarget, Translation3d predictedTarget) {
+        double x_dist = getDistanceToTarget(robot, predictedTarget).in(Inches);
+        double y_dist = predictedTarget
+                .getMeasureZ()
                 .minus(ROBOT_TO_TURRET_TRANSFORM.getMeasureZ())
                 .in(Inches);
         double g = 386;
-        double r = FieldConstants.FUNNEL_RADIUS.in(Inches);
+        double r = FieldConstants.FUNNEL_RADIUS.in(Inches)
+                * x_dist
+                / getDistanceToTarget(robot, actualTarget).in(Inches);
         double h = FieldConstants.FUNNEL_HEIGHT.plus(DISTANCE_ABOVE_FUNNEL).in(Inches);
         double A1 = x_dist * x_dist;
         double B1 = x_dist;
@@ -116,20 +120,20 @@ public class TurretCalculator {
         double b = (D1 - A1 * a) / B1;
         double theta = Math.atan(b);
         double v0 = Math.sqrt(-g / (2 * a * (Math.cos(theta)) * (Math.cos(theta))));
-        return new ShotData(InchesPerSecond.of(v0), Radians.of(theta), target);
+        return new ShotData(InchesPerSecond.of(v0), Radians.of(theta), predictedTarget);
     }
 
     public static ShotData iterativeMovingShotFromFunnelClearance(
             Pose2d robot, ChassisSpeeds fieldSpeeds, Translation3d target, int iterations) {
         // Perform initial estimation (assuming unmoving robot)
-        ShotData shot = calculateShotFromFunnelClearance(robot, target);
+        ShotData shot = calculateShotFromFunnelClearance(robot, target, target);
         Distance distance = getDistanceToTarget(robot, target);
         Time timeOfFlight = calculateTimeOfFlight(
                 robot, shot.getExitVelocity(), shot.getHoodAngle(), distance);
         Translation3d predictedTarget = target;
         for (int i = 0; i < iterations; i++) {
             predictedTarget = predictTargetPos(robot, target, fieldSpeeds, timeOfFlight);
-            shot = calculateShotFromFunnelClearance(robot, predictedTarget);
+            shot = calculateShotFromFunnelClearance(robot, target, predictedTarget);
             timeOfFlight = calculateTimeOfFlight(
                     robot, shot.getExitVelocity(), shot.getHoodAngle(), getDistanceToTarget(robot, predictedTarget));
         }

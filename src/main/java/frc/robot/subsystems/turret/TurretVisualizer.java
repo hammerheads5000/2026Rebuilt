@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -54,6 +56,13 @@ public class TurretVisualizer {
         fuel.add(initialPosition);
 
         fuelVelocities.add(launchVel(vel, angle));
+    }
+
+    public Command repeatedlyLaunchFuel(
+            Supplier<LinearVelocity> velSupplier, Supplier<Angle> angleSupplier, Turret turret) {
+        return turret.runOnce(() -> launchFuel(velSupplier.get(), angleSupplier.get()))
+                .andThen(Commands.waitSeconds(0.25))
+                .repeatedly();
     }
 
     public void updateFuel(LinearVelocity vel, Angle angle) {
