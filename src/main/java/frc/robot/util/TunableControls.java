@@ -30,6 +30,7 @@ public class TunableControls {
 
         // feedforward gains
         double kV, kA = 0;
+        boolean isControllingVelocity = false;
 
         // physical gains
         double kS, kG = 0;
@@ -58,6 +59,7 @@ public class TunableControls {
             this.period = constants.period;
             this.kV = constants.kV;
             this.kA = constants.kA;
+            this.isControllingVelocity = constants.isControllingVelocity;
             this.kS = constants.kS;
             this.kG = constants.kG;
             this.maxVel = constants.maxVel;
@@ -92,6 +94,14 @@ public class TunableControls {
         public ControlConstants withFeedforward(double kV, double kA) {
             this.kV = kV;
             this.kA = kA;
+            return this;
+        }
+
+        /**
+         * Sets a controller that measurements are of velocity, and to apply feedforwards control accordingly
+         */
+        public ControlConstants withVelocityControl() {
+            this.isControllingVelocity = true;
             return this;
         }
 
@@ -272,6 +282,7 @@ public class TunableControls {
         // feedforward gains
         LoggedTunableNumber kV;
         LoggedTunableNumber kA;
+        boolean isControllingVelocity;
 
         // physical gains
         LoggedTunableNumber kS;
@@ -307,6 +318,7 @@ public class TunableControls {
             this.period = constants.period;
             this.kV = new LoggedTunableNumber(key + "/kV", constants.kV);
             this.kA = new LoggedTunableNumber(key + "/kA", constants.kA);
+            this.isControllingVelocity = constants.isControllingVelocity;
             this.kS = new LoggedTunableNumber(key + "/kS", constants.kS);
             this.kG = new LoggedTunableNumber(key + "/kG", constants.kG);
             this.profiled = constants.profiled;
@@ -700,12 +712,13 @@ public class TunableControls {
          */
         public double calculateFeedforward() {
             State setpoint = profiledPIDController.getSetpoint();
-            double accel = (setpoint.velocity - previousVelocity) / profiledPIDController.getPeriod();
-            previousVelocity = setpoint.velocity;
+            double velocity = params.isControllingVelocity ? setpoint.position : setpoint.velocity;
+            double accel = (velocity - previousVelocity) / profiledPIDController.getPeriod();
+            previousVelocity = velocity;
 
-            return params.kS.get() * Math.signum(setpoint.velocity)
+            return params.kS.get() * Math.signum(velocity)
                     + params.kG.get()
-                    + params.kV.get() * setpoint.velocity
+                    + params.kV.get() * velocity
                     + params.kA.get() * accel;
         }
 

@@ -52,8 +52,8 @@ public class TurretCalculator {
         return Radians.of(angle);
     }
 
-    public static Time calculateTimeOfFlight(
-            Pose2d robot, LinearVelocity exitVelocity, Angle hoodAngle, Distance distance) {
+    // calculates how long it will take for a projectile to travel a set distance given its initial velocity and angle
+    public static Time calculateTimeOfFlight(LinearVelocity exitVelocity, Angle hoodAngle, Distance distance) {
         double vel = exitVelocity.in(MetersPerSecond);
         double angle = hoodAngle.in(Radians);
         double dist = distance.in(Meters);
@@ -68,6 +68,7 @@ public class TurretCalculator {
         return MetersPerSecond.of(vel.in(RadiansPerSecond) * radius.in(Meters));
     }
 
+    // calculates the angle of a turret relative to the robot to hit a target
     public static Angle calculateAzimuthAngle(Pose2d robot, Translation3d target) {
         Translation2d turretTranslation = new Pose3d(robot)
                 .transformBy(ROBOT_TO_TURRET_TRANSFORM)
@@ -80,14 +81,15 @@ public class TurretCalculator {
                 direction.getAngle().minus(robot.getRotation()).getRadians(), 0, 2 * Math.PI));
     }
 
-    public static Translation3d predictTargetPos(
-            Pose2d turret, Translation3d target, ChassisSpeeds fieldSpeeds, Time timeOfFlight) {
+    // Move a target a set time in the future along a velocity defined by fieldSpeeds
+    public static Translation3d predictTargetPos(Translation3d target, ChassisSpeeds fieldSpeeds, Time timeOfFlight) {
         double predictedX = target.getX() - fieldSpeeds.vxMetersPerSecond * timeOfFlight.in(Seconds);
         double predictedY = target.getY() - fieldSpeeds.vyMetersPerSecond * timeOfFlight.in(Seconds);
 
         return new Translation3d(predictedX, predictedY, target.getZ());
     }
 
+    // Custom velocity ramp meant to minimize how fast the flywheels have to change speed
     public static LinearVelocity scaleLinearVelocity(Distance distanceToTarget) {
         double velocity =
                 BASE_VEL.in(InchesPerSecond) + VEL_MULTIPLIER * Math.pow(distanceToTarget.in(Inches), VEL_POWER);
@@ -123,19 +125,21 @@ public class TurretCalculator {
         return new ShotData(InchesPerSecond.of(v0), Radians.of(theta), predictedTarget);
     }
 
+    // use an iterative lookahead approach to determine shot parameters for a moving robot
     public static ShotData iterativeMovingShotFromFunnelClearance(
             Pose2d robot, ChassisSpeeds fieldSpeeds, Translation3d target, int iterations) {
-        // Perform initial estimation (assuming unmoving robot)
+        // Perform initial estimation (assuming unmoving robot) to get time of flight estimate
         ShotData shot = calculateShotFromFunnelClearance(robot, target, target);
         Distance distance = getDistanceToTarget(robot, target);
-        Time timeOfFlight = calculateTimeOfFlight(
-                robot, shot.getExitVelocity(), shot.getHoodAngle(), distance);
+        Time timeOfFlight = calculateTimeOfFlight(shot.getExitVelocity(), shot.getHoodAngle(), distance);
         Translation3d predictedTarget = target;
+
+        // Iterate the process, getting better time of flight estimations and updating the predicted target accordingly
         for (int i = 0; i < iterations; i++) {
-            predictedTarget = predictTargetPos(robot, target, fieldSpeeds, timeOfFlight);
+            predictedTarget = predictTargetPos(target, fieldSpeeds, timeOfFlight);
             shot = calculateShotFromFunnelClearance(robot, target, predictedTarget);
             timeOfFlight = calculateTimeOfFlight(
-                    robot, shot.getExitVelocity(), shot.getHoodAngle(), getDistanceToTarget(robot, predictedTarget));
+                    shot.getExitVelocity(), shot.getHoodAngle(), getDistanceToTarget(robot, predictedTarget));
         }
 
         return shot;
