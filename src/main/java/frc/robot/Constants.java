@@ -340,12 +340,14 @@ public final class Constants {
         private static final ControlConstants FLYWHEEL_BASE_CONSTANTS = new ControlConstants()
                 .withFeedforward(0.4, 0)
                 .withPID(0.3, 0, 0.1)
-                .withProfile(70, 100); // acts as ramp rate limiter
+                .withProfile(100, 100) // acts as ramp rate limiter
+                .withVelocityControl();
 
         private static final ControlConstants SHOOT_BASE_CONSTANTS = new ControlConstants()
                 .withFeedforward(0.4, 0)
                 .withPID(0.3, 0, 0.1)
-                .withProfile(70, 100); // acts as ramp rate limiter
+                .withProfile(100, 100) // acts as ramp rate limiter
+                .withVelocityControl();
 
         public static final TunableControlConstants TURN_TUNABLE_CONSTANTS =
                 new TunableControlConstants("Turret/Turn", TURN_BASE_CONSTANTS);
