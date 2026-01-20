@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * Contains classes for defining control constants and tunable controllers.
@@ -766,6 +767,18 @@ public class TunableControls {
          */
         public void reset(double measuredPos) {
             reset(measuredPos, 0);
+        }
+
+        /**
+         * Logs goal, setpoint (pos+vel), position error, accumulated error, and velocity error
+         * @param tableKey NetworkTable key (no trailing "/")
+         */
+        public void logData(String tableKey) {
+            Logger.recordOutput(tableKey + "/Goal", getGoal());
+            Logger.recordOutput(tableKey + "/Setpoint", getSetpoint());
+            Logger.recordOutput(tableKey + "/Position error", getPositionError());
+            Logger.recordOutput(tableKey + "/Accumulated error", getAccumulatedError());
+            Logger.recordOutput(tableKey + "/Velocity error", getVelocityError());
         }
     }
 }

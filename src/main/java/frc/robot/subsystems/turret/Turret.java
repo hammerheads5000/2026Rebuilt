@@ -117,9 +117,10 @@ public class Turret extends SubsystemBase {
         Logger.recordOutput("Turret/Hood Voltage", hoodVoltage);
         Logger.recordOutput("Turret/Flywheel Voltage", flywheelVoltage);
         Logger.recordOutput("Turret/Shoot Voltage", shootVoltage);
-        Logger.recordOutput("Turret/Azimuth Angle", azimuthAngle);
-        Logger.recordOutput(
-                "Turret/Azimuth Visualizer",
-                new Pose2d(robot.getTranslation(), new Rotation2d(azimuthAngle).plus(robot.getRotation())));
+
+        turnController.logData("Turret/TurnController");
+        hoodController.logData("Turret/HoodController");
+        flywheelController.logData("Turret/FlywheelController");
+        shootController.logData("Turret/ShootController");
     }
 }
