@@ -328,25 +328,25 @@ public final class Constants {
         public static final int ENCODER_ID = 0;
 
         private static final ControlConstants TURN_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.083, 0)
-                .withPID(8.0, 0, 0.2)
-                .withProfile(100, 100);
+                .withFeedforward(0.0315, 0.0007)
+                .withPID(0.2, 0, 0.07)
+                .withProfile(150, 100);
 
         private static final ControlConstants HOOD_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.083, 0)
-                .withPID(8.0, 0, 0.2)
+                .withFeedforward(0.08, 0)
+                .withPID(1, 0, 0.32)
                 .withProfile(100, 100);
 
         private static final ControlConstants FLYWHEEL_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.4, 0)
-                .withPID(0.3, 0, 0.1)
-                .withProfile(100, 100) // acts as ramp rate limiter
+                .withFeedforward(0.0393, 0)
+                .withPID(0.3, 0, 0)
+                .withProfile(5000, 5000)
                 .withVelocityControl();
 
         private static final ControlConstants SHOOT_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.4, 0)
-                .withPID(0.3, 0, 0.1)
-                .withProfile(100, 100) // acts as ramp rate limiter
+                .withFeedforward(0.0393, 0)
+                .withPID(0.3, 0, 0)
+                .withProfile(5000, 5000)
                 .withVelocityControl();
 
         public static final TunableControlConstants TURN_TUNABLE_CONSTANTS =

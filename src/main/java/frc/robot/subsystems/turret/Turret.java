@@ -60,8 +60,7 @@ public class Turret extends SubsystemBase {
         turretVisualizer = new TurretVisualizer(
                 () -> new Pose3d(poseSupplier
                                 .get()
-                                .rotateAround(
-                                        poseSupplier.get().getTranslation(), new Rotation2d(turnController.getGoal())))
+                                .rotateAround(poseSupplier.get().getTranslation(), new Rotation2d(inputs.turnPosition)))
                         .transformBy(ROBOT_TO_TURRET_TRANSFORM),
                 fieldSpeedsSupplier);
 
@@ -114,8 +113,9 @@ public class Turret extends SubsystemBase {
         io.setHoodOutput(hoodVoltage);
         io.setFlywheelOutput(flywheelVoltage);
         io.setShootOutput(shootVoltage);
-        turretVisualizer.updateFuel(calculatedShot.getExitVelocity(), calculatedShot.getHoodAngle());
-        turretVisualizer.update3dPose(azimuthAngle);
+        turretVisualizer.updateFuel(
+                TurretCalculator.angularToLinearVelocity(inputs.flywheelSpeed, FLYWHEEL_RADIUS), inputs.hoodPosition);
+        turretVisualizer.update3dPose(inputs.turnPosition);
 
         Logger.recordOutput("Turret/Shot", calculatedShot);
         Logger.recordOutput("Turret/Turn Voltage", turnVoltage);

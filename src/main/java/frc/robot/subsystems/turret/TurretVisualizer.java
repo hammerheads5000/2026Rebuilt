@@ -96,7 +96,7 @@ public class TurretVisualizer {
 
         Translation3d trajVel = launchVel(vel, angle);
         for (int i = 0; i < trajectory.length; i++) {
-            double t = i * 0.08;
+            double t = i * 0.04;
             double x = trajVel.getX() * t + poseSupplier.get().getTranslation().getX();
             double y = trajVel.getY() * t + poseSupplier.get().getTranslation().getY();
             double z = trajVel.getZ() * t
