@@ -80,8 +80,12 @@ public final class Constants {
 
     public static class Dimensions {
         public static final Distance BUMPER_THICKNESS = Inches.of(3); // frame to edge of bumper
+        public static final Distance BUMPER_HEIGHT = Inches.of(7); // height from floor to top of bumper
         public static final Distance FRAME_WIDTH = Inches.of(27); // left to right
         public static final Distance FRAME_LENGTH = Inches.of(25); // front to back
+
+        public static final Distance FULL_WIDTH = FRAME_WIDTH.plus(BUMPER_THICKNESS.times(2));
+        public static final Distance FULL_LENGTH = FRAME_LENGTH.plus(BUMPER_THICKNESS.times(2));
     }
 
     public static class ControllerConstants {

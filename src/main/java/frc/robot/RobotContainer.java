@@ -7,12 +7,17 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.Dimensions;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.DriveCharacterization;
@@ -31,6 +36,7 @@ import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.turret.TurretIOTalonFX;
+import frc.robot.util.FuelSim;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -83,6 +89,8 @@ public class RobotContainer {
                         new ModuleIOSim(SwerveConstants.BackRight.MODULE_CONSTANTS));
                 intake = new Intake(new IntakeIOSim(), new IntakeIOSim(), drive::getChassisSpeeds);
                 turret = new Turret(new TurretIOSim(), drive::getPose, drive::getFieldSpeeds);
+
+                configureFuelSim();
                 break;
 
             default:
@@ -124,6 +132,25 @@ public class RobotContainer {
     private void configureButtonBindings() {
         // Default command, normal field-relative drive
         drive.setDefaultCommand(teleopDrive);
+    }
+
+    private void configureFuelSim() {
+        FuelSim instance = FuelSim.getInstance();
+        instance.spawnStartingFuel();
+        instance.registerRobot(
+                Dimensions.FULL_WIDTH.in(Meters),
+                Dimensions.FULL_LENGTH.in(Meters),
+                Dimensions.BUMPER_HEIGHT.in(Meters),
+                drive::getPose,
+                drive::getFieldSpeeds);
+
+        instance.start();
+        SmartDashboard.putData(Commands.runOnce(() -> {
+                    FuelSim.getInstance().clearFuel();
+                    FuelSim.getInstance().spawnStartingFuel();
+                })
+                .withName("Reset Fuel")
+                .ignoringDisable(true));
     }
 
     /**

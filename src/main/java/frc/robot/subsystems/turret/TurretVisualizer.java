@@ -15,6 +15,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.util.FuelSim;
 import java.util.ArrayList;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -53,9 +54,7 @@ public class TurretVisualizer {
         Pose3d robot = poseSupplier.get();
 
         Translation3d initialPosition = robot.getTranslation();
-        fuel.add(initialPosition);
-
-        fuelVelocities.add(launchVel(vel, angle));
+        // FuelSim.getInstance().spawnFuel(initialPosition, launchVel(vel, angle));
     }
 
     public Command repeatedlyLaunchFuel(
