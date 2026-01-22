@@ -81,6 +81,14 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putData("Turret/Shoot Controller", shootController.getProfiledPIDController());
     }
 
+    public boolean simAbleToIntake() {
+        return turretVisualizer.canIntake();
+    }
+
+    public void simIntake() {
+        turretVisualizer.intakeFuel();
+    }
+
     @Override
     public void periodic() {
         io.updateInputs(inputs);

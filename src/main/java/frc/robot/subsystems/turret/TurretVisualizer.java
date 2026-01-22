@@ -16,17 +16,16 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.util.FuelSim;
-import java.util.ArrayList;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
 /** Add your docs here. */
 public class TurretVisualizer {
-    private ArrayList<Translation3d> fuel = new ArrayList<Translation3d>();
-    private ArrayList<Translation3d> fuelVelocities = new ArrayList<Translation3d>();
     private Translation3d[] trajectory = new Translation3d[50];
     private Supplier<Pose3d> poseSupplier;
     private Supplier<ChassisSpeeds> fieldSpeedsSupplier;
+    private final int CAPACITY = 30;
+    private int fuelStored = 8;
 
     public TurretVisualizer(Supplier<Pose3d> poseSupplier, Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
         this.poseSupplier = poseSupplier;
@@ -50,11 +49,21 @@ public class TurretVisualizer {
         return new Translation3d(xVel, yVel, verticalVel);
     }
 
+    public boolean canIntake() {
+        return fuelStored < CAPACITY;
+    }
+
+    public void intakeFuel() {
+        fuelStored++;
+    }
+
     public void launchFuel(LinearVelocity vel, Angle angle) {
+        if (fuelStored == 0) return;
+        fuelStored--;
         Pose3d robot = poseSupplier.get();
 
         Translation3d initialPosition = robot.getTranslation();
-        // FuelSim.getInstance().spawnFuel(initialPosition, launchVel(vel, angle));
+        FuelSim.getInstance().spawnFuel(initialPosition, launchVel(vel, angle));
     }
 
     public Command repeatedlyLaunchFuel(
@@ -65,34 +74,6 @@ public class TurretVisualizer {
     }
 
     public void updateFuel(LinearVelocity vel, Angle angle) {
-        double dt = 0.02; // 20 ms loop time
-        double g = 9.81; // gravity in m/s^2
-
-        for (int i = 0; i < fuel.size(); i++) {
-            Translation3d position = fuel.get(i);
-            Translation3d velocity = fuelVelocities.get(i);
-
-            // Update position
-            double newX = position.getX() + velocity.getX() * dt;
-            double newY = position.getY() + velocity.getY() * dt;
-            double newZ = position.getZ() + velocity.getZ() * dt - 0.5 * g * dt * dt;
-
-            // Update velocity
-            double newVz = velocity.getZ() - g * dt;
-
-            fuel.set(i, new Translation3d(newX, newY, newZ));
-            fuelVelocities.set(i, new Translation3d(velocity.getX(), velocity.getY(), newVz));
-
-            // Remove fuel if it hits the ground
-            if (newZ <= 0) {
-                fuel.remove(i);
-                fuelVelocities.remove(i);
-                i--; // Adjust index after removal
-            }
-        }
-
-        Logger.recordOutput("Mechanism3d/Fuel", fuel.toArray(Translation3d[]::new));
-
         Translation3d trajVel = launchVel(vel, angle);
         for (int i = 0; i < trajectory.length; i++) {
             double t = i * 0.04;

@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import java.util.ArrayList;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -61,13 +62,13 @@ public class FuelSim {
         }
 
         public void update() {
-            pos = pos.plus(vel.times(PERIOD/subticks));
+            pos = pos.plus(vel.times(PERIOD / subticks));
             if (pos.getZ() > FUEL_RADIUS) {
-                vel = vel.plus(GRAVITY.times(PERIOD/subticks));
+                vel = vel.plus(GRAVITY.times(PERIOD / subticks));
             }
             if (Math.abs(vel.getZ()) < 0.05 && pos.getZ() <= FUEL_RADIUS + 0.03) {
                 vel = new Translation3d(vel.getX(), vel.getY(), 0);
-                vel = vel.times(1 - FRICTION * PERIOD/subticks);
+                vel = vel.times(1 - FRICTION * PERIOD / subticks);
                 // pos = new Translation3d(pos.getX(), pos.getY(), FUEL_RADIUS);
             }
             handleFieldCollisions();
@@ -208,6 +209,7 @@ public class FuelSim {
     private double robotWidth; // size along the robot's y axis
     private double robotLength; // size along the robot's x axis
     private double bumperHeight;
+    private ArrayList<SimIntake> intakes = new ArrayList<>();
 
     public static FuelSim getInstance() {
         if (instance == null) {
@@ -306,6 +308,7 @@ public class FuelSim {
 
             if (robotSupplier != null) {
                 handleRobotCollisions(fuels);
+                handleIntakes(fuels);
             }
         }
 
@@ -349,13 +352,47 @@ public class FuelSim {
     }
 
     private void handleRobotCollision(Fuel fuel, Pose2d robot, Translation2d robotVel, Translation3d[][] bumperLines) {
-        Pose2d fuelRelativePose = new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.kZero).relativeTo(robot);
-        if (Math.abs(fuelRelativePose.getX()) <= robotLength / 2 + FUEL_RADIUS
-                && Math.abs(fuelRelativePose.getY()) <= robotWidth / 2 + FUEL_RADIUS) {
-            for (int i = 0; i < 4; i++) {
-                fuel.handleXYRobotLineCollision(bumperLines[i][0], bumperLines[i][1], robotVel);
-            }
+        Translation2d relativePos = new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.kZero)
+                .relativeTo(robot)
+                .getTranslation();
+
+        if (fuel.pos.getZ() > bumperHeight - 0.1) return; // above bumpers
+        double distanceToLeft = -FUEL_RADIUS - robotLength / 2 - relativePos.getX();
+        double distanceToRight = -FUEL_RADIUS - robotLength / 2 + relativePos.getX();
+        double distanceToTop = -FUEL_RADIUS - robotWidth / 2 - relativePos.getY();
+        double distanceToBottom = -FUEL_RADIUS - robotWidth / 2 + relativePos.getY();
+
+        // not inside robot
+        if (distanceToLeft > 0 || distanceToRight > 0 || distanceToTop > 0 || distanceToBottom > 0) return;
+
+        Translation2d posOffset;
+        // find minimum distance to side and send corresponding collision response
+        if (relativePos.getX() <= robotLength / 2
+                || (distanceToLeft >= distanceToRight
+                        && distanceToLeft >= distanceToTop
+                        && distanceToLeft >= distanceToBottom)) {
+            posOffset = new Translation2d(distanceToLeft, 0);
+        } else if (fuel.pos.getX() >= robotLength / 2
+                || (distanceToRight >= distanceToLeft
+                        && distanceToRight >= distanceToTop
+                        && distanceToRight >= distanceToBottom)) {
+            posOffset = new Translation2d(-distanceToRight, 0);
+        } else if (fuel.pos.getY() >= robotWidth / 2
+                || (distanceToTop >= distanceToLeft
+                        && distanceToTop >= distanceToRight
+                        && distanceToTop >= distanceToBottom)) {
+            posOffset = new Translation2d(0, -distanceToTop);
+        } else {
+            posOffset = new Translation2d(0, distanceToBottom);
         }
+
+        posOffset = posOffset.rotateBy(robot.getRotation());
+        fuel.pos = fuel.pos.plus(new Translation3d(posOffset));
+        Translation2d normal = posOffset.div(posOffset.getNorm());
+        if (fuel.vel.toTranslation2d().dot(normal) < 0)
+            fuel.addImpulse(
+                    new Translation3d(normal.times(-fuel.vel.toTranslation2d().dot(normal) * (1 + ROBOT_COR))));
+        if (robotVel.dot(normal) > 0) fuel.addImpulse(new Translation3d(normal.times(robotVel.dot(normal))));
     }
 
     private void handleRobotCollisions(ArrayList<Fuel> fuels) {
@@ -367,6 +404,35 @@ public class FuelSim {
         for (Fuel fuel : fuels) {
             handleRobotCollision(fuel, robot, robotVel, bumperLines);
         }
+    }
+
+    private void handleIntakes(ArrayList<Fuel> fuels) {
+        Pose2d robot = robotSupplier.get();
+        for (SimIntake intake : intakes) {
+            for (int i = 0; i < fuels.size(); i++) {
+                if (intake.shouldIntake(fuels.get(i), robot)) {
+                    fuels.remove(i);
+                    i--;
+                }
+            }
+        }
+    }
+
+    public void registerIntake(
+            double xMin, double xMax, double yMin, double yMax, BooleanSupplier ableToIntake, Runnable intakeCallback) {
+        intakes.add(new SimIntake(xMin, xMax, yMin, yMax, ableToIntake, intakeCallback));
+    }
+
+    public void registerIntake(double xMin, double xMax, double yMin, double yMax, BooleanSupplier ableToIntake) {
+        registerIntake(xMin, xMax, yMin, yMax, ableToIntake, () -> {});
+    }
+
+    public void registerIntake(double xMin, double xMax, double yMin, double yMax, Runnable intakeCallback) {
+        registerIntake(xMin, xMax, yMin, yMax, () -> true, intakeCallback);
+    }
+
+    public void registerIntake(double xMin, double xMax, double yMin, double yMax) {
+        registerIntake(xMin, xMax, yMin, yMax, () -> true, () -> {});
     }
 
     private static class Hub {
@@ -405,7 +471,7 @@ public class FuelSim {
         private boolean didFuelScore(Fuel fuel) {
             return fuel.pos.toTranslation2d().getDistance(center) <= ENTRY_RADIUS
                     && fuel.pos.getZ() <= ENTRY_HEIGHT
-                    && fuel.pos.minus(fuel.vel.times(PERIOD/subticks)).getZ() > ENTRY_HEIGHT;
+                    && fuel.pos.minus(fuel.vel.times(PERIOD / subticks)).getZ() > ENTRY_HEIGHT;
         }
 
         private Translation3d getDispersalVelocity() {
@@ -450,6 +516,44 @@ public class FuelSim {
             } else {
                 return new Translation2d(0, distanceToBottom);
             }
+        }
+    }
+
+    private class SimIntake {
+        double xMin, xMax, yMin, yMax;
+        BooleanSupplier ableToIntake;
+        Runnable callback;
+
+        private SimIntake(
+                double xMin,
+                double xMax,
+                double yMin,
+                double yMax,
+                BooleanSupplier ableToIntake,
+                Runnable intakeCallback) {
+            this.xMin = xMin;
+            this.xMax = xMax;
+            this.yMin = yMin;
+            this.yMax = yMax;
+            this.ableToIntake = ableToIntake;
+            this.callback = intakeCallback;
+        }
+
+        private boolean shouldIntake(Fuel fuel, Pose2d robotPose) {
+            if (!ableToIntake.getAsBoolean() || fuel.pos.getZ() > bumperHeight) return false;
+
+            Translation2d fuelRelativePos = new Pose2d(fuel.pos.toTranslation2d(), Rotation2d.kZero)
+                    .relativeTo(robotPose)
+                    .getTranslation();
+
+            boolean result = fuelRelativePos.getX() >= xMin
+                    && fuelRelativePos.getX() <= xMax
+                    && fuelRelativePos.getY() >= yMin
+                    && fuelRelativePos.getY() <= yMax;
+            if (result) {
+                callback.run();
+            }
+            return result;
         }
     }
 }

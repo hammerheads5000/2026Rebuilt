@@ -31,9 +31,9 @@ public class Intake extends SubsystemBase {
     private final Supplier<ChassisSpeeds> chassisSpeedsSupplier;
 
     private boolean isDeployed = true;
-    private Trigger deployLeftTrigger =
+    public Trigger deployLeftTrigger =
             new Trigger(this::travelingLeft).and(() -> isDeployed).debounce(0.2);
-    private Trigger deployRightTrigger =
+    public Trigger deployRightTrigger =
             new Trigger(this::travelingRight).and(() -> isDeployed).debounce(0.2);
 
     private final IntakeVisualizer measuredVisualizer = new IntakeVisualizer("Measured", Color.kGreen);

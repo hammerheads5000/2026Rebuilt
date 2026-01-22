@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.geometry.Pose3d;
@@ -143,6 +144,20 @@ public class RobotContainer {
                 Dimensions.BUMPER_HEIGHT.in(Meters),
                 drive::getPose,
                 drive::getFieldSpeeds);
+        instance.registerIntake(
+                -Dimensions.FULL_LENGTH.div(2).in(Meters),
+                Dimensions.FULL_LENGTH.div(2).in(Meters),
+                -Dimensions.FULL_WIDTH.div(2).plus(Inches.of(7)).in(Meters),
+                -Dimensions.FULL_WIDTH.div(2).in(Meters),
+                intake.deployRightTrigger.and(turret::simAbleToIntake),
+                turret::simIntake);
+        instance.registerIntake(
+                -Dimensions.FULL_LENGTH.div(2).in(Meters),
+                Dimensions.FULL_LENGTH.div(2).in(Meters),
+                Dimensions.FULL_WIDTH.div(2).in(Meters),
+                Dimensions.FULL_WIDTH.div(2).plus(Inches.of(7)).in(Meters),
+                intake.deployLeftTrigger.and(turret::simAbleToIntake),
+                turret::simIntake);
 
         instance.start();
         SmartDashboard.putData(Commands.runOnce(() -> {
