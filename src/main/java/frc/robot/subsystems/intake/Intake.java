@@ -68,6 +68,14 @@ public class Intake extends SubsystemBase {
         return chassisSpeedsSupplier.get().vyMetersPerSecond < -MIN_SWITCH_ROBOT_VELOCITY.in(MetersPerSecond);
     }
 
+    public boolean isLeftDeployed() {
+        return DEPLOY_POS.isNear(Meters.of(leftController.getGoal()), 0.01);
+    }
+
+    public boolean isRightDeployed() {
+        return DEPLOY_POS.isNear(Meters.of(rightController.getGoal()), 0.01);
+    }
+
     public Command deploy() {
         return this.runOnce(() -> isDeployed = true)
                 .andThen(deployLeft().onlyIf(() -> !travelingLeft() && !travelingRight()))
