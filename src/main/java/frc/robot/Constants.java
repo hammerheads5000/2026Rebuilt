@@ -81,11 +81,11 @@ public final class Constants {
     public static class Dimensions {
         public static final Distance BUMPER_THICKNESS = Inches.of(3); // frame to edge of bumper
         public static final Distance BUMPER_HEIGHT = Inches.of(7); // height from floor to top of bumper
-        public static final Distance FRAME_WIDTH = Inches.of(27); // left to right (y-axis)
-        public static final Distance FRAME_LENGTH = Inches.of(25); // front to back (x-axis)
+        public static final Distance FRAME_SIZE_Y = Inches.of(26.25); // left to right (y-axis)
+        public static final Distance FRAME_SIZE_X = Inches.of(28.75); // front to back (x-axis)
 
-        public static final Distance FULL_WIDTH = FRAME_WIDTH.plus(BUMPER_THICKNESS.times(2));
-        public static final Distance FULL_LENGTH = FRAME_LENGTH.plus(BUMPER_THICKNESS.times(2));
+        public static final Distance FULL_WIDTH = FRAME_SIZE_Y.plus(BUMPER_THICKNESS.times(2));
+        public static final Distance FULL_LENGTH = FRAME_SIZE_X.plus(BUMPER_THICKNESS.times(2));
     }
 
     public static class ControllerConstants {
@@ -104,8 +104,8 @@ public final class Constants {
 
         public static final AngularVelocity MAX_MODULE_ROT_SPEED = RotationsPerSecond.of(5);
 
-        private static final Distance MODULE_DISTANCE_Y = Inches.of(23); // left to right
-        private static final Distance MODULE_DISTANCE_X = Inches.of(21); // front to back
+        private static final Distance MODULE_DISTANCE_Y = Inches.of(20.75); // left to right
+        private static final Distance MODULE_DISTANCE_X = Inches.of(22.5); // front to back
 
         private static final Slot0Configs STEER_GAINS = new Slot0Configs()
                 .withKP(20)
@@ -124,8 +124,8 @@ public final class Constants {
                 .withKV(0.854) // 0.13879, 0.13555, 0.13894, 0.13109 -> 0.136
                 .withKA(0.05); // 0.016363, 0.016268, 0.0085342, 0.011084 -> 0.013
 
-        private static final ClosedLoopOutputType STEER_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.Voltage;
-        private static final ClosedLoopOutputType DRIVE_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.Voltage;
+        private static final ClosedLoopOutputType STEER_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.TorqueCurrentFOC;
+        private static final ClosedLoopOutputType DRIVE_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.TorqueCurrentFOC;
 
         private static final DriveMotorArrangement DRIVE_MOTOR_TYPE = DriveMotorArrangement.TalonFX_Integrated;
         private static final SteerMotorArrangement STEER_MOTOR_TYPE = SteerMotorArrangement.TalonFX_Integrated;
@@ -136,7 +136,7 @@ public final class Constants {
 
         private static final TalonFXConfiguration DRIVE_CONFIGS = new TalonFXConfiguration()
                 .withCurrentLimits(new CurrentLimitsConfigs()
-                        .withStatorCurrentLimit(Amps.of(120))
+                        .withStatorCurrentLimit(Amps.of(80))
                         .withStatorCurrentLimitEnable(true))
                 .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
 
@@ -151,18 +151,18 @@ public final class Constants {
         private static final CANcoderConfiguration ENCODER_CONFIGS = new CANcoderConfiguration();
 
         public static final Pigeon2Configuration PIGEON_CONFIGS =
-                new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseRoll(Degrees.of(180)));
+                new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(Degrees.of(-90)));
 
-        public static final LinearVelocity SPEED_AT_12V = MetersPerSecond.of(4.1); // maybe needs tuning
+        public static final LinearVelocity SPEED_AT_12V = MetersPerSecond.of(5.85); // theoretical free speed
 
-        // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
-        private static final double COUPLE_RATIO = 4.58;
+        // Every 1 rotation of the azimuth results in COUPLE_RATIO drive motor turns;
+        private static final double COUPLE_RATIO = 3.375;
 
-        private static final double DRIVE_GEAR_RATIO = 7.03; // 7.03:1
-        private static final double STEER_GEAR_RATIO = 287.0 / 11; // 287:11
+        private static final double DRIVE_GEAR_RATIO = 5.2734375;
+        private static final double STEER_GEAR_RATIO = 26.09090909090909;
         private static final Distance WHEEL_RADIUS = Inches.of(1.985);
 
-        public static final int PIGEON_ID = 1;
+        public static final int PIGEON_ID = 6;
 
         // SIMULATION inertia
         private static final MomentOfInertia STEER_INERTIA = KilogramSquareMeters.of(0.01);
@@ -202,10 +202,10 @@ public final class Constants {
                         .withDriveFrictionVoltage(DRIVE_FRICTION_VOLTAGE);
 
         public static class FrontLeft {
-            private static final int DRIVE_ID = 1;
-            private static final int STEER_ID = 5;
-            private static final int ENCODER_ID = 1;
-            private static final Angle ENCODER_OFFSET = Rotations.of(-0.4365234375);
+            private static final int DRIVE_ID = 16;
+            private static final int STEER_ID = 15;
+            private static final int ENCODER_ID = 14;
+            private static final Angle ENCODER_OFFSET = Rotations.of(0.28564453125);
             private static final boolean STEER_INVERTED = false;
             private static final boolean ENCODER_INVERTED = false;
             private static final boolean DRIVE_INVERTED = false;
@@ -227,10 +227,10 @@ public final class Constants {
         }
 
         public static class FrontRight {
-            private static final int DRIVE_ID = 2;
-            private static final int STEER_ID = 6;
-            private static final int ENCODER_ID = 2;
-            private static final Angle ENCODER_OFFSET = Rotations.of(0.115478515625);
+            private static final int DRIVE_ID = 9;
+            private static final int STEER_ID = 10;
+            private static final int ENCODER_ID = 11;
+            private static final Angle ENCODER_OFFSET = Rotations.of(-0.109375);
             private static final boolean STEER_INVERTED = false;
             private static final boolean ENCODER_INVERTED = false;
             private static final boolean DRIVE_INVERTED = true;
@@ -252,10 +252,10 @@ public final class Constants {
         }
 
         public static class BackLeft {
-            private static final int DRIVE_ID = 4;
-            private static final int STEER_ID = 8;
-            private static final int ENCODER_ID = 4;
-            private static final Angle ENCODER_OFFSET = Rotations.of(-0.11083984375);
+            private static final int DRIVE_ID = 19;
+            private static final int STEER_ID = 20;
+            private static final int ENCODER_ID = 21;
+            private static final Angle ENCODER_OFFSET = Rotations.of(-0.188232421875);
             private static final boolean STEER_INVERTED = false;
             private static final boolean ENCODER_INVERTED = false;
             private static final boolean DRIVE_INVERTED = false;
@@ -277,10 +277,10 @@ public final class Constants {
         }
 
         public static class BackRight {
-            private static final int DRIVE_ID = 3;
-            private static final int STEER_ID = 7;
+            private static final int DRIVE_ID = 5;
+            private static final int STEER_ID = 4;
             private static final int ENCODER_ID = 3;
-            private static final Angle ENCODER_OFFSET = Rotations.of(0.28515625);
+            private static final Angle ENCODER_OFFSET = Rotations.of(-0.134033203125);
             private static final boolean STEER_INVERTED = false;
             private static final boolean ENCODER_INVERTED = false;
             private static final boolean DRIVE_INVERTED = true;
