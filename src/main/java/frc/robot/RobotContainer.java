@@ -10,6 +10,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -17,9 +18,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Dimensions;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.commands.DriveCharacterization;
 import frc.robot.commands.TeleopDrive;
@@ -32,11 +33,9 @@ import frc.robot.subsystems.drive.ModuleIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOSim;
-import frc.robot.subsystems.turret.TurretIOTalonFX;
 import frc.robot.util.FuelSim;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -59,6 +58,9 @@ public class RobotContainer {
     // Commands
     private final TeleopDrive teleopDrive;
 
+    // Bindings
+    private final Trigger resetHeadingTrigger = controller.y();
+
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -74,10 +76,12 @@ public class RobotContainer {
                         new ModuleIOTalonFX(SwerveConstants.BackLeft.MODULE_CONSTANTS),
                         new ModuleIOTalonFX(SwerveConstants.BackRight.MODULE_CONSTANTS));
                 intake = new Intake(
-                        new IntakeIOTalonFX(IntakeConstants.LEFT_RACK_ID, IntakeConstants.LEFT_SPIN_ID),
-                        new IntakeIOTalonFX(IntakeConstants.RIGHT_RACK_ID, IntakeConstants.RIGHT_SPIN_ID),
+                        new IntakeIO() {},
+                        new IntakeIO() {},
+                        // new IntakeIOTalonFX(IntakeConstants.LEFT_RACK_ID, IntakeConstants.LEFT_SPIN_ID),
+                        // new IntakeIOTalonFX(IntakeConstants.RIGHT_RACK_ID, IntakeConstants.RIGHT_SPIN_ID),
                         drive::getChassisSpeeds);
-                turret = new Turret(new TurretIOTalonFX(), drive::getPose, drive::getFieldSpeeds);
+                turret = new Turret(new TurretIO() {}, drive::getPose, drive::getFieldSpeeds);
                 break;
 
             case SIM:
@@ -133,6 +137,8 @@ public class RobotContainer {
     private void configureButtonBindings() {
         // Default command, normal field-relative drive
         drive.setDefaultCommand(teleopDrive);
+
+        resetHeadingTrigger.onTrue(Commands.runOnce(() -> drive.setPose(new Pose2d())));
     }
 
     private void configureFuelSim() {

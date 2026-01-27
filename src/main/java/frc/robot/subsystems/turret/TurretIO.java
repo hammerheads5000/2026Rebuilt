@@ -7,6 +7,7 @@ package frc.robot.subsystems.turret;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -19,33 +20,28 @@ public interface TurretIO {
     @AutoLog
     public static class TurretIOInputs {
         public boolean turnMotorConnected = false;
+        public Voltage turnAppliedVolts = Volts.zero();
         public Current turnCurrent = Amps.zero();
         public Angle turnPosition = Radians.zero();
-        public AngularVelocity turnVelocity = RadiansPerSecond.zero();
 
         public boolean hoodMotorConnected = false;
+        public Voltage hoodAppliedVolts = Volts.zero();
         public Current hoodCurrent = Amps.zero();
         public Angle hoodPosition = Radians.zero();
-        public AngularVelocity hoodVelocity = RadiansPerSecond.zero();
 
         public boolean flywheelMotorConnected = false;
+        public Voltage flywheelAppliedVoltage = Volts.zero();
         public Current flywheelCurrent = Amps.zero();
         public AngularVelocity flywheelSpeed = RadiansPerSecond.zero();
-
-        public boolean shootMotorConnected = false;
-        public Current shootCurrent = Amps.zero();
-        public AngularVelocity shootSpeed = RadiansPerSecond.zero();
     }
 
     public default void updateInputs(TurretIOInputs inputs) {}
 
-    public default void setTurnOutput(Voltage out) {}
+    public default void setTurnSetpoint(Angle position, AngularVelocity velocity) {}
 
-    public default void setHoodOutput(Voltage out) {}
+    public default void setHoodAngle(Angle angle) {}
 
-    public default void setFlywheelOutput(Voltage out) {}
-
-    public default void setShootOutput(Voltage out) {}
+    public default void setFlywheelSpeed(AngularVelocity speed) {}
 
     public default void stopTurn() {}
 

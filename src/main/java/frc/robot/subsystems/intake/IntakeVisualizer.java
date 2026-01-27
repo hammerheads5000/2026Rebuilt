@@ -33,8 +33,8 @@ public class IntakeVisualizer {
 
     public IntakeVisualizer(String name, Color color) {
         rightRoot = mechanism.getRoot(name + " Right", 0.75 + 0.118, 0.4);
-        leftIntake = rightRoot.append(new LoggedMechanismLigament2d(
-                "Left Intake", Inches.of(17), Degrees.of(-21), 3, new Color8Bit(color)));
+        leftIntake = rightRoot.append(
+                new LoggedMechanismLigament2d("Left Intake", Inches.of(17), Degrees.of(-21), 3, new Color8Bit(color)));
         leftRoot = mechanism.getRoot(name + " Left", 0.75 - 0.118, 0.4);
         rightIntake = leftRoot.append(new LoggedMechanismLigament2d(
                 "Right Intake", Inches.of(19.1), Degrees.of(180 + 21), 3, new Color8Bit(color)));

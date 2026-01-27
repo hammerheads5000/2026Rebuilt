@@ -6,7 +6,6 @@ package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.TurretConstants.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,10 +50,7 @@ public class Turret extends SubsystemBase {
         this.poseSupplier = poseSupplier;
         this.fieldSpeedsSupplier = fieldSpeedsSupplier;
 
-        turnController = new TunableProfiledController(TURN_TUNABLE_CONSTANTS);
-        hoodController = new TunableProfiledController(HOOD_TUNABLE_CONSTANTS);
-        flywheelController = new TunableProfiledController(FLYWHEEL_TUNABLE_CONSTANTS);
-        shootController = new TunableProfiledController(SHOOT_TUNABLE_CONSTANTS);
+        
 
         turretVisualizer = new TurretVisualizer(
                 () -> new Pose3d(poseSupplier
@@ -64,10 +59,10 @@ public class Turret extends SubsystemBase {
                         .transformBy(ROBOT_TO_TURRET_TRANSFORM),
                 fieldSpeedsSupplier);
 
-        this.setDefaultCommand(turretVisualizer.repeatedlyLaunchFuel(
-                () -> TurretCalculator.angularToLinearVelocity(inputs.flywheelSpeed, FLYWHEEL_RADIUS),
-                () -> inputs.hoodPosition,
-                this));
+        // this.setDefaultCommand(turretVisualizer.repeatedlyLaunchFuel(
+        //         () -> TurretCalculator.angularToLinearVelocity(inputs.flywheelSpeed, FLYWHEEL_RADIUS),
+        //         () -> inputs.hoodPosition,
+        //         this));
 
         SmartDashboard.putData(this.runOnce(() -> turretVisualizer.launchFuel(
                         TurretCalculator.angularToLinearVelocity(
@@ -104,36 +99,24 @@ public class Turret extends SubsystemBase {
                 robot, fieldSpeeds, currentTarget, LOOKAHEAD_ITERATIONS);
         Angle azimuthAngle = TurretCalculator.calculateAzimuthAngle(robot, calculatedShot.target());
         AngularVelocity azimuthVelocity = RadiansPerSecond.of(-fieldSpeeds.omegaRadiansPerSecond);
-        turnController.setGoal(azimuthAngle.in(Radians), azimuthVelocity.in(RadiansPerSecond));
-        hoodController.setGoal(calculatedShot.getHoodAngle().in(Radians));
-        flywheelController.setGoal(
-                TurretCalculator.linearToAngularVelocity(calculatedShot.getExitVelocity(), FLYWHEEL_RADIUS)
-                        .in(RadiansPerSecond));
-        shootController.setGoal(TurretCalculator.linearToAngularVelocity(calculatedShot.getExitVelocity(), SHOOT_RADIUS)
-                .in(RadiansPerSecond));
+        io.setTurnSetpoint(azimuthAngle, azimuthVelocity);
+        io.setHoodAngle(calculatedShot.getHoodAngle());
+        io.setFlywheelSpeed(
+                TurretCalculator.linearToAngularVelocity(calculatedShot.getExitVelocity(), FLYWHEEL_RADIUS));
 
-        Voltage turnVoltage = Volts.of(turnController.calculate(inputs.turnPosition.in(Radians)));
-        Voltage hoodVoltage = Volts.of(hoodController.calculate(inputs.hoodPosition.in(Radians)));
-        Voltage flywheelVoltage = Volts.of(flywheelController.calculate(inputs.flywheelSpeed.in(RadiansPerSecond)));
-        Voltage shootVoltage = Volts.of(shootController.calculate(inputs.shootSpeed.in(RadiansPerSecond)));
-
-        io.setTurnOutput(turnVoltage);
-        io.setHoodOutput(hoodVoltage);
-        io.setFlywheelOutput(flywheelVoltage);
-        io.setShootOutput(shootVoltage);
-        turretVisualizer.updateFuel(
-                TurretCalculator.angularToLinearVelocity(inputs.flywheelSpeed, FLYWHEEL_RADIUS), inputs.hoodPosition);
         turretVisualizer.update3dPose(inputs.turnPosition);
 
         Logger.recordOutput("Turret/Shot", calculatedShot);
-        Logger.recordOutput("Turret/Turn Voltage", turnVoltage);
-        Logger.recordOutput("Turret/Hood Voltage", hoodVoltage);
-        Logger.recordOutput("Turret/Flywheel Voltage", flywheelVoltage);
-        Logger.recordOutput("Turret/Shoot Voltage", shootVoltage);
 
         turnController.logData("Turret/TurnController");
         hoodController.logData("Turret/HoodController");
         flywheelController.logData("Turret/FlywheelController");
         shootController.logData("Turret/ShootController");
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        turretVisualizer.updateFuel(
+                TurretCalculator.angularToLinearVelocity(inputs.flywheelSpeed, FLYWHEEL_RADIUS), inputs.hoodPosition);
     }
 }

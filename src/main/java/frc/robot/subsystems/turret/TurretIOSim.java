@@ -18,22 +18,15 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 /** Add your docs here. */
 public class TurretIOSim implements TurretIO {
     private final DCMotor turnMotor = DCMotor.getKrakenX44Foc(1);
-    private final SingleJointedArmSim turnSim =
-            new SingleJointedArmSim(turnMotor, 2, 0.001, 0.1, 0, 2 * Math.PI, false, 0, 0.0, 0.0);
 
     private final DCMotor hoodMotor = DCMotor.getKrakenX44Foc(1);
-    private final SingleJointedArmSim hoodSim =
-            new SingleJointedArmSim(hoodMotor, 2, 0.005, 0.1, 0, Math.PI, false, 0, 0.0002, 0.0002);
 
     private final DCMotor flywheelMotor = DCMotor.getKrakenX60Foc(1);
     private final FlywheelSim flywheelSim =
             new FlywheelSim(LinearSystemId.createFlywheelSystem(flywheelMotor, 0.005, 2), flywheelMotor, 0.0005);
 
-    private final DCMotor shootMotor = DCMotor.getKrakenX60Foc(1);
-    private final FlywheelSim shootSim =
-            new FlywheelSim(LinearSystemId.createFlywheelSystem(shootMotor, 0.001, 2), shootMotor, 0.0005);
-
     public TurretIOSim() {
+        
         setTurnOutput(Volts.zero());
         setHoodOutput(Volts.zero());
         setFlywheelOutput(Volts.zero());
@@ -51,7 +44,7 @@ public class TurretIOSim implements TurretIO {
 
         // Simulate input values
         inputs.turnPosition = Radians.of(turnSim.getAngleRads());
-        inputs.turnVelocity = RadiansPerSecond.of(turnSim.getVelocityRadPerSec());
+        inputs.turnAppliedVolts = RadiansPerSecond.of(turnSim.getVelocityRadPerSec());
         inputs.turnCurrent = Amps.of(turnSim.getCurrentDrawAmps());
         inputs.hoodPosition = Radians.of(hoodSim.getAngleRads());
         inputs.hoodVelocity = RadiansPerSecond.of(hoodSim.getVelocityRadPerSec());

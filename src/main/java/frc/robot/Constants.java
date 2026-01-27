@@ -108,24 +108,24 @@ public final class Constants {
         private static final Distance MODULE_DISTANCE_X = Inches.of(22.5); // front to back
 
         private static final Slot0Configs STEER_GAINS = new Slot0Configs()
-                .withKP(20)
-                .withKI(1)
-                .withKD(0.1)
-                .withKS(0.1)
-                .withKV(2.37)
-                .withKA(0.0)
-                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+                .withKP(1000)
+                .withKI(0)
+                .withKD(8)
+                .withKS(6)
+                .withKV(0)
+                .withKA(0)
+                .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
 
         private static final Slot0Configs DRIVE_GAINS = new Slot0Configs()
-                .withKP(1.3)
-                .withKI(0.01)
+                .withKP(0)
+                .withKI(0.0)
                 .withKD(0.0)
-                .withKS(0.879) // 0.11367, 0.1301, 0.15349, 0.16187 -> 0.140
-                .withKV(0.854) // 0.13879, 0.13555, 0.13894, 0.13109 -> 0.136
-                .withKA(0.05); // 0.016363, 0.016268, 0.0085342, 0.011084 -> 0.013
+                .withKS(0.208) // 0.11367, 0.1301, 0.15349, 0.16187 -> 0.140
+                .withKV(0.726) // 0.13879, 0.13555, 0.13894, 0.13109 -> 0.136
+                .withKA(0.0); // 0.016363, 0.016268, 0.0085342, 0.011084 -> 0.013
 
         private static final ClosedLoopOutputType STEER_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.TorqueCurrentFOC;
-        private static final ClosedLoopOutputType DRIVE_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.TorqueCurrentFOC;
+        private static final ClosedLoopOutputType DRIVE_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.Voltage;
 
         private static final DriveMotorArrangement DRIVE_MOTOR_TYPE = DriveMotorArrangement.TalonFX_Integrated;
         private static final SteerMotorArrangement STEER_MOTOR_TYPE = SteerMotorArrangement.TalonFX_Integrated;
