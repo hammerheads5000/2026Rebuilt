@@ -212,14 +212,10 @@ public class FuelSim {
         Translation3d center = new Translation3d(FIELD_LENGTH / 2, FIELD_WIDTH / 2, FUEL_RADIUS);
         for (int i = 0; i < 15; i++) {
             for (int j = 0; j < 6; j++) {
-                fuels.add(new Fuel(center.plus(new Translation3d(0.076 + 0.152 * j, 0.0254 + 0.076 + 0.152 * i,
-        0))));
-                fuels.add(new Fuel(center.plus(new Translation3d(-0.076 - 0.152 * j, 0.0254 + 0.076 + 0.152 * i,
-        0))));
-                fuels.add(new Fuel(center.plus(new Translation3d(0.076 + 0.152 * j, -0.0254 - 0.076 - 0.152 * i,
-        0))));
-                fuels.add(new Fuel(center.plus(new Translation3d(-0.076 - 0.152 * j, -0.0254 - 0.076 - 0.152 * i,
-        0))));
+                fuels.add(new Fuel(center.plus(new Translation3d(0.076 + 0.152 * j, 0.0254 + 0.076 + 0.152 * i, 0))));
+                fuels.add(new Fuel(center.plus(new Translation3d(-0.076 - 0.152 * j, 0.0254 + 0.076 + 0.152 * i, 0))));
+                fuels.add(new Fuel(center.plus(new Translation3d(0.076 + 0.152 * j, -0.0254 - 0.076 - 0.152 * i, 0))));
+                fuels.add(new Fuel(center.plus(new Translation3d(-0.076 - 0.152 * j, -0.0254 - 0.076 - 0.152 * i, 0))));
             }
         }
 
@@ -343,16 +339,16 @@ public class FuelSim {
         Translation2d posOffset;
         // find minimum distance to side and send corresponding collision response
         if ((distanceToBottom >= distanceToTop
-                        && distanceToBottom >= distanceToRight
-                        && distanceToBottom >= distanceToLeft)) {
+                && distanceToBottom >= distanceToRight
+                && distanceToBottom >= distanceToLeft)) {
             posOffset = new Translation2d(distanceToBottom, 0);
         } else if ((distanceToTop >= distanceToBottom
-                        && distanceToTop >= distanceToRight
-                        && distanceToTop >= distanceToLeft)) {
+                && distanceToTop >= distanceToRight
+                && distanceToTop >= distanceToLeft)) {
             posOffset = new Translation2d(-distanceToTop, 0);
         } else if ((distanceToRight >= distanceToBottom
-                        && distanceToRight >= distanceToTop
-                        && distanceToRight >= distanceToLeft)) {
+                && distanceToRight >= distanceToTop
+                && distanceToRight >= distanceToLeft)) {
             posOffset = new Translation2d(0, distanceToRight);
         } else {
             posOffset = new Translation2d(0, -distanceToLeft);

@@ -47,6 +47,7 @@ public class TurretVisualizer {
 
         return new Translation3d(xVel, yVel, verticalVel);
     }
+
     private int fuelStored = 8;
 
     public boolean canIntake() {

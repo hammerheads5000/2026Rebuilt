@@ -77,6 +77,14 @@ public class Module {
         io.setTurnPosition(state.angle);
     }
 
+    public void setDrivePID(double kP, double kD, double kV, double kS) {
+        io.setDrivePID(kP, kD, kV, kS);
+    }
+
+    public void setTurnPID(double kP, double kD, double kS) {
+        io.setTurnPID(kP, kD, kS);
+    }
+
     /** Runs the module with the specified output while controlling to zero degrees. */
     public void runCharacterization(Voltage output) {
         io.setDriveOpenLoop(output.in(Volts));

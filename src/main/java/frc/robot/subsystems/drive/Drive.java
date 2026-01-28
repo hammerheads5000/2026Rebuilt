@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.util.LoggedTunableNumber;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -72,6 +73,15 @@ public class Drive extends SubsystemBase {
             };
     private SwerveDrivePoseEstimator poseEstimator =
             new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
+
+    private LoggedTunableNumber driveKP = new LoggedTunableNumber("Swerve/Drive/kP", SwerveConstants.DRIVE_GAINS.kP);
+    private LoggedTunableNumber driveKD = new LoggedTunableNumber("Swerve/Drive/kD", SwerveConstants.DRIVE_GAINS.kD);
+    private LoggedTunableNumber driveKV = new LoggedTunableNumber("Swerve/Drive/kV", SwerveConstants.DRIVE_GAINS.kV);
+    private LoggedTunableNumber driveKS = new LoggedTunableNumber("Swerve/Drive/kS", SwerveConstants.DRIVE_GAINS.kS);
+
+    private LoggedTunableNumber turnKP = new LoggedTunableNumber("Swerve/Turn/kP", SwerveConstants.STEER_GAINS.kP);
+    private LoggedTunableNumber turnKD = new LoggedTunableNumber("Swerve/Turn/kD", SwerveConstants.STEER_GAINS.kD);
+    private LoggedTunableNumber turnKS = new LoggedTunableNumber("Swerve/Turn/kS", SwerveConstants.STEER_GAINS.kS);
 
     public Drive(GyroIO gyroIO, ModuleIO flModuleIO, ModuleIO frModuleIO, ModuleIO blModuleIO, ModuleIO brModuleIO) {
         this.gyroIO = gyroIO;
@@ -114,6 +124,22 @@ public class Drive extends SubsystemBase {
         if (DriverStation.isDisabled()) {
             Logger.recordOutput("SwerveStates/Setpoints", new SwerveModuleState[] {});
             Logger.recordOutput("SwerveStates/SetpointsOptimized", new SwerveModuleState[] {});
+        }
+
+        // Update PID
+        if (driveKP.hasChanged(hashCode())
+                || driveKD.hasChanged(hashCode())
+                || driveKV.hasChanged(hashCode())
+                || driveKS.hasChanged(hashCode())) {
+            for (Module module : modules) {
+                module.setDrivePID(driveKP.get(), driveKD.get(), driveKV.get(), driveKS.get());
+            }
+        }
+
+        if (turnKP.hasChanged(hashCode()) || turnKD.hasChanged(hashCode()) || turnKS.hasChanged(hashCode())) {
+            for (Module module : modules) {
+                module.setTurnPID(turnKP.get(), turnKD.get(), turnKS.get());
+            }
         }
 
         // Update odometry

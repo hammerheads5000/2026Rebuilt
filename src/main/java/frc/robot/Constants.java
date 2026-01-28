@@ -105,7 +105,7 @@ public final class Constants {
         private static final Distance MODULE_DISTANCE_Y = Inches.of(20.75); // left to right
         private static final Distance MODULE_DISTANCE_X = Inches.of(22.5); // front to back
 
-        private static final Slot0Configs STEER_GAINS = new Slot0Configs()
+        public static final Slot0Configs STEER_GAINS = new Slot0Configs()
                 .withKP(1000)
                 .withKI(0)
                 .withKD(8)
@@ -114,7 +114,7 @@ public final class Constants {
                 .withKA(0)
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
 
-        private static final Slot0Configs DRIVE_GAINS = new Slot0Configs()
+        public static final Slot0Configs DRIVE_GAINS = new Slot0Configs()
                 .withKP(0)
                 .withKI(0.0)
                 .withKD(0.0)

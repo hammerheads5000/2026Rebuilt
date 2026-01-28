@@ -85,6 +85,10 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final Debouncer turnConnectedDebounce = new Debouncer(0.5, Debouncer.DebounceType.kFalling);
     private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5, Debouncer.DebounceType.kFalling);
 
+    // Configs
+    private final TalonFXConfiguration driveConfig;
+    private final TalonFXConfiguration turnConfig;
+
     public ModuleIOTalonFX(
             SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> constants) {
         this.constants = constants;
@@ -93,7 +97,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         cancoder = new CANcoder(constants.EncoderId, Constants.CAN_FD_BUS);
 
         // Configure drive motor
-        var driveConfig = constants.DriveMotorInitialConfigs;
+        driveConfig = constants.DriveMotorInitialConfigs;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.Slot0 = constants.DriveMotorGains;
         driveConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio;
@@ -108,7 +112,7 @@ public class ModuleIOTalonFX implements ModuleIO {
         tryUntilOk(5, () -> driveTalon.setPosition(0.0, 0.25));
 
         // Configure turn motor
-        var turnConfig = new TalonFXConfiguration();
+        turnConfig = new TalonFXConfiguration();
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         turnConfig.Slot0 = constants.SteerMotorGains;
         turnConfig.Feedback.FeedbackRemoteSensorID = constants.EncoderId;
@@ -243,5 +247,24 @@ public class ModuleIOTalonFX implements ModuleIO {
                     case Voltage -> positionVoltageRequest.withPosition(rotation.getRotations());
                     case TorqueCurrentFOC -> positionTorqueCurrentRequest.withPosition(rotation.getRotations());
                 });
+    }
+
+    @Override
+    public void setDrivePID(double kP, double kD, double kV, double kS) {
+        driveConfig.Slot0.kP = kP;
+        driveConfig.Slot0.kD = kD;
+        driveConfig.Slot0.kV = kV;
+        driveConfig.Slot0.kS = kS;
+
+        tryUntilOk(5, () -> driveTalon.getConfigurator().apply(driveConfig, 0.25));
+    }
+
+    @Override
+    public void setTurnPID(double kP, double kD, double kS) {
+        turnConfig.Slot0.kP = kP;
+        turnConfig.Slot0.kD = kD;
+        turnConfig.Slot0.kS = kS;
+
+        tryUntilOk(5, () -> turnTalon.getConfigurator().apply(turnConfig, 0.25));
     }
 }
