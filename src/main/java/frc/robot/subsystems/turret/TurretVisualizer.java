@@ -25,7 +25,6 @@ public class TurretVisualizer {
     private Supplier<Pose3d> poseSupplier;
     private Supplier<ChassisSpeeds> fieldSpeedsSupplier;
     private final int CAPACITY = 30;
-    private int fuelStored = 8;
 
     public TurretVisualizer(Supplier<Pose3d> poseSupplier, Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
         this.poseSupplier = poseSupplier;
@@ -48,6 +47,7 @@ public class TurretVisualizer {
 
         return new Translation3d(xVel, yVel, verticalVel);
     }
+    private int fuelStored = 8;
 
     public boolean canIntake() {
         return fuelStored < CAPACITY;

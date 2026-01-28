@@ -4,9 +4,7 @@
 
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -15,7 +13,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.util.TunableControls.TunableProfiledController;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -25,19 +22,17 @@ public class Intake extends SubsystemBase {
     private final IntakeIOInputsAutoLogged leftInputs;
     private final IntakeIOInputsAutoLogged rightInputs;
 
-    private final TunableProfiledController leftController;
-    private final TunableProfiledController rightController;
-
     private final Supplier<ChassisSpeeds> chassisSpeedsSupplier;
 
     private boolean isDeployed = true;
+    private boolean leftDeployed = false;
+    private boolean rightDeployed = false;
     public Trigger deployLeftTrigger =
             new Trigger(this::travelingLeft).and(() -> isDeployed).debounce(0.2);
     public Trigger deployRightTrigger =
             new Trigger(this::travelingRight).and(() -> isDeployed).debounce(0.2);
 
     private final IntakeVisualizer measuredVisualizer = new IntakeVisualizer("Measured", Color.kGreen);
-    // private final IntakeVisualizer setpointVisualizer = new IntakeVisualizer("Setpoint", Color.kBlue);
 
     /** Creates a new Intake. */
     public Intake(IntakeIO leftIO, IntakeIO rightIO, Supplier<ChassisSpeeds> chassisSpeedsSupplier) {
@@ -46,9 +41,6 @@ public class Intake extends SubsystemBase {
 
         this.leftInputs = new IntakeIOInputsAutoLogged();
         this.rightInputs = new IntakeIOInputsAutoLogged();
-
-        this.leftController = new TunableProfiledController(RACK_TUNABLE_CONSTANTS);
-        this.rightController = new TunableProfiledController(RACK_TUNABLE_CONSTANTS);
 
         this.chassisSpeedsSupplier = chassisSpeedsSupplier;
 
@@ -69,11 +61,11 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean isLeftDeployed() {
-        return DEPLOY_POS.isNear(Meters.of(leftController.getGoal()), 0.01);
+        return leftDeployed;
     }
 
     public boolean isRightDeployed() {
-        return DEPLOY_POS.isNear(Meters.of(rightController.getGoal()), 0.01);
+        return rightDeployed;
     }
 
     public Command deploy() {
@@ -84,8 +76,8 @@ public class Intake extends SubsystemBase {
 
     private Command deployLeft() {
         return this.runOnce(() -> {
-                    leftController.setGoal(DEPLOY_POS.in(Meters));
-                    rightController.setGoal(STOW_POS.in(Meters));
+                    leftIO.setRackPosition(DEPLOY_POS);
+                    rightIO.setRackPosition(STOW_POS);
 
                     leftIO.setSpinOutput(SPIN_VOLTAGE);
                     rightIO.stopSpin();
@@ -95,8 +87,8 @@ public class Intake extends SubsystemBase {
 
     private Command deployRight() {
         return this.runOnce(() -> {
-                    leftController.setGoal(STOW_POS.in(Meters));
-                    rightController.setGoal(DEPLOY_POS.in(Meters));
+                    leftIO.setRackPosition(STOW_POS);
+                    rightIO.setRackPosition(DEPLOY_POS);
 
                     leftIO.stopSpin();
                     rightIO.setSpinOutput(SPIN_VOLTAGE);
@@ -107,8 +99,8 @@ public class Intake extends SubsystemBase {
     public Command stow() {
         return this.runOnce(() -> {
                     isDeployed = false;
-                    leftController.setGoal(STOW_POS.in(Meters));
-                    rightController.setGoal(STOW_POS.in(Meters));
+                    leftIO.setRackPosition(STOW_POS);
+                    rightIO.setRackPosition(STOW_POS);
 
                     leftIO.stopSpin();
                     rightIO.stopSpin();
@@ -124,14 +116,7 @@ public class Intake extends SubsystemBase {
         Logger.processInputs("Left Intake", leftInputs);
         Logger.processInputs("Right Intake", rightInputs);
 
-        leftIO.setRackOutput(Volts.of(leftController.calculate(leftInputs.rackPosition.in(Meters))));
-        rightIO.setRackOutput(Volts.of(rightController.calculate(rightInputs.rackPosition.in(Meters))));
-
         measuredVisualizer.setLeftPosition(leftInputs.rackPosition);
         measuredVisualizer.setRightPosition(rightInputs.rackPosition);
-        // setpointVisualizer.setLeftPosition(Meters.of(leftController.getSetpoint().position));
-        // setpointVisualizer.setRightPosition(Meters.of(rightController.getSetpoint().position));
-        Logger.recordOutput("Left Setpoint", leftController.getSetpoint().position, Meters);
-        Logger.recordOutput("Right Setpoint", rightController.getSetpoint().position, Meters);
     }
 }

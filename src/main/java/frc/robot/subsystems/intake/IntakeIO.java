@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -23,16 +24,20 @@ public interface IntakeIO {
         public boolean rackMotorConnected = false;
         public Distance rackPosition = Meters.zero();
         public LinearVelocity rackVelocity = MetersPerSecond.zero();
+        public Distance rackSetpoint = Meters.zero();
+        public LinearVelocity rackSetpointVelocity = MetersPerSecond.zero();
         public Current rackCurrent = Amps.zero();
+        public Voltage rackAppliedVolts = Volts.zero();
 
         public boolean spinMotorConnected = false;
         public AngularVelocity spinVelocity = RadiansPerSecond.zero();
         public Current spinCurrent = Amps.zero();
+        public Voltage spinAppliedVolts = Volts.zero();
     }
 
     public default void updateInputs(IntakeIOInputs inputs) {}
 
-    public default void setRackOutput(Voltage out) {}
+    public default void setRackPosition(Distance position) {}
 
     public default void setSpinOutput(Voltage out) {}
 

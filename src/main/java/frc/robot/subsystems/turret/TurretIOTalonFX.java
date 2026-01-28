@@ -5,15 +5,19 @@
 package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static frc.robot.Constants.CAN_FD_BUS;
 import static frc.robot.Constants.TurretConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
@@ -27,22 +31,24 @@ public class TurretIOTalonFX implements TurretIO {
 
     private final StatusSignal<Angle> turnPosition;
     private final StatusSignal<AngularVelocity> turnVelocity;
+    private final StatusSignal<Voltage> turnAppliedVolts;
     private final StatusSignal<Current> turnCurrent;
 
     private final StatusSignal<Angle> hoodPosition;
     private final StatusSignal<AngularVelocity> hoodVelocity;
+    private final StatusSignal<Voltage> hoodAppliedVolts;
     private final StatusSignal<Current> hoodCurrent;
 
     private final StatusSignal<AngularVelocity> flywheelSpeed;
+    private final StatusSignal<AngularAcceleration> flywheelAccel;
+    private final StatusSignal<Double> flywheelSetpointSpeed;
+    private final StatusSignal<Double> flywheelSetpointAccel;
+    private final StatusSignal<Voltage> flywheelAppliedVolts;
     private final StatusSignal<Current> flywheelCurrent;
 
-    private final StatusSignal<AngularVelocity> shootSpeed;
-    private final StatusSignal<Current> shootCurrent;
-
-    private final VoltageOut turnVoltageRequest = new VoltageOut(0);
-    private final VoltageOut hoodVoltageRequest = new VoltageOut(0);
-    private final VoltageOut flywheelVoltageRequest = new VoltageOut(0);
-    private final VoltageOut shootVoltageRequest = new VoltageOut(0);
+    private final PositionVoltage turnPositionRequest = new PositionVoltage(0);
+    private final PositionVoltage hoodPositionRequest = new PositionVoltage(0);
+    private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(0);
 
     private final NeutralOut neutralOut = new NeutralOut();
 
@@ -54,62 +60,77 @@ public class TurretIOTalonFX implements TurretIO {
 
         turnPosition = turnMotor.getPosition();
         turnVelocity = turnMotor.getVelocity();
+        turnAppliedVolts = turnMotor.getMotorVoltage();
         turnCurrent = turnMotor.getStatorCurrent();
 
         hoodPosition = hoodMotor.getPosition();
         hoodVelocity = hoodMotor.getVelocity();
+        hoodAppliedVolts = hoodMotor.getMotorVoltage();
         hoodCurrent = hoodMotor.getStatorCurrent();
 
         flywheelSpeed = flywheelMotor.getVelocity();
-        flywheelCurrent = flywheelMotor.getStatorCurrent();
+        flywheelAccel = flywheelMotor.getAcceleration();
+        flywheelSetpointSpeed = flywheelMotor.getClosedLoopReference();
+        flywheelSetpointAccel = flywheelMotor.getClosedLoopReferenceSlope();
+        flywheelAppliedVolts = flywheelMotor.getMotorVoltage();
+        flywheelCurrent = flywheelMotor.getTorqueCurrent();
 
-        shootSpeed = shootMotor.getVelocity();
-        shootCurrent = shootMotor.getStatorCurrent();
+        BaseStatusSignal.setUpdateFrequencyForAll(
+                50,
+                turnPosition,
+                turnAppliedVolts,
+                turnCurrent,
+                hoodPosition,
+                hoodAppliedVolts,
+                hoodCurrent,
+                flywheelSpeed,
+                flywheelAppliedVolts,
+                flywheelCurrent);
+        turnMotor.optimizeBusUtilization();
+        hoodMotor.optimizeBusUtilization();
+        flywheelMotor.optimizeBusUtilization();
     }
 
     @Override
     public void updateInputs(TurretIOInputs inputs) {
-        inputs.turnMotorConnected = BaseStatusSignal.refreshAll(turnPosition, turnVelocity, turnCurrent)
+        inputs.turnMotorConnected = BaseStatusSignal.refreshAll(turnPosition, turnAppliedVolts, turnCurrent)
                 .isOK();
         inputs.turnPosition = turnPosition.getValue();
         inputs.turnVelocity = turnVelocity.getValue();
+        inputs.turnAppliedVolts = turnAppliedVolts.getValue();
         inputs.turnCurrent = turnCurrent.getValue();
 
-        inputs.hoodMotorConnected = BaseStatusSignal.refreshAll(hoodPosition, hoodVelocity, hoodCurrent)
+        inputs.hoodMotorConnected = BaseStatusSignal.refreshAll(hoodPosition, hoodAppliedVolts, hoodCurrent)
                 .isOK();
         inputs.hoodPosition = hoodPosition.getValue();
         inputs.hoodVelocity = hoodVelocity.getValue();
+        inputs.hoodAppliedVolts = hoodAppliedVolts.getValue();
         inputs.hoodCurrent = hoodCurrent.getValue();
 
-        inputs.flywheelMotorConnected =
-                BaseStatusSignal.refreshAll(flywheelSpeed, flywheelCurrent).isOK();
+        inputs.flywheelMotorConnected = BaseStatusSignal.refreshAll(
+                        flywheelSpeed, flywheelAppliedVolts, flywheelCurrent)
+                .isOK();
         inputs.flywheelSpeed = flywheelSpeed.getValue();
+        inputs.flywheelAccel = flywheelAccel.getValue();
+        inputs.flywheelSetpointSpeed = RotationsPerSecond.of(flywheelSetpointSpeed.getValueAsDouble());
+        inputs.flywheelSetpointAccel = RotationsPerSecondPerSecond.of(flywheelSetpointAccel.getValueAsDouble());
+        inputs.flywheelAppliedVolts = flywheelAppliedVolts.getValue();
         inputs.flywheelCurrent = flywheelCurrent.getValue();
-
-        inputs.shootMotorConnected =
-                BaseStatusSignal.refreshAll(shootSpeed, shootCurrent).isOK();
-        inputs.shootSpeed = shootSpeed.getValue();
-        inputs.shootCurrent = shootCurrent.getValue();
     }
 
     @Override
-    public void setTurnOutput(Voltage out) {
-        turnMotor.setControl(turnVoltageRequest.withOutput(out));
+    public void setTurnSetpoint(Angle position, AngularVelocity velocity) {
+        turnMotor.setControl(turnPositionRequest.withPosition(position).withVelocity(velocity));
     }
 
     @Override
-    public void setHoodOutput(Voltage out) {
-        hoodMotor.setControl(hoodVoltageRequest.withOutput(out));
+    public void setHoodAngle(Angle angle) {
+        hoodMotor.setControl(hoodPositionRequest.withPosition(angle));
     }
 
     @Override
-    public void setFlywheelOutput(Voltage out) {
-        flywheelMotor.setControl(flywheelVoltageRequest.withOutput(out));
-    }
-
-    @Override
-    public void setShootOutput(Voltage out) {
-        shootMotor.setControl(shootVoltageRequest.withOutput(out));
+    public void setFlywheelSpeed(AngularVelocity speed) {
+        flywheelMotor.setControl(flywheelVelocityRequest.withVelocity(speed));
     }
 
     @Override

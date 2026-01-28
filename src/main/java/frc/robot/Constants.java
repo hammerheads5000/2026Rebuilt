@@ -43,8 +43,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.util.TunableControls.ControlConstants;
-import frc.robot.util.TunableControls.TunableControlConstants;
 import java.util.function.Supplier;
 
 /**
@@ -331,36 +329,19 @@ public final class Constants {
         public static final int SHOOT_ID = 0;
         public static final int ENCODER_ID = 0;
 
-        private static final ControlConstants TURN_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.0315, 0.0007)
-                .withPID(0.2, 0, 0.07)
-                .withProfile(150, 100);
+        public static final Slot0Configs TURN_GAINS =
+                new Slot0Configs().withKP(0.0).withKD(0.0).withKS(0.0);
 
-        private static final ControlConstants HOOD_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.08, 0)
-                .withPID(1, 0, 0.32)
-                .withProfile(100, 100);
+        public static final Slot0Configs HOOD_GAINS =
+                new Slot0Configs().withKP(0.0).withKD(0.0).withKS(0.0);
 
-        private static final ControlConstants FLYWHEEL_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.0393, 0)
-                .withPID(0.3, 0, 0)
-                .withProfile(5000, 5000)
-                .withVelocityControl();
+        public static final Slot0Configs FLYWHEEL_GAINS =
+                new Slot0Configs().withKP(0.3).withKD(0).withKS(0);
 
-        private static final ControlConstants SHOOT_BASE_CONSTANTS = new ControlConstants()
-                .withFeedforward(0.0393, 0)
-                .withPID(0.3, 0, 0)
-                .withProfile(5000, 5000)
-                .withVelocityControl();
-
-        public static final TunableControlConstants TURN_TUNABLE_CONSTANTS =
-                new TunableControlConstants("Turret/Turn", TURN_BASE_CONSTANTS);
-        public static final TunableControlConstants HOOD_TUNABLE_CONSTANTS =
-                new TunableControlConstants("Turret/Hood", HOOD_BASE_CONSTANTS);
-        public static final TunableControlConstants FLYWHEEL_TUNABLE_CONSTANTS =
-                new TunableControlConstants("Turret/Flywheel", FLYWHEEL_BASE_CONSTANTS);
-        public static final TunableControlConstants SHOOT_TUNABLE_CONSTANTS =
-                new TunableControlConstants("Turret/Shoot", SHOOT_BASE_CONSTANTS);
+        public static final CurrentLimitsConfigs TURN_CURRENT_LIMITS = new CurrentLimitsConfigs()
+                .withStatorCurrentLimit(30)
+                .withSupplyCurrentLowerTime(1)
+                .withSupplyCurrentLowerLimit(40);
 
         public static final Distance DISTANCE_ABOVE_FUNNEL = Inches.of(20); // how high to clear the funnel
         public static final Distance APEX = Inches.of(130);
@@ -377,10 +358,12 @@ public final class Constants {
         public static final int LEFT_SPIN_ID = 0;
         public static final int RIGHT_SPIN_ID = 0;
 
-        private static final ControlConstants RACK_BASE_CONSTANTS =
-                new ControlConstants().withFeedforward(1.65, 0).withPID(1, 0, 0).withProfile(10, 10);
-        public static final TunableControlConstants RACK_TUNABLE_CONSTANTS =
-                new TunableControlConstants("Intake/Rack", RACK_BASE_CONSTANTS);
+        public static final Slot0Configs RACK_GAINS = new Slot0Configs()
+                .withKP(0.0)
+                .withKD(0.0)
+                .withKA(0.0)
+                .withKV(0.0)
+                .withKS(0.0);
 
         public static final Distance STOW_POS = Inches.of(0);
         public static final Distance DEPLOY_POS = Inches.of(10.875);
