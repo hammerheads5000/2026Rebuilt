@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems.turret;
 
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static frc.robot.Constants.CAN_FD_BUS;
@@ -15,12 +14,16 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.util.EasyCRT;
+import frc.robot.util.EasyCRTConfig;
+import org.littletonrobotics.junction.Logger;
 
 /** Add your docs here. */
 public class TurretIOTalonFX implements TurretIO {
@@ -29,7 +32,12 @@ public class TurretIOTalonFX implements TurretIO {
     private final TalonFX flywheelMotor;
     private final TalonFX shootMotor;
 
+    private final CANcoder encoder1;
+    private final CANcoder encoder2;
+
     private final StatusSignal<Angle> turnPosition;
+    private final StatusSignal<Angle> encoder1Position;
+    private final StatusSignal<Angle> encoder2Position;
     private final StatusSignal<AngularVelocity> turnVelocity;
     private final StatusSignal<Voltage> turnAppliedVolts;
     private final StatusSignal<Current> turnCurrent;
@@ -52,12 +60,19 @@ public class TurretIOTalonFX implements TurretIO {
 
     private final NeutralOut neutralOut = new NeutralOut();
 
+    private final EasyCRT easyCRT;
+
     public TurretIOTalonFX() {
         turnMotor = new TalonFX(TURN_ID, CAN_FD_BUS);
         hoodMotor = new TalonFX(HOOD_ID, CAN_FD_BUS);
         flywheelMotor = new TalonFX(FLYWHEEL_ID, CAN_FD_BUS);
         shootMotor = new TalonFX(SHOOT_ID, CAN_FD_BUS);
 
+        encoder1 = new CANcoder(ENCODER1_ID, CAN_FD_BUS);
+        encoder2 = new CANcoder(ENCODER2_ID, CAN_FD_BUS);
+
+        encoder1Position = encoder1.getPosition();
+        encoder2Position = encoder2.getPosition();
         turnPosition = turnMotor.getPosition();
         turnVelocity = turnMotor.getVelocity();
         turnAppliedVolts = turnMotor.getMotorVoltage();
@@ -78,6 +93,8 @@ public class TurretIOTalonFX implements TurretIO {
         BaseStatusSignal.setUpdateFrequencyForAll(
                 50,
                 turnPosition,
+                encoder1Position,
+                encoder2Position,
                 turnAppliedVolts,
                 turnCurrent,
                 hoodPosition,
@@ -89,12 +106,17 @@ public class TurretIOTalonFX implements TurretIO {
         turnMotor.optimizeBusUtilization();
         hoodMotor.optimizeBusUtilization();
         flywheelMotor.optimizeBusUtilization();
+
+        EasyCRTConfig crtConfig = new EasyCRTConfig(encoder1Position::getValue, encoder2Position::getValue)
+                .withCommonDriveGear(1, DRIVE_GEAR_TEETH, ENCODER_1_TEETH, ENCODER_2_TEETH)
+                .withMechanismRange(MIN_TURN_ANGLE, MAX_TURN_ANGLE);
+        easyCRT = new EasyCRT(crtConfig);
     }
 
     @Override
     public void updateInputs(TurretIOInputs inputs) {
-        inputs.turnMotorConnected = BaseStatusSignal.refreshAll(turnPosition, turnAppliedVolts, turnCurrent)
-                .isOK();
+        inputs.turnMotorConnected =
+                BaseStatusSignal.refreshAll(turnAppliedVolts, turnCurrent).isOK();
         inputs.turnPosition = turnPosition.getValue();
         inputs.turnVelocity = turnVelocity.getValue();
         inputs.turnAppliedVolts = turnAppliedVolts.getValue();
@@ -116,6 +138,9 @@ public class TurretIOTalonFX implements TurretIO {
         inputs.flywheelSetpointAccel = RotationsPerSecondPerSecond.of(flywheelSetpointAccel.getValueAsDouble());
         inputs.flywheelAppliedVolts = flywheelAppliedVolts.getValue();
         inputs.flywheelCurrent = flywheelCurrent.getValue();
+
+        BaseStatusSignal.refreshAll(encoder1Position, encoder2Position);
+        inputs.turnPosition = encoder1Position.getValue();
     }
 
     @Override
@@ -154,7 +179,15 @@ public class TurretIOTalonFX implements TurretIO {
     }
 
     @Override
-    public void resetTurnEncoder() {
-        turnMotor.setPosition(turnPosition.getValue().in(Rotations) % 1);
+    public void resetTurnCRT() {
+        easyCRT.getAngleOptional()
+                .ifPresentOrElse(
+                        (angle) -> {
+                            turnMotor.setPosition(angle);
+                            Logger.recordOutput("Turret/EasyCRT Error", easyCRT.getLastErrorRotations());
+                        },
+                        () -> {
+                            System.err.println("ERROR: EasyCRT failed to solve!");
+                        });
     }
 }

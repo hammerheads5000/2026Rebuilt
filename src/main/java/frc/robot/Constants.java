@@ -327,7 +327,8 @@ public final class Constants {
         public static final int HOOD_ID = 0;
         public static final int FLYWHEEL_ID = 0;
         public static final int SHOOT_ID = 0;
-        public static final int ENCODER_ID = 0;
+        public static final int ENCODER1_ID = 0;
+        public static final int ENCODER2_ID = 0;
 
         public static final Slot0Configs TURN_GAINS =
                 new Slot0Configs().withKP(0.0).withKD(0.0).withKS(0.0);
@@ -350,6 +351,12 @@ public final class Constants {
         public static final Distance FLYWHEEL_RADIUS = Inches.of(2);
         public static final Distance SHOOT_RADIUS = Inches.of(1);
         public static final int LOOKAHEAD_ITERATIONS = 3;
+
+        public static final int DRIVE_GEAR_TEETH = 110;
+        public static final int ENCODER_1_TEETH = 15;
+        public static final int ENCODER_2_TEETH = 16;
+        public static final Angle MIN_TURN_ANGLE = Rotations.of(-1);
+        public static final Angle MAX_TURN_ANGLE = Rotations.of(1);
     }
 
     public static class IntakeConstants {
