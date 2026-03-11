@@ -373,10 +373,10 @@ public final class Constants {
         public static final int FLYWHEEL_FOLLOWER_ID = 22;
         public static final int ENCODER_ID = 24;
 
-        public static final double ENCODER_TO_TURRET_RATIO = 11.0 / 23;
-        public static final double TURN_TO_TURRET_RATIO = 11 * 41.0 / 15;
+        public static final double ENCODER_TO_TURRET_RATIO = 180.0 / 27 * 1.0 / 23; // 180:27 big gear, 1:23 cycloidal
+        public static final double TURN_TO_TURRET_RATIO = 28.0 / 14 * 180.0 / 10; // 28:14 belt, 180:10 big gear
         public static final double HOOD_MOTOR_RATIO =
-                40.0 / 14 * 2.0 / 1 * 180.0 / 10; // 40:14 gear, 2:1 belt, 180:10 rack
+                50.0 / 14 * 22.0 / 20 * 156.0 / 10; // 50:? gear, 22:20 belt, 156:10 rack
 
         public static final Slot0Configs TURN_GAINS =
                 new Slot0Configs().withKP(400).withKD(0.1).withKS(2);
@@ -589,11 +589,11 @@ public final class Constants {
 
         public static final MotorOutputConfigs SPIN_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
-                .withInverted(InvertedValue.Clockwise_Positive);
+                .withInverted(InvertedValue.CounterClockwise_Positive);
 
         public static final MotorOutputConfigs FEED_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
-                .withInverted(InvertedValue.Clockwise_Positive);
+                .withInverted(InvertedValue.CounterClockwise_Positive);
 
         public static final CurrentLimitsConfigs SPIN_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(50);
@@ -714,18 +714,18 @@ public final class Constants {
         // yaw)
         public static final Transform3d[] CAMERA_TRANSFORMS = {
             new Transform3d(
-                    new Translation3d(0.307, 0.299, 0.529),
+                    new Translation3d(0.309, 0.317, 0.529),
                     new Rotation3d(Degrees.zero(), Degrees.of(-21), Degrees.of(65))),
             new Transform3d(
-                    new Translation3d(0.307, -0.299, 0.529),
+                    new Translation3d(0.309, -0.317, 0.529),
                     new Rotation3d(Degrees.zero(), Degrees.of(-21), Degrees.of(-65))),
             new Transform3d(
                     new Translation3d(0.352, 0, 0.529), new Rotation3d(Degrees.zero(), Degrees.of(-21), Degrees.of(0))),
             new Transform3d(
-                    new Translation3d(-0.305, 0.299, 0.529),
+                    new Translation3d(-0.302, 0.313, 0.529),
                     new Rotation3d(Degrees.zero(), Degrees.of(-21), Degrees.of(90))),
             new Transform3d(
-                    new Translation3d(-0.305, -0.299, 0.529),
+                    new Translation3d(-0.302, -0.313, 0.529),
                     new Rotation3d(Degrees.zero(), Degrees.of(-21), Degrees.of(-90))),
             new Transform3d(
                     new Translation3d(-0.352, 0, 0.529),
