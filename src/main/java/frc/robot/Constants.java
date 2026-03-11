@@ -68,6 +68,7 @@ import frc.robot.subsystems.turret.TurretCalculator.ShotData;
 import frc.robot.util.TunableControls.ControlConstants;
 import frc.robot.util.TunableControls.TunableControlConstants;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -802,7 +803,7 @@ public final class Constants {
                 false);
 
         public static final PathConstraints COLLECT_CONSTRAINTS = new PathConstraints(
-                MetersPerSecond.of(0.4),
+                MetersPerSecond.of(2),
                 MetersPerSecondPerSecond.of(3),
                 DegreesPerSecond.of(360),
                 DegreesPerSecondPerSecond.of(540),
@@ -812,6 +813,25 @@ public final class Constants {
         public static final Time START_DUMP_TIME = Seconds.of(1.5);
         public static final Time START_SPIN_UP_TIME = Seconds.of(0.5);
         public static final Time CLIMB_TIME_REMAINING = Seconds.of(3);
+
+        public static final Map<String, String> PREBUILT_AUTOS = Map.of(
+                "Stay in Place", "",
+                "Left Single Sweep",
+                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep and Return 1 Left!;Trench Left to Dump Left=4.0",
+                "Right Single Sweep",
+                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep and Return 1 Right!;Trench Right to Dump Right=4.0",
+                "Left Double Sweep",
+                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sideways 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep 1 Left!;Trench Left to Dump Left=3.0",
+                "Right Double Sweep",
+                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sideways 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep 1 Right!;Trench Right to Dump Right=3.0",
+                "Left Single Sweep + Climb",
+                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep and Return 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Climb Left",
+                "Right Single Sweep + Climb",
+                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep and Return 1 Right!;Trench Right to Dump Right=3.0;Dump Right to Climb Right",
+                "Left Double Sweep + Climb",
+                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sideways 2 Left!;Trench Left to Dump Left=2.0;Dump Left to Trench Left;Collect Sweep 1 Left!;Trench Left to Dump Left=1.0;Dump Left to Climb Left",
+                "Right Double Sweep + Climb",
+                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sideways 2 Right!;Trench Right to Dump Right=2.0;Dump Right to Trench Right;Collect Sweep 1 Right!;Trench Right to Dump Right=1.0;Dump Right to Climb Right");
     }
 
     private Constants() {}

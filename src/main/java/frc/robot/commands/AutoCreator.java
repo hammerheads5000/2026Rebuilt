@@ -44,7 +44,7 @@ import org.json.simple.parser.ParseException;
 /** Builds autos from PathPlanner paths selected using SharkPlanner */
 public class AutoCreator {
     /** A set waypoint that can be the start or end of a path */
-    private enum StartEndPoint {
+    public enum StartEndPoint {
         TRENCH_START_LEFT("Trench Start Left", MetersPerSecond.of(0)),
         TRENCH_START_RIGHT("Trench Start Right", MetersPerSecond.of(0)),
         TRENCH_MID_START_LEFT("Trench Mid Start Left", MetersPerSecond.of(0)),
@@ -85,7 +85,7 @@ public class AutoCreator {
     }
 
     /** Wrapper of a PathPlanner path to get useful information */
-    private static class AutoPath {
+    public static class AutoPath {
         protected final StartEndPoint start;
         protected final StartEndPoint end;
         protected final String name;
@@ -279,6 +279,26 @@ public class AutoCreator {
         return arr;
     }
 
+    public static ArrayList<AutoPath> autoPathsFromString(String selected) {
+        String[] parts = selected.split(";");
+        if (parts.length == 1 && parts[0].isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // only start point
+        if (parts.length == 1) {
+            return new ArrayList<>();
+        }
+
+        // update auto paths
+        ArrayList<AutoPath> autoPaths = new ArrayList<>();
+        for (int i = 1; i < parts.length; i++) {
+            autoPaths.add(AutoPath.fromString(parts[i].trim()));
+        }
+
+        return autoPaths;
+    }
+
     /** updates subscribers and publishes values to NetworkTables, recalculating auto paths if necessary */
     public void updateNT() {
         String selected = AutoConstants.AUTO_SELECTION.get();
@@ -370,29 +390,54 @@ public class AutoCreator {
             Turret turret,
             Climber climber,
             Superstructure superstructure) {
+        return AutoCreator.buildAuto(
+                drive,
+                vision,
+                intakes,
+                indexer,
+                turret,
+                climber,
+                superstructure,
+                selectedAutoPaths,
+                AutoConstants.DUMP_AT_START.get());
+    }
+
+    /**
+     * Builds auto from the given paths
+     */
+    public static Command buildAuto(
+            Drive drive,
+            Vision vision,
+            Intakes intakes,
+            Indexer indexer,
+            Turret turret,
+            Climber climber,
+            Superstructure superstructure,
+            List<AutoPath> selectedAutoPaths,
+            boolean dumpAtStart) {
         ArrayList<Command> commands = new ArrayList<>();
         for (AutoPath path : selectedAutoPaths) {
             Command toAdd = AutoBuilder.followPath(path.getPathPlannerPath());
             if (path.name.contains("Collect")) {
                 if (path.collect) {
-                    toAdd = toAdd.alongWith(
+                    toAdd = toAdd.deadlineFor(
                             indexer.setGoal(IndexerGoal.IDLE),
                             turret.setGoal(TurretGoal.IDLE).asProxy());
                 } else {
-                    toAdd = toAdd.alongWith(
+                    toAdd = toAdd.deadlineFor(
                             indexer.setGoal(IndexerGoal.ACTIVE),
                             turret.setGoal(TurretGoal.PASSING).asProxy());
                 }
 
                 // deploy appropriate intake
                 if (path.start == StartEndPoint.TRENCH_LEFT) {
-                    toAdd = toAdd.alongWith(intakes.deployLeft());
+                    toAdd = toAdd.deadlineFor(intakes.deployLeft());
                 } else if (path.start == StartEndPoint.TRENCH_RIGHT) {
-                    toAdd = toAdd.alongWith(intakes.deployRight());
+                    toAdd = toAdd.deadlineFor(intakes.deployRight());
                 } else if (path.start == StartEndPoint.BUMP_LEFT) {
-                    toAdd = toAdd.alongWith(intakes.deployLeft());
+                    toAdd = toAdd.deadlineFor(intakes.deployLeft());
                 } else if (path.start == StartEndPoint.BUMP_RIGHT) {
-                    toAdd = toAdd.alongWith(intakes.deployRight());
+                    toAdd = toAdd.deadlineFor(intakes.deployRight());
                 }
             } else if (!((path.start == StartEndPoint.TRENCH_START_LEFT && path.end == StartEndPoint.TRENCH_LEFT)
                     || (path.start == StartEndPoint.TRENCH_START_RIGHT && path.end == StartEndPoint.TRENCH_RIGHT)
@@ -402,7 +447,7 @@ public class AutoCreator {
                     || (path.start == StartEndPoint.BUMP_START_RIGHT
                             && path.end == StartEndPoint.BUMP_RIGHT))) { // if not passing through trench or over bump
                 // set turret to score when possible
-                toAdd = toAdd.alongWith(Commands.waitUntil(superstructure.inAllianceZoneTrigger)
+                toAdd = toAdd.deadlineFor(Commands.waitUntil(superstructure.inAllianceZoneTrigger)
                         .andThen(turret.setGoal(TurretGoal.SCORING)
                                 .asProxy()
                                 .alongWith(Commands.waitTime(AutoConstants.START_SPIN_UP_TIME)
@@ -443,7 +488,7 @@ public class AutoCreator {
         }
 
         // add dump at start if necessary
-        if (AutoConstants.DUMP_AT_START.get()) {
+        if (dumpAtStart) {
             commands.add(
                     0,
                     Commands.parallel(
@@ -459,6 +504,6 @@ public class AutoCreator {
         }
 
         // turn commands ArrayList into a sequential command group
-        return Commands.sequence(commands.toArray(Command[]::new));
+        return Commands.sequence(commands.toArray(Command[]::new)).withName("Created Auto");
     }
 }

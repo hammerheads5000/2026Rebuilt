@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ClimberConstants.ClimbPosition;
 import frc.robot.Constants.Dimensions;
@@ -35,7 +34,6 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlignToClimb;
 import frc.robot.commands.AutoClimb;
 import frc.robot.commands.AutoCreator;
-import frc.robot.commands.DriveCharacterization;
 import frc.robot.commands.SystemChecks;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.climber.Climber;
@@ -74,6 +72,7 @@ import frc.robot.util.Zones;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -119,7 +118,8 @@ public class RobotContainer {
     private final Trigger manualPassTrigger = controller.rightBumper();
 
     // Dashboard inputs
-    private final LoggedDashboardChooser<Command> autoChooser;
+    private final LoggedDashboardChooser<String> autoChooser;
+    private final LoggedNetworkBoolean usePrebuiltAuto;
 
     public final AutoCreator autoCreator;
 
@@ -226,20 +226,17 @@ public class RobotContainer {
 
         superstructure = new Superstructure(turret, intakes, indexer, drive::getPose);
 
-        // Set up auto routines
-        autoChooser = new LoggedDashboardChooser<>("Characterizations");
-
         // Set up SysId routines
-        autoChooser.addOption(
-                "Drive Wheel Radius Characterization", DriveCharacterization.wheelRadiusCharacterization(drive));
-        autoChooser.addOption(
-                "Drive Simple FF Characterization", DriveCharacterization.feedforwardCharacterization(drive));
-        autoChooser.addOption(
-                "Drive SysId (Quasistatic Forward)", drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption(
-                "Drive SysId (Quasistatic Reverse)", drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser.addOption("Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption("Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // autoChooser.addOption(
+        //         "Drive Wheel Radius Characterization", DriveCharacterization.wheelRadiusCharacterization(drive));
+        // autoChooser.addOption(
+        //         "Drive Simple FF Characterization", DriveCharacterization.feedforwardCharacterization(drive));
+        // autoChooser.addOption(
+        //         "Drive SysId (Quasistatic Forward)", drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // autoChooser.addOption(
+        //         "Drive SysId (Quasistatic Reverse)", drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // autoChooser.addOption("Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // autoChooser.addOption("Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // configure autos
         autoCreator = new AutoCreator();
@@ -256,6 +253,15 @@ public class RobotContainer {
         PathPlannerLogging.setLogActivePathCallback(
                 (path) -> Logger.recordOutput("Odometry/Active Path", path.toArray(Pose2d[]::new)));
         PathPlannerLogging.setLogTargetPoseCallback((target) -> Logger.recordOutput("Odometry/Target Pose", target));
+
+        // Set up auto routines
+        autoChooser = new LoggedDashboardChooser<>("Prebuilt Autos");
+        usePrebuiltAuto = new LoggedNetworkBoolean("Autos/Use Prebuilt Autos", true);
+
+        autoChooser.addDefaultOption("None", "");
+        for (String option : AutoConstants.PREBUILT_AUTOS.keySet()) {
+            autoChooser.addOption(option, AutoConstants.PREBUILT_AUTOS.get(option));
+        }
 
         teleopDrive = new TeleopDrive(drive, controller);
         Logger.recordOutput("ZeroedRobotComponents", new Pose3d[] {new Pose3d(), new Pose3d(), new Pose3d()});
@@ -390,6 +396,19 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return autoCreator.buildAuto(drive, vision, intakes, indexer, turret, climber, superstructure);
+        if (!usePrebuiltAuto.get()) {
+            return autoCreator.buildAuto(drive, vision, intakes, indexer, turret, climber, superstructure);
+        }
+
+        return AutoCreator.buildAuto(
+                drive,
+                vision,
+                intakes,
+                indexer,
+                turret,
+                climber,
+                superstructure,
+                AutoCreator.autoPathsFromString(autoChooser.get()),
+                AutoConstants.DUMP_AT_START.get());
     }
 }
