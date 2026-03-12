@@ -7,6 +7,7 @@ import static frc.robot.Constants.IndexerConstants.FEED_OUTPUT_CONFIGS;
 import static frc.robot.Constants.IndexerConstants.SPIN_CURRENT_LIMITS;
 import static frc.robot.Constants.IndexerConstants.SPIN_ID;
 import static frc.robot.Constants.IndexerConstants.SPIN_OUTPUT_CONFIGS;
+import static frc.robot.Constants.IndexerConstants.SPIN_RAMPS;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -43,8 +44,10 @@ public class IndexerIOTalonFX implements IndexerIO {
         spinMotor = new TalonFX(SPIN_ID, Constants.CAN_FD_BUS);
         feedMotor = new TalonFX(FEED_ID, Constants.CAN_FD_BUS);
 
-        TalonFXConfiguration spinConfig =
-                new TalonFXConfiguration().withMotorOutput(SPIN_OUTPUT_CONFIGS).withCurrentLimits(SPIN_CURRENT_LIMITS);
+        TalonFXConfiguration spinConfig = new TalonFXConfiguration()
+                .withMotorOutput(SPIN_OUTPUT_CONFIGS)
+                .withCurrentLimits(SPIN_CURRENT_LIMITS)
+                .withOpenLoopRamps(SPIN_RAMPS);
 
         PhoenixUtil.tryUntilOk(5, () -> spinMotor.getConfigurator().apply(spinConfig, 0.25));
 

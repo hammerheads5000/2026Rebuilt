@@ -1,8 +1,6 @@
 package frc.robot.subsystems.indexer;
 
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.IndexerConstants.FEED_THRESHOLD;
 import static frc.robot.Constants.IndexerConstants.FEED_VOLTAGE;
 import static frc.robot.Constants.IndexerConstants.SPIN_VOLTAGE;
 
@@ -88,16 +86,16 @@ public class Indexer extends SubsystemBase {
 
     public Command activate() {
         return this.runOnce(() -> {
-                    io.setFeedOutput(Volts.of(-4));
-                    io.setSpinOutput(Volts.of(-2));
+                    io.setFeedOutput(FEED_VOLTAGE);
+                    io.setSpinOutput(SPIN_VOLTAGE);
                 })
-                .andThen(Commands.waitSeconds(0.1875))
-                .andThen(this.runOnce(() -> {
-                    io.setFeedOutput(Volts.of(feedVoltage.get()));
-                    io.stopSpin();
-                }))
-                .andThen(Commands.waitUntil(() -> inputs.feedVelocity.abs(RPM) >= FEED_THRESHOLD.in(RPM)))
-                .andThen(this.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
+                // .andThen(Commands.waitSeconds(0.1875))
+                // .andThen(this.runOnce(() -> {
+                //     io.setFeedOutput(Volts.of(feedVoltage.get()));
+                //     io.stopSpin();
+                // }))
+                // .andThen(Commands.waitUntil(() -> inputs.feedVelocity.abs(RPM) >= FEED_THRESHOLD.in(RPM)))
+                // .andThen(this.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
                 .withName("IndexerActivate");
     }
 

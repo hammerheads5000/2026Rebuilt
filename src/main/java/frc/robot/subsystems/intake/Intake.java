@@ -173,7 +173,7 @@ public class Intake extends SubsystemBase {
                         Commands.sequence(
                                 Commands.runOnce(() -> io.setSpinOutput(UNJAM_SPIN_VOLTAGE)),
                                 Commands.waitUntil(spinStallTrigger.negate()),
-                                Commands.runOnce(() -> io.setSpinOutput(Volts.of(reverseSpinVoltage.get())))),
+                                Commands.runOnce(() -> io.stopSpin())),
                         IntakeGoal.DEPLOYING, // stow intake
                         Commands.sequence(
                                 Commands.runOnce(() -> io.setRackPosition(STOW_POS)),
@@ -198,9 +198,9 @@ public class Intake extends SubsystemBase {
                             io.stopSpin();
                             break;
                         case STOWED:
+                            io.stopSpin();
                             break;
                         case STOWING:
-                            io.setSpinOutput(Volts.of(reverseSpinVoltage.get()));
                             io.setRackPosition(STOW_POS);
                             break;
                         case ZEROING:

@@ -17,6 +17,7 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
+import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -376,7 +377,7 @@ public final class Constants {
         public static final double ENCODER_TO_TURRET_RATIO = 180.0 / 27 * 1.0 / 23; // 180:27 big gear, 1:23 cycloidal
         public static final double TURN_TO_TURRET_RATIO = 28.0 / 12 * 180.0 / 10; // 28:14 belt, 180:10 big gear
         public static final double HOOD_MOTOR_RATIO =
-                50.0 / 16 * 22.0 / 20 * 156.0 / 10; // 50:? gear, 22:20 belt, 156:10 rack
+                50.0 / 14 * 22.0 / 20 * 156.0 / 10; // 50:14 gear, 22:20 belt, 156:10 rack
 
         public static final Slot0Configs TURN_GAINS =
                 new Slot0Configs().withKP(100).withKD(0.1).withKS(2);
@@ -385,7 +386,7 @@ public final class Constants {
                 new Slot0Configs().withKP(800).withKD(5).withKS(0.28);
 
         public static final Slot0Configs FLYWHEEL_GAINS =
-                new Slot0Configs().withKP(10).withKD(0.0).withKS(6).withKV(0.04);
+                new Slot0Configs().withKP(10).withKD(5.0).withKS(6).withKV(0.04);
 
         public static final CurrentLimitsConfigs TURN_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30);
@@ -473,15 +474,15 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            SHOT_MAP.put(5.34, new ShotData(RPM.of(2770), Degrees.of(27)));
-            TOF_MAP.put(5.34, 1.30);
+            SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(35)));
+            TOF_MAP.put(5.18, 1.42);
 
-            SHOT_MAP.put(4.90, new ShotData(RPM.of(2740), Degrees.of(26)));
-            TOF_MAP.put(4.90, 1.42);
+            SHOT_MAP.put(4.72, new ShotData(RPM.of(3600), Degrees.of(32)));
+            TOF_MAP.put(4.72, 1.42);
 
-            SHOT_MAP.put(4.44, new ShotData(RPM.of(2725), Degrees.of(25.5)));
-            TOF_MAP.put(4.44, 1.34);
-
+            SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
+            TOF_MAP.put(4.24, 1.41);
+            // end of tuning 3/12
             SHOT_MAP.put(4.05, new ShotData(RPM.of(2725), Degrees.of(25)));
             TOF_MAP.put(4.05, 1.36);
 
@@ -590,6 +591,9 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Brake)
                 .withInverted(InvertedValue.CounterClockwise_Positive);
 
+        public static final OpenLoopRampsConfigs SPIN_RAMPS =
+                new OpenLoopRampsConfigs().withVoltageOpenLoopRampPeriod(Seconds.of(1));
+
         public static final MotorOutputConfigs FEED_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
                 .withInverted(InvertedValue.CounterClockwise_Positive);
@@ -600,8 +604,8 @@ public final class Constants {
         public static final CurrentLimitsConfigs FEED_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(60);
 
-        public static final Voltage SPIN_VOLTAGE = Volts.of(3);
-        public static final Voltage FEED_VOLTAGE = Volts.of(12);
+        public static final Voltage SPIN_VOLTAGE = Volts.of(4);
+        public static final Voltage FEED_VOLTAGE = Volts.of(8);
 
         public static final AngularVelocity FEED_THRESHOLD = RPM.of(2000);
     }
