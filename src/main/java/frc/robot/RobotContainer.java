@@ -54,7 +54,6 @@ import frc.robot.subsystems.indexer.IndexerIOTalonFX;
 import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.intake.IntakeIOSim;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
-import frc.robot.subsystems.intake.IntakeIOTalonFXDual;
 import frc.robot.subsystems.intake.Intakes;
 import frc.robot.subsystems.intake.Intakes.IntakesGoal;
 import frc.robot.subsystems.superstructure.Superstructure;
@@ -109,11 +108,12 @@ public class RobotContainer {
     private final Trigger zeroHoodTrigger = controller.povUp();
     private final Trigger switchIntakesTrigger = controller.rightTrigger();
     private final Trigger collectTrigger = controller.leftTrigger();
-    // private final Trigger turretTuningTrigger = controller.start();
+    private final Trigger turretTuningTrigger = controller.start();
+    private final Trigger indexTrigger = controller.back();
     //     private final Trigger turretScoringTrigger = controller.a();
     private final Trigger climbTrigger = controller.y();
-    private final Trigger extendTrigger = controller.start();
-    private final Trigger stowTrigger = controller.back();
+    //     private final Trigger extendTrigger = controller.start();
+    //     private final Trigger stowTrigger = controller.back();
     private final Trigger manualScoreTrigger = controller.leftBumper();
     private final Trigger manualPassTrigger = controller.rightBumper();
 
@@ -142,8 +142,7 @@ public class RobotContainer {
                         // new IntakeIO() {},
                         // new IntakeIO() {},
                         new IntakeIOTalonFX(IntakeConstants.LEFT_RACK_ID, IntakeConstants.LEFT_SPIN_ID),
-                        new IntakeIOTalonFXDual(
-                                IntakeConstants.FR_RACK_ID, IntakeConstants.BR_RACK_ID, IntakeConstants.RIGHT_SPIN_ID),
+                        new IntakeIOTalonFX(IntakeConstants.RIGHT_RACK_ID, IntakeConstants.RIGHT_SPIN_ID),
                         drive::getChassisSpeeds);
                 indexer = new Indexer(new IndexerIOTalonFX());
                 // indexer = new Indexer(new IndexerIO() {}, drive::getRotation);
@@ -327,20 +326,24 @@ public class RobotContainer {
         // collectTrigger.onFalse(superstructure.stopCollecting().onlyIf(() -> superstructure.getGoal() ==
         // Goal.EXPANDED));
 
-        // turretTuningTrigger.onTrue(Commands.either(
-        //         turret.setGoal(TurretGoal.OFF),
-        //         turret.setGoal(TurretGoal.TUNING),
-        //         () -> turret.getGoal() == TurretGoal.TUNING));
+        // turretTuningTrigger.toggleOnTrue(Commands.startEnd(
+        //         turret.setFlywheelSpeed(RPM.of(3000))::initialize, turret.setGoal(TurretGoal.OFF)::initialize));
+        turretTuningTrigger.onTrue(Commands.either(
+                turret.setGoal(TurretGoal.OFF),
+                turret.setGoal(TurretGoal.TUNING),
+                () -> turret.getGoal() == TurretGoal.TUNING));
 
         // turretScoringTrigger.onTrue(Commands.either(
         //         superstructure.setGoal(Goal.IDLE),
         //         superstructure.setGoal(Goal.SCORING),
         //         () -> superstructure.getGoal() == Goal.SCORING));
 
+        indexTrigger.whileTrue(indexer.activate().andThen(Commands.idle()).finallyDo(indexer::stop));
+
         climbTrigger.toggleOnTrue(
                 intakes.setGoal(IntakesGoal.STOW).andThen(AutoClimb.getAutoClimbCommand(drive, vision, climber)));
-        extendTrigger.toggleOnTrue(intakes.setGoal(IntakesGoal.STOW).andThen(climber.extend()));
-        stowTrigger.toggleOnTrue(climber.stow());
+        // extendTrigger.toggleOnTrue(intakes.setGoal(IntakesGoal.STOW).andThen(climber.extend()));
+        // stowTrigger.toggleOnTrue(climber.stow());
 
         manualScoreTrigger.whileTrue(turret.manualScore()
                 .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))

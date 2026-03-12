@@ -29,7 +29,12 @@ public class SystemChecks {
         this.climber = climber;
 
         SmartDashboard.putData("System Checks/Turret", turret());
+        SmartDashboard.putData("System Checks/TurretTurn", turretTurn());
+        SmartDashboard.putData("System Checks/TurretHood", turretHood());
+        SmartDashboard.putData("System Checks/TurretFlywheels", turretFlywheels());
         SmartDashboard.putData("System Checks/Intakes", intakes());
+        SmartDashboard.putData("System Checks/LeftIntake", leftIntake());
+        SmartDashboard.putData("System Checks/RightIntake", rightIntake());
         SmartDashboard.putData("System Checks/Indexer", indexer());
         SmartDashboard.putData("System Checks/Climber", climber());
     }

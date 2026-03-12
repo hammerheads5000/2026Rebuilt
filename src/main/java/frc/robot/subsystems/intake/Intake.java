@@ -7,12 +7,11 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.DEPLOY_POS;
 import static frc.robot.Constants.IntakeConstants.DEPLOY_TOLERANCE;
-import static frc.robot.Constants.IntakeConstants.LEFT_RACK_GAINS;
+import static frc.robot.Constants.IntakeConstants.RACK_GAINS;
 import static frc.robot.Constants.IntakeConstants.RACK_MOTION_MAGIC;
 import static frc.robot.Constants.IntakeConstants.RACK_STALL_CURRENT;
 import static frc.robot.Constants.IntakeConstants.RACK_STALL_VEL;
 import static frc.robot.Constants.IntakeConstants.REVERSE_SPIN_VOLTAGE;
-import static frc.robot.Constants.IntakeConstants.RIGHT_RACK_GAINS;
 import static frc.robot.Constants.IntakeConstants.SPIN_STALL_ANGULAR_VELOCITY;
 import static frc.robot.Constants.IntakeConstants.SPIN_STALL_CURRENT;
 import static frc.robot.Constants.IntakeConstants.SPIN_VOLTAGE;
@@ -21,7 +20,6 @@ import static frc.robot.Constants.IntakeConstants.STOW_TOLERANCE;
 import static frc.robot.Constants.IntakeConstants.UNJAM_SPIN_VOLTAGE;
 import static frc.robot.Constants.IntakeConstants.ZEROING_VOLTAGE;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -84,13 +82,11 @@ public class Intake extends SubsystemBase {
         this.side = side;
         this.name = side.toString();
 
-        Slot0Configs gains = side == IntakeSide.Left ? LEFT_RACK_GAINS : RIGHT_RACK_GAINS;
-
-        rackKP = new LoggedTunableNumber("Intakes/" + name + "/kP", gains.kP);
-        rackKD = new LoggedTunableNumber("Intakes/" + name + "/kD", gains.kD);
-        rackKV = new LoggedTunableNumber("Intakes/" + name + "/kV", gains.kV);
-        rackKA = new LoggedTunableNumber("Intakes/" + name + "/kA", gains.kA);
-        rackKS = new LoggedTunableNumber("Intakes/" + name + "/kS", gains.kS);
+        rackKP = new LoggedTunableNumber("Intakes/" + name + "/kP", RACK_GAINS.kP);
+        rackKD = new LoggedTunableNumber("Intakes/" + name + "/kD", RACK_GAINS.kD);
+        rackKV = new LoggedTunableNumber("Intakes/" + name + "/kV", RACK_GAINS.kV);
+        rackKA = new LoggedTunableNumber("Intakes/" + name + "/kA", RACK_GAINS.kA);
+        rackKS = new LoggedTunableNumber("Intakes/" + name + "/kS", RACK_GAINS.kS);
 
         rackDisconnectedAlert = new Alert(name + " Intake Rack Motor Disconnected!", AlertType.kError);
         spinDisconnectedAlert = new Alert(name + " Intake Spin Motor Disconnected!", AlertType.kError);

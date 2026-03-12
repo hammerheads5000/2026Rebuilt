@@ -41,6 +41,10 @@ public interface TurretIO {
         public Voltage flywheelAppliedVolts = Volts.of(0.0);
         public Current flywheelCurrent = Amps.of(0.0);
         public Current flywheelSupplyCurrent = Amps.of(0.0);
+        public Current flywheelLeaderCurrent = Amps.of(0.0);
+        public Current flywheelLeaderSupplyCurrent = Amps.of(0.0);
+        public Current flywheelFollowerCurrent = Amps.of(0.0);
+        public Current flywheelFollowerSupplyCurrent = Amps.of(0.0);
         public AngularVelocity flywheelSpeed = RadiansPerSecond.of(0.0);
         public AngularAcceleration flywheelAccel = RadiansPerSecondPerSecond.of(0.0);
         public AngularVelocity flywheelSetpointSpeed = RadiansPerSecond.of(0.0);

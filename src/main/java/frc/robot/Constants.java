@@ -19,7 +19,6 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -368,25 +367,25 @@ public final class Constants {
     }
 
     public static class TurretConstants {
-        public static final int TURN_ID = 25;
-        public static final int HOOD_ID = 21;
-        public static final int FLYWHEEL_ID = 23;
-        public static final int FLYWHEEL_FOLLOWER_ID = 22;
-        public static final int ENCODER_ID = 24;
+        public static final int TURN_ID = 22;
+        public static final int HOOD_ID = 26;
+        public static final int FLYWHEEL_ID = 24;
+        public static final int FLYWHEEL_FOLLOWER_ID = 25;
+        public static final int ENCODER_ID = 23;
 
         public static final double ENCODER_TO_TURRET_RATIO = 180.0 / 27 * 1.0 / 23; // 180:27 big gear, 1:23 cycloidal
-        public static final double TURN_TO_TURRET_RATIO = 28.0 / 14 * 180.0 / 10; // 28:14 belt, 180:10 big gear
+        public static final double TURN_TO_TURRET_RATIO = 28.0 / 12 * 180.0 / 10; // 28:14 belt, 180:10 big gear
         public static final double HOOD_MOTOR_RATIO =
-                50.0 / 14 * 22.0 / 20 * 156.0 / 10; // 50:? gear, 22:20 belt, 156:10 rack
+                50.0 / 16 * 22.0 / 20 * 156.0 / 10; // 50:? gear, 22:20 belt, 156:10 rack
 
         public static final Slot0Configs TURN_GAINS =
-                new Slot0Configs().withKP(400).withKD(0.1).withKS(2);
+                new Slot0Configs().withKP(100).withKD(0.1).withKS(2);
 
         public static final Slot0Configs HOOD_GAINS =
-                new Slot0Configs().withKP(1024).withKD(5).withKS(0.28);
+                new Slot0Configs().withKP(800).withKD(5).withKS(0.28);
 
         public static final Slot0Configs FLYWHEEL_GAINS =
-                new Slot0Configs().withKP(40).withKD(0.4).withKS(10).withKV(0.3);
+                new Slot0Configs().withKP(10).withKD(0.0).withKS(6).withKV(0.04);
 
         public static final CurrentLimitsConfigs TURN_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30);
@@ -403,10 +402,10 @@ public final class Constants {
 
         public static final FeedbackConfigs TURN_FEEDBACK_CONFIGS = new FeedbackConfigs()
                 .withFeedbackRemoteSensorID(ENCODER_ID)
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+                .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
                 .withSensorToMechanismRatio(ENCODER_TO_TURRET_RATIO)
                 .withRotorToSensorRatio(TURN_TO_TURRET_RATIO / ENCODER_TO_TURRET_RATIO)
-                .withFeedbackRotorOffset(-0.4)
+                .withFeedbackRotorOffset(0)
                 .withVelocityFilterTimeConstant(0.01);
 
         public static final MotorOutputConfigs HOOD_OUTPUT_CONFIGS = new MotorOutputConfigs()
@@ -422,9 +421,9 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(-0.497314453125)
+                .withMagnetOffset(0.05859375)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
-                .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
+                .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
 
         public static final FeedbackConfigs FLYWHEEL_FEEDBACK_CONFIGS =
                 new FeedbackConfigs().withVelocityFilterTimeConstant(Seconds.of(0.01));
@@ -446,8 +445,8 @@ public final class Constants {
         public static final Distance EXTRA_DUCK_DISTANCE = Meters.of(0.3);
         public static final Time DUCK_TIME = Seconds.of(0.2);
 
-        public static final Angle MIN_HOOD_ANGLE = Degrees.of(14);
-        public static final Angle MAX_HOOD_ANGLE = Degrees.of(45);
+        public static final Angle MIN_HOOD_ANGLE = Degrees.of(6.24);
+        public static final Angle MAX_HOOD_ANGLE = Degrees.of(47);
 
         public static final Current HOOD_STALL_CURRENT = Amps.of(10);
         public static final AngularVelocity HOOD_STALL_ANGULAR_VELOCITY = RadiansPerSecond.of(0.3);
@@ -515,30 +514,29 @@ public final class Constants {
     }
 
     public static class IntakeConstants {
-        public static final int LEFT_RACK_ID = 26;
-        public static final int FR_RACK_ID = 12;
-        public static final int BR_RACK_ID = 2;
+        public static final int LEFT_RACK_ID = 21;
+        public static final int RIGHT_RACK_ID = 2;
         public static final int LEFT_SPIN_ID = 27;
         public static final int RIGHT_SPIN_ID = 28;
 
         public static final double ROTOR_TO_PINION_RATIO = 2.0 / 1;
         public static final Distance PINION_PITCH_RADIUS = Inches.of(0.5);
 
-        public static final Slot0Configs RIGHT_RACK_GAINS = new Slot0Configs()
-                .withKP(3.0)
-                .withKD(0.1)
-                .withKA(0.0)
-                .withKV(0.23)
-                .withKS(0.4);
+        // public static final Slot0Configs RIGHT_RACK_GAINS = new Slot0Configs()
+        //         .withKP(3.0)
+        //         .withKD(0.1)
+        //         .withKA(0.0)
+        //         .withKV(0.23)
+        //         .withKS(0.4);
 
-        public static final Slot0Configs LEFT_RACK_GAINS = new Slot0Configs()
+        public static final Slot0Configs RACK_GAINS = new Slot0Configs()
                 .withKP(15.0)
                 .withKD(0.1)
                 .withKA(0.0)
                 .withKV(2.0)
                 .withKS(1.2);
 
-        public static final Slot1Configs RACK_DIFF_GAINS = new Slot1Configs().withKP(0.5);
+        // public static final Slot1Configs RACK_DIFF_GAINS = new Slot1Configs().withKP(0.5);
 
         public static final MotorOutputConfigs RIGHT_RACK_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Coast)

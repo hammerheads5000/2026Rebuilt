@@ -218,7 +218,11 @@ public class TurretIOTalonFX implements TurretIO {
         inputs.flywheelSetpointAccel = RotationsPerSecondPerSecond.of(flywheelSetpointAccel.getValueAsDouble());
         inputs.flywheelAppliedVolts = flywheelAppliedVolts.getValue();
         inputs.flywheelCurrent = flywheelCurrent.getValue().plus(flywheelFollowerCurrent.getValue());
-        inputs.flywheelSupplyCurrent = flywheelCurrent.getValue().plus(flywheelFollowerSupplyCurrent.getValue());
+        inputs.flywheelSupplyCurrent = flywheelSupplyCurrent.getValue().plus(flywheelFollowerSupplyCurrent.getValue());
+        inputs.flywheelLeaderCurrent = flywheelCurrent.getValue();
+        inputs.flywheelLeaderSupplyCurrent = flywheelSupplyCurrent.getValue();
+        inputs.flywheelFollowerCurrent = flywheelFollowerCurrent.getValue();
+        inputs.flywheelFollowerSupplyCurrent = flywheelFollowerSupplyCurrent.getValue();
     }
 
     @Override
