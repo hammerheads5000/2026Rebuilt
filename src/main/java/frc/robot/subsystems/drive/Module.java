@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import frc.robot.util.VirtualPD;
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
@@ -39,6 +41,10 @@ public class Module {
         this.io = io;
         this.index = index;
         this.constants = constants;
+
+        VirtualPD.registerMotor(() -> Amps.of(inputs.turnSupplyCurrentAmps));
+        VirtualPD.registerMotor(() -> Amps.of(inputs.driveSupplyCurrentAmps));
+
         driveDisconnectedAlert =
                 new Alert("Disconnected drive motor on module " + Integer.toString(index) + ".", AlertType.kError);
         turnDisconnectedAlert =

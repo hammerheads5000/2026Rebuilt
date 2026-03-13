@@ -32,6 +32,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.subsystems.intake.Intakes.IntakeSide;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.VirtualPD;
 import java.util.Map;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -81,6 +82,9 @@ public class Intake extends SubsystemBase {
         this.io = io;
         this.side = side;
         this.name = side.toString();
+
+        VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent);
+        VirtualPD.registerMotor(() -> inputs.rackSupplyCurrent);
 
         rackKP = new LoggedTunableNumber("Intakes/" + name + "/kP", RACK_GAINS.kP);
         rackKD = new LoggedTunableNumber("Intakes/" + name + "/kD", RACK_GAINS.kD);

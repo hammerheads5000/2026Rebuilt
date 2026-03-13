@@ -37,6 +37,7 @@ import frc.robot.Constants.Mode;
 import frc.robot.Robot;
 import frc.robot.subsystems.turret.TurretCalculator.ShotData;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.VirtualPD;
 import frc.robot.util.Zones;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -101,6 +102,11 @@ public class Turret extends SubsystemBase {
 
         io.zeroHoodPosition();
         setTarget(FieldConstants.HUB_BLUE);
+
+        VirtualPD.registerMotor(() -> inputs.hoodSupplyCurrent);
+        VirtualPD.registerMotor(() -> inputs.turnSupplyCurrent);
+        VirtualPD.registerMotor(() -> inputs.flywheelLeaderSupplyCurrent);
+        VirtualPD.registerMotor(() -> inputs.flywheelFollowerSupplyCurrent);
 
         hoodStalledTrigger = new Trigger(() -> inputs.hoodCurrent.abs(Amps) >= HOOD_STALL_CURRENT.abs(Amps)
                 && inputs.hoodVelocity.abs(RadiansPerSecond) <= HOOD_STALL_ANGULAR_VELOCITY.abs(RadiansPerSecond));

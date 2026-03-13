@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.util.VirtualPD;
 import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
@@ -42,6 +43,9 @@ public class Climber extends SubsystemBase {
 
     public Climber(ClimberIO io) {
         this.io = io;
+
+        VirtualPD.registerMotor(() -> inputs.frontSupplyCurrent);
+        VirtualPD.registerMotor(() -> inputs.backSupplyCurrent);
 
         SmartDashboard.putData("Climb/Climb", climb());
         SmartDashboard.putData("Climb/AutoClimb", autoClimb());

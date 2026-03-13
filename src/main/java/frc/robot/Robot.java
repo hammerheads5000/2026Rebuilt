@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.Elastic;
 import frc.robot.util.HubShiftUtil;
 import frc.robot.util.PhoenixUtil;
+import frc.robot.util.VirtualPD;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -88,6 +89,8 @@ public class Robot extends LoggedRobot {
         // timing (see the template project documentation for details)
         // Threads.setCurrentThreadPriority(true, 99);
         PhoenixUtil.refreshAll();
+
+        VirtualPD.logTotalCurrent();
 
         // Runs the Scheduler. This is responsible for polling buttons, adding
         // newly-scheduled commands, running already-scheduled commands, removing

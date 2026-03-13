@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
+import frc.robot.util.VirtualPD;
 import java.util.Set;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -48,6 +49,9 @@ public class Indexer extends SubsystemBase {
     public Indexer(IndexerIO io) {
         this.io = io;
         this.visualizer = new IndexerVisualizer();
+
+        VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent);
+        VirtualPD.registerMotor(() -> inputs.feedSupplyCurrent);
 
         spinStallTrigger.and(() -> this.goal == IndexerGoal.ACTIVE).onTrue(unjam());
 
