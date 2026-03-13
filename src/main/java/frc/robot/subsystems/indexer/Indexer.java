@@ -50,8 +50,8 @@ public class Indexer extends SubsystemBase {
         this.io = io;
         this.visualizer = new IndexerVisualizer();
 
-        VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent);
-        VirtualPD.registerMotor(() -> inputs.feedSupplyCurrent);
+        VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent, "Indexer");
+        VirtualPD.registerMotor(() -> inputs.feedSupplyCurrent, "Indexer");
 
         spinStallTrigger.and(() -> this.goal == IndexerGoal.ACTIVE).onTrue(unjam());
 

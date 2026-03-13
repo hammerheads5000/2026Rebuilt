@@ -83,8 +83,8 @@ public class Intake extends SubsystemBase {
         this.side = side;
         this.name = side.toString();
 
-        VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent);
-        VirtualPD.registerMotor(() -> inputs.rackSupplyCurrent);
+        VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent, "Intakes/" + name);
+        VirtualPD.registerMotor(() -> inputs.rackSupplyCurrent, "Intakes/" + name);
 
         rackKP = new LoggedTunableNumber("Intakes/" + name + "/kP", RACK_GAINS.kP);
         rackKD = new LoggedTunableNumber("Intakes/" + name + "/kD", RACK_GAINS.kD);

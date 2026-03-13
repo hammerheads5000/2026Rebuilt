@@ -34,7 +34,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.Mode;
-import frc.robot.Robot;
 import frc.robot.subsystems.turret.TurretCalculator.ShotData;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.VirtualPD;
@@ -103,10 +102,10 @@ public class Turret extends SubsystemBase {
         io.zeroHoodPosition();
         setTarget(FieldConstants.HUB_BLUE);
 
-        VirtualPD.registerMotor(() -> inputs.hoodSupplyCurrent);
-        VirtualPD.registerMotor(() -> inputs.turnSupplyCurrent);
-        VirtualPD.registerMotor(() -> inputs.flywheelLeaderSupplyCurrent);
-        VirtualPD.registerMotor(() -> inputs.flywheelFollowerSupplyCurrent);
+        VirtualPD.registerMotor(() -> inputs.hoodSupplyCurrent, "Turret");
+        VirtualPD.registerMotor(() -> inputs.turnSupplyCurrent, "Turret");
+        VirtualPD.registerMotor(() -> inputs.flywheelLeaderSupplyCurrent, "Turret");
+        VirtualPD.registerMotor(() -> inputs.flywheelFollowerSupplyCurrent, "Turret");
 
         hoodStalledTrigger = new Trigger(() -> inputs.hoodCurrent.abs(Amps) >= HOOD_STALL_CURRENT.abs(Amps)
                 && inputs.hoodVelocity.abs(RadiansPerSecond) <= HOOD_STALL_ANGULAR_VELOCITY.abs(RadiansPerSecond));
@@ -334,7 +333,7 @@ public class Turret extends SubsystemBase {
         ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
 
         ShotData calculatedShot;
-        if (Robot.isReal()) {
+        if (Constants.CURRENT_MODE == Mode.REAL) {
             calculatedShot = TurretCalculator.iterativeMovingShotFromMap(
                     robotPose, fieldSpeeds, currentTarget, LOOKAHEAD_ITERATIONS);
         } else {
