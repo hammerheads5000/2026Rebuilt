@@ -422,7 +422,7 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(0.05859375)
+                .withMagnetOffset(0.05712890625)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
                 .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
 
@@ -477,38 +477,32 @@ public final class Constants {
             SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(35)));
             TOF_MAP.put(5.18, 1.42);
 
-            SHOT_MAP.put(4.72, new ShotData(RPM.of(3600), Degrees.of(32)));
+            SHOT_MAP.put(4.72, new ShotData(RPM.of(3600), Degrees.of(33)));
             TOF_MAP.put(4.72, 1.42);
 
             SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
             TOF_MAP.put(4.24, 1.41);
             // end of tuning 3/12
-            SHOT_MAP.put(4.05, new ShotData(RPM.of(2725), Degrees.of(25)));
-            TOF_MAP.put(4.05, 1.36);
+            SHOT_MAP.put(3.87, new ShotData(RPM.of(3450), Degrees.of(31)));
+            TOF_MAP.put(3.87, 1.41);
 
-            SHOT_MAP.put(3.74, new ShotData(RPM.of(2660), Degrees.of(24)));
-            TOF_MAP.put(3.74, 1.21);
+            SHOT_MAP.put(3.29, new ShotData(RPM.of(3300), Degrees.of(29)));
+            TOF_MAP.put(3.29, 1.30);
 
-            SHOT_MAP.put(3.42, new ShotData(RPM.of(2600), Degrees.of(23)));
-            TOF_MAP.put(3.42, 1.40);
+            SHOT_MAP.put(2.84, new ShotData(RPM.of(3260), Degrees.of(26)));
+            TOF_MAP.put(2.84, 1.30);
 
-            SHOT_MAP.put(3.06, new ShotData(RPM.of(2510), Degrees.of(22)));
-            TOF_MAP.put(3.06, 1.38);
+            SHOT_MAP.put(2.45, new ShotData(RPM.of(3100), Degrees.of(25)));
+            TOF_MAP.put(2.45, 1.25);
 
-            SHOT_MAP.put(2.73, new ShotData(RPM.of(2410), Degrees.of(20.5)));
-            TOF_MAP.put(2.73, 1.34);
+            SHOT_MAP.put(2.09, new ShotData(RPM.of(3000), Degrees.of(22.5)));
+            TOF_MAP.put(2.09, 1.17);
 
-            SHOT_MAP.put(2.45, new ShotData(RPM.of(2360), Degrees.of(19.5)));
-            TOF_MAP.put(2.45, 1.28);
+            SHOT_MAP.put(1.73, new ShotData(RPM.of(2900), Degrees.of(20)));
+            TOF_MAP.put(1.73, 1.17);
 
-            SHOT_MAP.put(2.14, new ShotData(RPM.of(2310), Degrees.of(18)));
-            TOF_MAP.put(2.14, 1.31);
-
-            SHOT_MAP.put(1.86, new ShotData(RPM.of(2260), Degrees.of(17)));
-            TOF_MAP.put(1.86, 1.24);
-
-            SHOT_MAP.put(1.55, new ShotData(RPM.of(2235), Degrees.of(15)));
-            TOF_MAP.put(1.55, 1.23);
+            SHOT_MAP.put(1.37, new ShotData(RPM.of(2800), Degrees.of(17)));
+            TOF_MAP.put(1.37, 1.09);
         }
 
         public static final Time ACTIVE_PRESHOOT_TIME = Seconds.of(2);
@@ -605,9 +599,12 @@ public final class Constants {
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(60);
 
         public static final Voltage SPIN_VOLTAGE = Volts.of(4);
-        public static final Voltage FEED_VOLTAGE = Volts.of(8);
+        public static final Voltage FEED_VOLTAGE = Volts.of(11);
+        public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
+        public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-5);
 
-        public static final AngularVelocity FEED_THRESHOLD = RPM.of(2000);
+        public static final AngularVelocity SPIN_STALL_ANGULAR_VELOCITY = RPM.of(1000);
+        public static final Current SPIN_STALL_CURRENT = Amps.of(30);
     }
 
     public static class ClimberConstants {

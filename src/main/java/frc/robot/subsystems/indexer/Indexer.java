@@ -1,8 +1,14 @@
 package frc.robot.subsystems.indexer;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IndexerConstants.FEED_VOLTAGE;
+import static frc.robot.Constants.IndexerConstants.SPIN_STALL_ANGULAR_VELOCITY;
+import static frc.robot.Constants.IndexerConstants.SPIN_STALL_CURRENT;
 import static frc.robot.Constants.IndexerConstants.SPIN_VOLTAGE;
+import static frc.robot.Constants.IndexerConstants.UNJAM_FEED_VOLTAGE;
+import static frc.robot.Constants.IndexerConstants.UNJAM_SPIN_VOLTAGE;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -10,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.Set;
@@ -25,6 +32,11 @@ public class Indexer extends SubsystemBase {
     private final LoggedTunableNumber feedVoltage =
             new LoggedTunableNumber("Indexer/Feed Voltage", FEED_VOLTAGE.in(Volts));
 
+    private final Trigger spinStallTrigger = new Trigger(
+                    () -> inputs.spinCurrent.abs(Amps) >= SPIN_STALL_CURRENT.in(Amps)
+                            && inputs.spinVelocity.abs(RPM) <= SPIN_STALL_ANGULAR_VELOCITY.in(RPM))
+            .debounce(0.2);
+
     private final IndexerVisualizer visualizer;
 
     private final Alert feedDisconnectedAlert = new Alert("Indexer Feed Motor Disconnected", AlertType.kError);
@@ -36,6 +48,8 @@ public class Indexer extends SubsystemBase {
     public Indexer(IndexerIO io) {
         this.io = io;
         this.visualizer = new IndexerVisualizer();
+
+        spinStallTrigger.and(() -> this.goal == IndexerGoal.ACTIVE).onTrue(unjam());
 
         SmartDashboard.putData("Overrides/Indexer", disable());
     }
@@ -64,7 +78,7 @@ public class Indexer extends SubsystemBase {
                             if (goal == IndexerGoal.ACTIVE && this.goal != IndexerGoal.ACTIVE) {
                                 toSchedule = activate();
                             } else if (goal == IndexerGoal.IDLE) {
-                                toSchedule = this.run(this::stop);
+                                toSchedule = this.runOnce(this::stop);
                             }
                             this.goal = goal;
                             return toSchedule;
@@ -86,17 +100,29 @@ public class Indexer extends SubsystemBase {
 
     public Command activate() {
         return this.runOnce(() -> {
-                    io.setFeedOutput(FEED_VOLTAGE);
-                    io.setSpinOutput(SPIN_VOLTAGE);
+                    io.setFeedOutput(Volts.of(feedVoltage.get()));
+                    // io.setSpinOutput(SPIN_VOLTAGE);
                 })
-                // .andThen(Commands.waitSeconds(0.1875))
-                // .andThen(this.runOnce(() -> {
-                //     io.setFeedOutput(Volts.of(feedVoltage.get()));
-                //     io.stopSpin();
-                // }))
+                .andThen(Commands.waitSeconds(0.5))
+                .andThen(this.runOnce(() -> {
+                    io.setSpinOutput(Volts.of(spinVoltage.get()));
+                    // io.stopSpin();
+                }))
                 // .andThen(Commands.waitUntil(() -> inputs.feedVelocity.abs(RPM) >= FEED_THRESHOLD.in(RPM)))
                 // .andThen(this.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
                 .withName("IndexerActivate");
+    }
+
+    private Command unjam() {
+        return Commands.runOnce(() -> {
+                    io.setFeedOutput(UNJAM_FEED_VOLTAGE);
+                    io.setSpinOutput(UNJAM_SPIN_VOLTAGE);
+                })
+                .andThen(Commands.waitSeconds(0.3))
+                .andThen(Commands.runOnce(() -> {
+                    io.setFeedOutput(Volts.of(feedVoltage.get()));
+                    io.setSpinOutput(Volts.of(spinVoltage.get()));
+                }));
     }
 
     public void stop() {

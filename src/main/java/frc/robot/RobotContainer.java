@@ -39,7 +39,6 @@ import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
-import frc.robot.subsystems.climber.ClimberIOTalonFX;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -148,7 +147,7 @@ public class RobotContainer {
                 // indexer = new Indexer(new IndexerIO() {}, drive::getRotation);
                 turret = new Turret(new TurretIOTalonFX(), drive::getPose, drive::getFieldSpeeds);
                 // turret = new Turret(new TurretIO() {}, drive::getPose, drive::getFieldSpeeds);
-                climber = new Climber(new ClimberIOTalonFX());
+                climber = new Climber(new ClimberIO() {});
                 vision = new Vision(
                         drive::addVisionMeasurement,
                         new VisionIOPhotonVision(VisionConstants.CAMERA_NAMES[0], VisionConstants.CAMERA_TRANSFORMS[0]),
@@ -330,15 +329,18 @@ public class RobotContainer {
         //         turret.setFlywheelSpeed(RPM.of(3000))::initialize, turret.setGoal(TurretGoal.OFF)::initialize));
         turretTuningTrigger.onTrue(Commands.either(
                 turret.setGoal(TurretGoal.OFF),
-                turret.setGoal(TurretGoal.TUNING),
-                () -> turret.getGoal() == TurretGoal.TUNING));
+                turret.setGoal(TurretGoal.SCORING),
+                () -> turret.getGoal() == TurretGoal.SCORING));
 
         // turretScoringTrigger.onTrue(Commands.either(
         //         superstructure.setGoal(Goal.IDLE),
         //         superstructure.setGoal(Goal.SCORING),
         //         () -> superstructure.getGoal() == Goal.SCORING));
 
-        indexTrigger.whileTrue(indexer.activate().andThen(Commands.idle()).finallyDo(indexer::stop));
+        indexTrigger.onTrue(Commands.either(
+                indexer.setGoal(IndexerGoal.IDLE),
+                indexer.setGoal(IndexerGoal.ACTIVE),
+                () -> indexer.getGoal() == IndexerGoal.ACTIVE));
 
         climbTrigger.toggleOnTrue(
                 intakes.setGoal(IntakesGoal.STOW).andThen(AutoClimb.getAutoClimbCommand(drive, vision, climber)));
