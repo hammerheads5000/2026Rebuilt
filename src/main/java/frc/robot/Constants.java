@@ -380,13 +380,13 @@ public final class Constants {
                 50.0 / 14 * 22.0 / 20 * 156.0 / 10; // 50:14 gear, 22:20 belt, 156:10 rack
 
         public static final Slot0Configs TURN_GAINS =
-                new Slot0Configs().withKP(100).withKD(0.1).withKS(2);
+                new Slot0Configs().withKP(200).withKD(0.1).withKS(2);
 
         public static final Slot0Configs HOOD_GAINS =
                 new Slot0Configs().withKP(800).withKD(5).withKS(0.28);
 
         public static final Slot0Configs FLYWHEEL_GAINS =
-                new Slot0Configs().withKP(10).withKD(5.0).withKS(6).withKV(0.04);
+                new Slot0Configs().withKP(12).withKD(0.0).withKS(6).withKV(0.04);
 
         public static final CurrentLimitsConfigs TURN_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30);
@@ -403,7 +403,7 @@ public final class Constants {
 
         public static final FeedbackConfigs TURN_FEEDBACK_CONFIGS = new FeedbackConfigs()
                 .withFeedbackRemoteSensorID(ENCODER_ID)
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+                .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
                 .withSensorToMechanismRatio(ENCODER_TO_TURRET_RATIO)
                 .withRotorToSensorRatio(TURN_TO_TURRET_RATIO / ENCODER_TO_TURRET_RATIO)
                 .withFeedbackRotorOffset(0)
@@ -439,8 +439,8 @@ public final class Constants {
         public static final Distance SHOOT_RADIUS = Inches.of(1);
         public static final int LOOKAHEAD_ITERATIONS = 3;
 
-        public static final Angle MIN_TURN_ANGLE = Rotations.of(-0.55);
-        public static final Angle MAX_TURN_ANGLE = Rotations.of(0.55);
+        public static final Angle MIN_TURN_ANGLE = Degrees.of(-236);
+        public static final Angle MAX_TURN_ANGLE = Degrees.of(216);
         public static final Angle TURNAROUND_ZONE = Degrees.of(30);
 
         public static final Distance EXTRA_DUCK_DISTANCE = Meters.of(0.3);
@@ -511,10 +511,11 @@ public final class Constants {
     public static class IntakeConstants {
         public static final int LEFT_RACK_ID = 21;
         public static final int RIGHT_RACK_ID = 2;
-        public static final int LEFT_SPIN_ID = 27;
-        public static final int RIGHT_SPIN_ID = 28;
+        public static final int LEFT_SPIN_ID = 28;
+        public static final int RIGHT_SPIN_ID = 27;
 
-        public static final double ROTOR_TO_PINION_RATIO = 2.0 / 1;
+        public static final double LEFT_ROTOR_TO_PINION_RATIO = 34.0 / 12; // 34:12 gear
+        public static final double RIGHT_ROTOR_TO_PINION_RATIO = 50.0 / 17; // 50:17 belt
         public static final Distance PINION_PITCH_RADIUS = Inches.of(0.5);
 
         // public static final Slot0Configs RIGHT_RACK_GAINS = new Slot0Configs()
@@ -524,12 +525,12 @@ public final class Constants {
         //         .withKV(0.23)
         //         .withKS(0.4);
 
-        public static final Slot0Configs RACK_GAINS = new Slot0Configs()
-                .withKP(15.0)
-                .withKD(0.1)
+        public static final Slot0Configs LEFT_RACK_GAINS = new Slot0Configs()
+                .withKP(21)
+                .withKD(0.15)
                 .withKA(0.0)
-                .withKV(2.0)
-                .withKS(1.2);
+                .withKV(3.3)
+                .withKS(1.7);
 
         // public static final Slot1Configs RACK_DIFF_GAINS = new Slot1Configs().withKP(0.5);
 
@@ -545,10 +546,7 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast)
                 .withInverted(InvertedValue.CounterClockwise_Positive);
 
-        public static final CurrentLimitsConfigs RIGHT_RACK_CURRENT_LIMITS =
-                new CurrentLimitsConfigs().withStatorCurrentLimit(50).withSupplyCurrentLowerLimit(30);
-
-        public static final CurrentLimitsConfigs LEFT_RACK_CURRENT_LIMITS =
+        public static final CurrentLimitsConfigs RACK_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withStatorCurrentLimit(100).withSupplyCurrentLowerLimit(30);
 
         public static final CurrentLimitsConfigs SPIN_CURRENT_LIMITS =
@@ -560,7 +558,7 @@ public final class Constants {
 
         public static final Distance STOW_POS = Inches.of(0);
         public static final Distance DEPLOY_POS = Inches.of(11);
-        public static final Voltage SPIN_VOLTAGE = Volts.of(12);
+        public static final Voltage SPIN_VOLTAGE = Volts.of(10);
         public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(10);
         public static final Distance STOW_TOLERANCE = Inches.of(0.5);

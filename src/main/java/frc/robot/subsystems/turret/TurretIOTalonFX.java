@@ -72,7 +72,8 @@ public class TurretIOTalonFX implements TurretIO {
     private final PositionVoltage turnPositionRequest = new PositionVoltage(0);
     private final PositionVoltage hoodPositionRequest = new PositionVoltage(0);
     private final VoltageOut hoodVoltageRequest = new VoltageOut(0);
-    private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(0);
+    private final VelocityTorqueCurrentFOC flywheelVelocityRequest =
+            new VelocityTorqueCurrentFOC(0); // .withUpdateFreqHz(250);
 
     private final Follower followRequest = new Follower(
                     FLYWHEEL_ID,
@@ -174,6 +175,7 @@ public class TurretIOTalonFX implements TurretIO {
                 flywheelSupplyCurrent,
                 flywheelFollowerCurrent,
                 flywheelFollowerSupplyCurrent);
+        // PhoenixUtil.registerStatusSignals(Hertz.of(250), flywheelSpeed);
         turnMotor.optimizeBusUtilization();
         hoodMotor.optimizeBusUtilization();
         flywheelMotor.optimizeBusUtilization();

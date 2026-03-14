@@ -7,11 +7,12 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.DEPLOY_POS;
 import static frc.robot.Constants.IntakeConstants.DEPLOY_TOLERANCE;
-import static frc.robot.Constants.IntakeConstants.RACK_GAINS;
+import static frc.robot.Constants.IntakeConstants.LEFT_RACK_GAINS;
+import static frc.robot.Constants.IntakeConstants.LEFT_ROTOR_TO_PINION_RATIO;
 import static frc.robot.Constants.IntakeConstants.RACK_MOTION_MAGIC;
 import static frc.robot.Constants.IntakeConstants.RACK_STALL_CURRENT;
 import static frc.robot.Constants.IntakeConstants.RACK_STALL_VEL;
-import static frc.robot.Constants.IntakeConstants.REVERSE_SPIN_VOLTAGE;
+import static frc.robot.Constants.IntakeConstants.RIGHT_ROTOR_TO_PINION_RATIO;
 import static frc.robot.Constants.IntakeConstants.SPIN_STALL_ANGULAR_VELOCITY;
 import static frc.robot.Constants.IntakeConstants.SPIN_STALL_CURRENT;
 import static frc.robot.Constants.IntakeConstants.SPIN_VOLTAGE;
@@ -70,8 +71,8 @@ public class Intake extends SubsystemBase {
             new LoggedTunableNumber("Intakes/maxAccRotPerSecPerSec", RACK_MOTION_MAGIC.MotionMagicAcceleration);
     private final LoggedTunableNumber spinVoltage =
             new LoggedTunableNumber("Intakes/Spin Voltage", SPIN_VOLTAGE.in(Volts));
-    private final LoggedTunableNumber reverseSpinVoltage =
-            new LoggedTunableNumber("Intakes/Reverse Spin Voltage", REVERSE_SPIN_VOLTAGE.in(Volts));
+    // private final LoggedTunableNumber reverseSpinVoltage =
+    //         new LoggedTunableNumber("Intakes/Reverse Spin Voltage", REVERSE_SPIN_VOLTAGE.in(Volts));
     private final LoggedTunableNumber deployPos =
             new LoggedTunableNumber("Intakes/DeployPosInches", DEPLOY_POS.in(Inches));
 
@@ -86,11 +87,13 @@ public class Intake extends SubsystemBase {
         VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent, "Intakes/" + name);
         VirtualPD.registerMotor(() -> inputs.rackSupplyCurrent, "Intakes/" + name);
 
-        rackKP = new LoggedTunableNumber("Intakes/" + name + "/kP", RACK_GAINS.kP);
-        rackKD = new LoggedTunableNumber("Intakes/" + name + "/kD", RACK_GAINS.kD);
-        rackKV = new LoggedTunableNumber("Intakes/" + name + "/kV", RACK_GAINS.kV);
-        rackKA = new LoggedTunableNumber("Intakes/" + name + "/kA", RACK_GAINS.kA);
-        rackKS = new LoggedTunableNumber("Intakes/" + name + "/kS", RACK_GAINS.kS);
+        double multiplier = side == IntakeSide.Right ? RIGHT_ROTOR_TO_PINION_RATIO / LEFT_ROTOR_TO_PINION_RATIO : 1;
+
+        rackKP = new LoggedTunableNumber("Intakes/" + name + "/kP", LEFT_RACK_GAINS.kP * multiplier);
+        rackKD = new LoggedTunableNumber("Intakes/" + name + "/kD", LEFT_RACK_GAINS.kD * multiplier);
+        rackKV = new LoggedTunableNumber("Intakes/" + name + "/kV", LEFT_RACK_GAINS.kV * multiplier);
+        rackKA = new LoggedTunableNumber("Intakes/" + name + "/kA", LEFT_RACK_GAINS.kA * multiplier);
+        rackKS = new LoggedTunableNumber("Intakes/" + name + "/kS", LEFT_RACK_GAINS.kS);
 
         rackDisconnectedAlert = new Alert(name + " Intake Rack Motor Disconnected!", AlertType.kError);
         spinDisconnectedAlert = new Alert(name + " Intake Spin Motor Disconnected!", AlertType.kError);
@@ -191,7 +194,7 @@ public class Intake extends SubsystemBase {
                     this.goal = goal;
                     switch (goal) {
                         case DEPLOYED:
-                            io.stopRack();
+                            // io.stopRack();
                             break;
                         case DEPLOYING:
                             io.setSpinOutput(Volts.of(spinVoltage.get()));
@@ -253,11 +256,11 @@ public class Intake extends SubsystemBase {
             }
         }
 
-        if (reverseSpinVoltage.hasChanged(hashCode())) {
-            if (goal == IntakeGoal.STOWED || goal == IntakeGoal.STOWING) {
-                io.setSpinOutput(Volts.of(reverseSpinVoltage.get()));
-            }
-        }
+        // if (reverseSpinVoltage.hasChanged(hashCode())) {
+        //     if (goal == IntakeGoal.STOWED || goal == IntakeGoal.STOWING) {
+        //         io.setSpinOutput(Volts.of(reverseSpinVoltage.get()));
+        //     }
+        // }
     }
 
     public Distance getPosition() {
