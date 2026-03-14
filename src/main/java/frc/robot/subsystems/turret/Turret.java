@@ -6,9 +6,11 @@ package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.TurretConstants.*;
 
 import com.pathplanner.lib.util.FlippingUtil;
@@ -21,10 +23,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.MutAngularVelocity;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -88,6 +92,14 @@ public class Turret extends SubsystemBase {
 
     @AutoLogOutput
     private MutAngularVelocity flywheelFudgeFactor = RPM.of(0).mutableCopy();
+
+    private Angle[] turnVelFilterPos =
+            new Angle[] {Radians.zero(), Radians.zero(), Radians.zero(), Radians.zero(), Radians.zero()};
+    private Time[] turnVelFilterTimes =
+            new Time[] {Seconds.zero(), Seconds.zero(), Seconds.zero(), Seconds.zero(), Seconds.zero()};
+
+    @AutoLogOutput
+    private AngularVelocity velocitySetpoint = RadiansPerSecond.zero();
 
     private final Alert flywheelDisconnectedAlert = new Alert("Turret Flywheel Motor Disconnected!", AlertType.kError);
     private final Alert hoodDisconnectedAlert = new Alert("Turret Hood Motor Disconnected!", AlertType.kError);
@@ -242,6 +254,24 @@ public class Turret extends SubsystemBase {
         return inputs.turnPosition.isNear(MIN_TURN_ANGLE, TURNAROUND_ZONE);
     }
 
+    private void updateVelocitySetpoint() {
+        MutAngularVelocity sumVelocities = RadiansPerSecond.zero().mutableCopy();
+
+        // update filter window
+        for (int i = turnVelFilterPos.length - 1; i >= 1; i--) {
+            Angle deltaAngle = turnVelFilterPos[i - 1].minus(turnVelFilterPos[i]);
+            Time deltaTime = turnVelFilterTimes[i - 1].minus(turnVelFilterTimes[i]);
+            sumVelocities.mut_plus(deltaAngle.div(deltaTime));
+
+            turnVelFilterPos[i] = turnVelFilterPos[i - 1];
+            turnVelFilterTimes[i] = turnVelFilterTimes[i - 1];
+        }
+        turnVelFilterPos[0] = inputs.turnSetpoint;
+        turnVelFilterTimes[0] = Microseconds.of(RobotController.getFPGATime());
+
+        velocitySetpoint = sumVelocities.copy();
+    }
+
     public Command disable() {
         return setGoal(TurretGoal.DISABLED)
                 .andThen(Commands.idle())
@@ -342,8 +372,11 @@ public class Turret extends SubsystemBase {
         }
         Angle azimuthAngle =
                 TurretCalculator.calculateAzimuthAngle(robotPose, calculatedShot.target(), inputs.turnPosition);
-        AngularVelocity azimuthVelocity = RadiansPerSecond.of(-fieldSpeeds.omegaRadiansPerSecond);
-        io.setTurnSetpoint(azimuthAngle, azimuthVelocity);
+        // AngularVelocity azimuthVelocity = RadiansPerSecond.of(-fieldSpeeds.omegaRadiansPerSecond);
+
+        updateVelocitySetpoint();
+
+        io.setTurnSetpoint(azimuthAngle, velocitySetpoint);
         io.setHoodAngle(calculatedShot.getHoodAngle());
         io.setFlywheelSpeed(calculatedShot.getAngularExitVelocity().plus(flywheelFudgeFactor));
 
