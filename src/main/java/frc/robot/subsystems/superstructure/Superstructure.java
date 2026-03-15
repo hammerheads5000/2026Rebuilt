@@ -4,7 +4,10 @@
 
 package frc.robot.subsystems.superstructure;
 
+import static frc.robot.Constants.TurretConstants.DUCK_TIME;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,7 +24,9 @@ import frc.robot.subsystems.intake.Intakes.IntakesGoal;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.Turret.TurretGoal;
 import frc.robot.util.HubShiftUtil;
+import frc.robot.util.Zones;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -32,9 +37,16 @@ public class Superstructure extends SubsystemBase {
     private final Indexer indexer;
 
     private final Supplier<Pose2d> poseSupplier;
+    private final Supplier<ChassisSpeeds> fieldSpeedsSupplier;
 
     @AutoLogOutput
     private Goal goal = Goal.SCORING;
+
+    @AutoLogOutput
+    private Goal nonDuckingGoal = goal;
+
+    @AutoLogOutput
+    public final Trigger underTrenchTrigger;
 
     @AutoLogOutput
     public final Trigger inAllianceZoneTrigger = new Trigger(this::inAllianceZone);
@@ -64,11 +76,17 @@ public class Superstructure extends SubsystemBase {
     private final Map<Goal, Supplier<Command>> goalCommands;
 
     /** Creates a new Superstructure. */
-    public Superstructure(Turret turret, Intakes intake, Indexer indexer, Supplier<Pose2d> poseSupplier) {
+    public Superstructure(
+            Turret turret,
+            Intakes intake,
+            Indexer indexer,
+            Supplier<Pose2d> poseSupplier,
+            Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
         this.turret = turret;
         this.intake = intake;
         this.indexer = indexer;
         this.poseSupplier = poseSupplier;
+        this.fieldSpeedsSupplier = fieldSpeedsSupplier;
 
         goalCommands = Map.of(
                 Goal.SCORING,
@@ -89,12 +107,9 @@ public class Superstructure extends SubsystemBase {
                                 this.intake.setGoal(IntakesGoal.MANUAL),
                                 this.indexer.setGoal(IndexerGoal.IDLE))
                         .withName("Start collecting"),
-                Goal.EXPANDED,
-                () -> Commands.sequence(
-                                this.turret.setGoal(TurretGoal.IDLE),
-                                this.intake.setGoal(IntakesGoal.IDLE),
-                                this.indexer.setGoal(IndexerGoal.IDLE))
-                        .withName("Start expanded"),
+                Goal.DUCKING,
+                () -> Commands.sequence(this.turret.setGoal(TurretGoal.DUCKING), this.indexer.setGoal(IndexerGoal.IDLE))
+                        .withName("Start ducking"),
                 Goal.IDLE,
                 () -> Commands.sequence(
                                 this.turret.setGoal(TurretGoal.IDLE),
@@ -102,6 +117,10 @@ public class Superstructure extends SubsystemBase {
                                 this.indexer.setGoal(IndexerGoal.IDLE))
                         .withName("Idle"));
 
+        underTrenchTrigger = Zones.TRENCH_DUCK_ZONES.willContain(poseSupplier, fieldSpeedsSupplier, DUCK_TIME);
+
+        underTrenchTrigger.onTrue(this.duck());
+        underTrenchTrigger.onFalse(this.unduck());
         inAllianceZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
         // inactiveInZoneTrigger.onTrue(this.setGoal(Goal.COLLECTING));
         leaveZoneTrigger.onTrue(this.setGoal(Goal.PASSING).onlyIf(() -> this.goal != Goal.COLLECTING));
@@ -123,18 +142,33 @@ public class Superstructure extends SubsystemBase {
     }
 
     public Command setGoal(Goal newGoal) {
-        return this.runOnce(() -> this.goal = newGoal)
-                .andThen(goalCommands.get(newGoal).get())
+        return Commands.either(
+                        this.runOnce(() -> this.nonDuckingGoal = newGoal),
+                        this.runOnce(() -> this.goal = newGoal)
+                                .andThen(goalCommands.get(newGoal).get()),
+                        underTrenchTrigger.and(() -> newGoal != Goal.DUCKING))
                 .withName("Set goal");
     }
 
     public Command toggleCollecting() {
-        return Commands.either(stopCollecting(), this.setGoal(Goal.COLLECTING), () -> this.goal == Goal.COLLECTING);
+        return Commands.either(stopCollecting(), this.setGoal(Goal.COLLECTING), () -> this.goal == Goal.COLLECTING)
+                .withName("Toggle collecting");
     }
 
     /** Handle state logic for transitioning out of COLLECTING */
     public Command stopCollecting() {
-        return Commands.either(this.setGoal(Goal.SCORING), this.setGoal(Goal.PASSING), activeInZoneTrigger);
+        return Commands.either(this.setGoal(Goal.SCORING), this.setGoal(Goal.PASSING), activeInZoneTrigger)
+                .withName("Stop collecting");
+    }
+
+    public Command duck() {
+        return this.setGoal(Goal.DUCKING)
+                .beforeStarting(() -> nonDuckingGoal = goal)
+                .withName("Duck");
+    }
+
+    public Command unduck() {
+        return Commands.defer(() -> this.setGoal(nonDuckingGoal), Set.of(this)).withName("Unduck");
     }
 
     public Command enableShiftOverride() {
@@ -150,13 +184,18 @@ public class Superstructure extends SubsystemBase {
     public void periodic() {
         Logger.recordOutput(
                 "Superstructure/Shift Time", HubShiftUtil.getOfficialShiftInfo().remainingTime());
+        Logger.recordOutput(
+                "Superstructure/Current Command",
+                this.getCurrentCommand() == null
+                        ? "None"
+                        : this.getCurrentCommand().getName());
     }
 
     public static enum Goal {
         SCORING,
         PASSING,
         COLLECTING,
-        EXPANDED,
+        DUCKING,
         IDLE
     }
 }

@@ -222,7 +222,7 @@ public class RobotContainer {
                 break;
         }
 
-        superstructure = new Superstructure(turret, intakes, indexer, drive::getPose);
+        superstructure = new Superstructure(turret, intakes, indexer, drive::getPose, drive::getFieldSpeeds);
 
         // Set up SysId routines
         // autoChooser.addOption(
