@@ -102,9 +102,12 @@ public class Superstructure extends SubsystemBase {
                                 this.indexer.setGoal(IndexerGoal.IDLE))
                         .withName("Idle"));
 
-        // activeInZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
+        inAllianceZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
         // inactiveInZoneTrigger.onTrue(this.setGoal(Goal.COLLECTING));
-        // leaveZoneTrigger.onTrue(this.setGoal(Goal.PASSING).onlyIf(() -> this.goal != Goal.COLLECTING));
+        leaveZoneTrigger.onTrue(this.setGoal(Goal.PASSING).onlyIf(() -> this.goal != Goal.COLLECTING));
+
+        // turret.underTrenchTrigger.onTrue(indexer.runOnce(() -> indexer.stop(false)));
+        // turret.underTrenchTrigger.onFalse(Commands.defer(() -> indexer.setGoal(indexer.getGoal()), Set.of()));
 
         SmartDashboard.putData("Overrides/Shift", enableShiftOverride());
     }

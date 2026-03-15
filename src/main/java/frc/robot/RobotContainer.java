@@ -139,8 +139,8 @@ public class RobotContainer {
                         new ModuleIOTalonFX(SwerveConstants.BackRight.MODULE_CONSTANTS));
                 intakes = new Intakes(
                         // new IntakeIO() {},
-                        new IntakeIO() {},
                         // new IntakeIOTalonFX(IntakeConstants.LEFT_RACK_ID, IntakeConstants.LEFT_SPIN_ID),
+                        new IntakeIO() {},
                         new IntakeIOTalonFX(IntakeConstants.RIGHT_RACK_ID, IntakeConstants.RIGHT_SPIN_ID),
                         drive::getChassisSpeeds);
                 indexer = new Indexer(new IndexerIOTalonFX());
@@ -278,12 +278,12 @@ public class RobotContainer {
                 "Overrides/Manual Pass",
                 turret.manualPass()
                         .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
-                        .finallyDo(indexer::stop));
+                        .finallyDo(() -> indexer.stop()));
         SmartDashboard.putData(
                 "Overrides/Manual Score",
                 turret.manualScore()
                         .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
-                        .finallyDo(indexer::stop));
+                        .finallyDo(() -> indexer.stop()));
 
         systemChecks = new SystemChecks(turret, intakes, indexer, climber);
 
@@ -349,11 +349,11 @@ public class RobotContainer {
 
         manualScoreTrigger.whileTrue(turret.manualScore()
                 .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
-                .finallyDo(indexer::stop)
+                .finallyDo(() -> indexer.stop())
                 .withName("Manual Score"));
         manualPassTrigger.whileTrue(turret.manualPass()
                 .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
-                .finallyDo(indexer::stop)
+                .finallyDo(() -> indexer.stop())
                 .withName("Manual Pass"));
     }
 

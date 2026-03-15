@@ -380,7 +380,7 @@ public final class Constants {
                 50.0 / 14 * 22.0 / 20 * 156.0 / 10; // 50:14 gear, 22:20 belt, 156:10 rack
 
         public static final Slot0Configs TURN_GAINS =
-                new Slot0Configs().withKP(200).withKD(0.1).withKS(2);
+                new Slot0Configs().withKP(300).withKD(0.0).withKS(2).withKV(0.0);
 
         public static final Slot0Configs HOOD_GAINS =
                 new Slot0Configs().withKP(800).withKD(5).withKS(0.28);
@@ -422,7 +422,7 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(0.05712890625)
+                .withMagnetOffset(-0.2724609375)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
                 .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
 
@@ -439,8 +439,8 @@ public final class Constants {
         public static final Distance SHOOT_RADIUS = Inches.of(1);
         public static final int LOOKAHEAD_ITERATIONS = 3;
 
-        public static final Angle MIN_TURN_ANGLE = Degrees.of(-236);
-        public static final Angle MAX_TURN_ANGLE = Degrees.of(216);
+        public static final Angle MIN_TURN_ANGLE = Degrees.of(-230);
+        public static final Angle MAX_TURN_ANGLE = Degrees.of(210);
         public static final Angle TURNAROUND_ZONE = Degrees.of(30);
 
         public static final Distance EXTRA_DUCK_DISTANCE = Meters.of(0.3);
@@ -471,9 +471,20 @@ public final class Constants {
         public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP =
                 new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData::interpolate);
 
+        public static final InterpolatingTreeMap<Double, ShotData> PASSING_MAP =
+                new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData::interpolate);
+
         public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
 
+        public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
+
         static {
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3720), Degrees.of(42)));
+            TOF_MAP.put(6.3, 1.5);
+
+            SHOT_MAP.put(5.5, new ShotData(RPM.of(3720), Degrees.of(39)));
+            TOF_MAP.put(5.5, 1.46);
+
             SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(35)));
             TOF_MAP.put(5.18, 1.42);
 
@@ -482,7 +493,7 @@ public final class Constants {
 
             SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
             TOF_MAP.put(4.24, 1.41);
-            // end of tuning 3/12
+
             SHOT_MAP.put(3.87, new ShotData(RPM.of(3450), Degrees.of(31)));
             TOF_MAP.put(3.87, 1.41);
 
@@ -503,6 +514,18 @@ public final class Constants {
 
             SHOT_MAP.put(1.37, new ShotData(RPM.of(2800), Degrees.of(17)));
             TOF_MAP.put(1.37, 1.09);
+
+            PASSING_MAP.put(12.6, new ShotData(RPM.of(5000), Degrees.of(47)));
+            PASS_TOF_MAP.put(12.6, 1.5);
+
+            PASSING_MAP.put(7.7, new ShotData(RPM.of(3600), Degrees.of(47)));
+            PASS_TOF_MAP.put(7.7, 1.4);
+
+            PASSING_MAP.put(5.5, new ShotData(RPM.of(3400), Degrees.of(47)));
+            PASS_TOF_MAP.put(5.5, 1.3);
+
+            PASSING_MAP.put(1.0, new ShotData(RPM.of(700), Degrees.of(47)));
+            PASS_TOF_MAP.put(1.0, 1.);
         }
 
         public static final Time ACTIVE_PRESHOOT_TIME = Seconds.of(2);
@@ -540,7 +563,7 @@ public final class Constants {
 
         public static final MotorOutputConfigs LEFT_RACK_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Coast)
-                .withInverted(InvertedValue.CounterClockwise_Positive);
+                .withInverted(InvertedValue.Clockwise_Positive);
 
         public static final MotorOutputConfigs SPIN_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Coast)
@@ -558,7 +581,7 @@ public final class Constants {
 
         public static final Distance STOW_POS = Inches.of(0);
         public static final Distance DEPLOY_POS = Inches.of(11);
-        public static final Voltage SPIN_VOLTAGE = Volts.of(10);
+        public static final Voltage SPIN_VOLTAGE = Volts.of(12);
         public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(10);
         public static final Distance STOW_TOLERANCE = Inches.of(0.5);

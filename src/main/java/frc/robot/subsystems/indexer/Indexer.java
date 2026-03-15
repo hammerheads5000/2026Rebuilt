@@ -80,7 +80,14 @@ public class Indexer extends SubsystemBase {
                             Command toSchedule = Commands.none();
 
                             if (goal == IndexerGoal.ACTIVE && this.goal != IndexerGoal.ACTIVE) {
+                                // if (this.goal != IndexerGoal.ACTIVE) {
                                 toSchedule = activate();
+                                // } else {
+                                //     toSchedule = this.runOnce(() -> {
+                                //         io.setSpinOutput(Volts.of(spinVoltage.get()));
+                                //         io.setFeedOutput(Volts.of(feedVoltage.get()));
+                                //     });
+                                // }
                             } else if (goal == IndexerGoal.IDLE) {
                                 toSchedule = this.runOnce(this::stop);
                             }
@@ -129,10 +136,14 @@ public class Indexer extends SubsystemBase {
                 }));
     }
 
-    public void stop() {
+    public void stop(boolean changeGoal) {
         io.stopSpin();
         io.stopFeed();
-        this.goal = IndexerGoal.IDLE;
+        if (changeGoal) this.goal = IndexerGoal.IDLE;
+    }
+
+    public void stop() {
+        stop(true);
     }
 
     public enum IndexerGoal {

@@ -93,10 +93,8 @@ public class Turret extends SubsystemBase {
     @AutoLogOutput
     private MutAngularVelocity flywheelFudgeFactor = RPM.of(0).mutableCopy();
 
-    private Angle[] turnVelFilterPos =
-            new Angle[] {Radians.zero(), Radians.zero(), Radians.zero(), Radians.zero(), Radians.zero()};
-    private Time[] turnVelFilterTimes =
-            new Time[] {Seconds.zero(), Seconds.zero(), Seconds.zero(), Seconds.zero(), Seconds.zero()};
+    private Angle[] turnVelFilterPos = new Angle[] {Radians.zero(), Radians.zero()};
+    private Time[] turnVelFilterTimes = new Time[] {Seconds.zero(), Seconds.zero()};
 
     @AutoLogOutput
     private AngularVelocity velocitySetpoint = RadiansPerSecond.zero();
@@ -166,6 +164,7 @@ public class Turret extends SubsystemBase {
                             io.stopTurn();
                             break;
                         case TUNING:
+                            // setTarget(getPassingTarget(poseSupplier.get()));
                             setTarget(FieldConstants.HUB_BLUE);
                             break;
                         case DUCKING:
@@ -365,7 +364,12 @@ public class Turret extends SubsystemBase {
         ShotData calculatedShot;
         if (Constants.CURRENT_MODE == Mode.REAL) {
             calculatedShot = TurretCalculator.iterativeMovingShotFromMap(
-                    robotPose, fieldSpeeds, currentTarget, LOOKAHEAD_ITERATIONS);
+                    robotPose,
+                    fieldSpeeds,
+                    currentTarget,
+                    LOOKAHEAD_ITERATIONS,
+                    goal == TurretGoal.PASSING ? PASSING_MAP : SHOT_MAP,
+                    goal == TurretGoal.PASSING ? PASS_TOF_MAP : TOF_MAP);
         } else {
             calculatedShot = TurretCalculator.iterativeMovingShotFromFunnelClearance(
                     robotPose, fieldSpeeds, currentTarget, LOOKAHEAD_ITERATIONS);
