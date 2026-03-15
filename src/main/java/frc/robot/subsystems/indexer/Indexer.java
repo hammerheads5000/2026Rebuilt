@@ -50,8 +50,8 @@ public class Indexer extends SubsystemBase {
         this.io = io;
         this.visualizer = new IndexerVisualizer();
 
-        VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent);
-        VirtualPD.registerMotor(() -> inputs.feedSupplyCurrent);
+        VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent, "Indexer");
+        VirtualPD.registerMotor(() -> inputs.feedSupplyCurrent, "Indexer");
 
         spinStallTrigger.and(() -> this.goal == IndexerGoal.ACTIVE).onTrue(unjam());
 
@@ -80,7 +80,14 @@ public class Indexer extends SubsystemBase {
                             Command toSchedule = Commands.none();
 
                             if (goal == IndexerGoal.ACTIVE && this.goal != IndexerGoal.ACTIVE) {
+                                // if (this.goal != IndexerGoal.ACTIVE) {
                                 toSchedule = activate();
+                                // } else {
+                                //     toSchedule = this.runOnce(() -> {
+                                //         io.setSpinOutput(Volts.of(spinVoltage.get()));
+                                //         io.setFeedOutput(Volts.of(feedVoltage.get()));
+                                //     });
+                                // }
                             } else if (goal == IndexerGoal.IDLE) {
                                 toSchedule = this.runOnce(this::stop);
                             }
@@ -129,10 +136,14 @@ public class Indexer extends SubsystemBase {
                 }));
     }
 
-    public void stop() {
+    public void stop(boolean changeGoal) {
         io.stopSpin();
         io.stopFeed();
-        this.goal = IndexerGoal.IDLE;
+        if (changeGoal) this.goal = IndexerGoal.IDLE;
+    }
+
+    public void stop() {
+        stop(true);
     }
 
     public enum IndexerGoal {

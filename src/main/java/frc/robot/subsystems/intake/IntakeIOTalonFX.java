@@ -10,22 +10,23 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
-import static frc.robot.Constants.IntakeConstants.DEPLOY_POS;
-import static frc.robot.Constants.IntakeConstants.LEFT_RACK_CURRENT_LIMITS;
+import static frc.robot.Constants.IntakeConstants.LEFT_RACK_GAINS;
 import static frc.robot.Constants.IntakeConstants.LEFT_RACK_OUTPUT_CONFIGS;
+import static frc.robot.Constants.IntakeConstants.LEFT_ROTOR_TO_PINION_RATIO;
 import static frc.robot.Constants.IntakeConstants.PINION_PITCH_RADIUS;
-import static frc.robot.Constants.IntakeConstants.RACK_GAINS;
+import static frc.robot.Constants.IntakeConstants.RACK_CURRENT_LIMITS;
 import static frc.robot.Constants.IntakeConstants.RACK_MOTION_MAGIC;
-import static frc.robot.Constants.IntakeConstants.ROTOR_TO_PINION_RATIO;
+import static frc.robot.Constants.IntakeConstants.RIGHT_RACK_ID;
+import static frc.robot.Constants.IntakeConstants.RIGHT_RACK_OUTPUT_CONFIGS;
+import static frc.robot.Constants.IntakeConstants.RIGHT_ROTOR_TO_PINION_RATIO;
 import static frc.robot.Constants.IntakeConstants.SPIN_CURRENT_LIMITS;
 import static frc.robot.Constants.IntakeConstants.SPIN_OUTPUT_CONFIGS;
-import static frc.robot.Constants.IntakeConstants.STOW_POS;
 import static frc.robot.util.PhoenixUtil.tryUntilOk;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -70,19 +71,23 @@ public class IntakeIOTalonFX implements IntakeIO {
         this.rackMotor = new TalonFX(rackID, Constants.CAN_FD_BUS);
         this.spinMotor = new TalonFX(spinID, Constants.CAN_FD_BUS);
 
+        double ratio = rackID == RIGHT_RACK_ID ? RIGHT_ROTOR_TO_PINION_RATIO : LEFT_ROTOR_TO_PINION_RATIO;
+        Slot0Configs gains = LEFT_RACK_GAINS;
+
+        if (rackID == RIGHT_RACK_ID) {
+            gains.kP *= RIGHT_ROTOR_TO_PINION_RATIO / LEFT_ROTOR_TO_PINION_RATIO;
+            gains.kD *= RIGHT_ROTOR_TO_PINION_RATIO / LEFT_ROTOR_TO_PINION_RATIO;
+            gains.kV *= RIGHT_ROTOR_TO_PINION_RATIO / LEFT_ROTOR_TO_PINION_RATIO;
+            gains.kA *= RIGHT_ROTOR_TO_PINION_RATIO / LEFT_ROTOR_TO_PINION_RATIO;
+            gains.kS *= RIGHT_ROTOR_TO_PINION_RATIO / LEFT_ROTOR_TO_PINION_RATIO;
+        }
+
         rackConfig = new TalonFXConfiguration()
-                .withSlot0(RACK_GAINS)
-                .withMotorOutput(LEFT_RACK_OUTPUT_CONFIGS)
-                .withCurrentLimits(LEFT_RACK_CURRENT_LIMITS)
+                .withSlot0(gains)
+                .withMotorOutput(rackID == RIGHT_RACK_ID ? RIGHT_RACK_OUTPUT_CONFIGS : LEFT_RACK_OUTPUT_CONFIGS)
+                .withCurrentLimits(RACK_CURRENT_LIMITS)
                 .withMotionMagic(RACK_MOTION_MAGIC)
-                .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-                        .withForwardSoftLimitEnable(false)
-                        .withForwardSoftLimitThreshold(distanceToRotorAngle(DEPLOY_POS))
-                        .withReverseSoftLimitEnable(false)
-                        .withReverseSoftLimitThreshold(distanceToRotorAngle(STOW_POS)))
-                .withFeedback(new FeedbackConfigs()
-                        .withRotorToSensorRatio(1)
-                        .withSensorToMechanismRatio(ROTOR_TO_PINION_RATIO));
+                .withFeedback(new FeedbackConfigs().withRotorToSensorRatio(1).withSensorToMechanismRatio(ratio));
 
         spinConfig = new TalonFXConfiguration()
                 .withCurrentLimits(SPIN_CURRENT_LIMITS)
@@ -162,12 +167,12 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     @Override
     public void setRackPosition(Distance position) {
-        // rackMotor.setControl(rackPositionRequest.withPosition(distanceToRotorAngle(position)));
+        rackMotor.setControl(rackPositionRequest.withPosition(distanceToRotorAngle(position)));
     }
 
     @Override
     public void setRackOutput(Voltage out) {
-        // rackMotor.setControl(rackVoltageRequest.withOutput(out));
+        rackMotor.setControl(rackVoltageRequest.withOutput(out));
     }
 
     @Override
@@ -177,7 +182,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     @Override
     public void stopRack() {
-        // rackMotor.setControl(neutralOut);
+        rackMotor.setControl(neutralOut);
     }
 
     @Override

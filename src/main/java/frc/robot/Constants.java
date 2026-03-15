@@ -83,7 +83,7 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkString;
  * (log replay from a file).
  */
 public final class Constants {
-    public static final Mode SIM_MODE = Mode.REPLAY;
+    public static final Mode SIM_MODE = Mode.SIM;
     public static final Mode CURRENT_MODE = RobotBase.isReal() ? Mode.REAL : SIM_MODE;
 
     public static enum Mode {
@@ -380,13 +380,13 @@ public final class Constants {
                 50.0 / 14 * 22.0 / 20 * 156.0 / 10; // 50:14 gear, 22:20 belt, 156:10 rack
 
         public static final Slot0Configs TURN_GAINS =
-                new Slot0Configs().withKP(100).withKD(0.1).withKS(2);
+                new Slot0Configs().withKP(300).withKD(0.0).withKS(2).withKV(0.0);
 
         public static final Slot0Configs HOOD_GAINS =
                 new Slot0Configs().withKP(800).withKD(5).withKS(0.28);
 
         public static final Slot0Configs FLYWHEEL_GAINS =
-                new Slot0Configs().withKP(10).withKD(5.0).withKS(6).withKV(0.04);
+                new Slot0Configs().withKP(12).withKD(0.0).withKS(6).withKV(0.04);
 
         public static final CurrentLimitsConfigs TURN_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30);
@@ -403,7 +403,7 @@ public final class Constants {
 
         public static final FeedbackConfigs TURN_FEEDBACK_CONFIGS = new FeedbackConfigs()
                 .withFeedbackRemoteSensorID(ENCODER_ID)
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+                .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
                 .withSensorToMechanismRatio(ENCODER_TO_TURRET_RATIO)
                 .withRotorToSensorRatio(TURN_TO_TURRET_RATIO / ENCODER_TO_TURRET_RATIO)
                 .withFeedbackRotorOffset(0)
@@ -422,7 +422,7 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(0.05712890625)
+                .withMagnetOffset(-0.2724609375)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
                 .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
 
@@ -439,8 +439,8 @@ public final class Constants {
         public static final Distance SHOOT_RADIUS = Inches.of(1);
         public static final int LOOKAHEAD_ITERATIONS = 3;
 
-        public static final Angle MIN_TURN_ANGLE = Rotations.of(-0.55);
-        public static final Angle MAX_TURN_ANGLE = Rotations.of(0.55);
+        public static final Angle MIN_TURN_ANGLE = Degrees.of(-230);
+        public static final Angle MAX_TURN_ANGLE = Degrees.of(210);
         public static final Angle TURNAROUND_ZONE = Degrees.of(30);
 
         public static final Distance EXTRA_DUCK_DISTANCE = Meters.of(0.3);
@@ -471,9 +471,20 @@ public final class Constants {
         public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP =
                 new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData::interpolate);
 
+        public static final InterpolatingTreeMap<Double, ShotData> PASSING_MAP =
+                new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData::interpolate);
+
         public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
 
+        public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
+
         static {
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3720), Degrees.of(42)));
+            TOF_MAP.put(6.3, 1.5);
+
+            SHOT_MAP.put(5.5, new ShotData(RPM.of(3720), Degrees.of(39)));
+            TOF_MAP.put(5.5, 1.46);
+
             SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(35)));
             TOF_MAP.put(5.18, 1.42);
 
@@ -482,7 +493,7 @@ public final class Constants {
 
             SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
             TOF_MAP.put(4.24, 1.41);
-            // end of tuning 3/12
+
             SHOT_MAP.put(3.87, new ShotData(RPM.of(3450), Degrees.of(31)));
             TOF_MAP.put(3.87, 1.41);
 
@@ -503,6 +514,18 @@ public final class Constants {
 
             SHOT_MAP.put(1.37, new ShotData(RPM.of(2800), Degrees.of(17)));
             TOF_MAP.put(1.37, 1.09);
+
+            PASSING_MAP.put(12.6, new ShotData(RPM.of(5000), Degrees.of(47)));
+            PASS_TOF_MAP.put(12.6, 1.5);
+
+            PASSING_MAP.put(7.7, new ShotData(RPM.of(3600), Degrees.of(47)));
+            PASS_TOF_MAP.put(7.7, 1.4);
+
+            PASSING_MAP.put(5.5, new ShotData(RPM.of(3400), Degrees.of(47)));
+            PASS_TOF_MAP.put(5.5, 1.3);
+
+            PASSING_MAP.put(1.0, new ShotData(RPM.of(700), Degrees.of(47)));
+            PASS_TOF_MAP.put(1.0, 1.);
         }
 
         public static final Time ACTIVE_PRESHOOT_TIME = Seconds.of(2);
@@ -511,10 +534,11 @@ public final class Constants {
     public static class IntakeConstants {
         public static final int LEFT_RACK_ID = 21;
         public static final int RIGHT_RACK_ID = 2;
-        public static final int LEFT_SPIN_ID = 27;
-        public static final int RIGHT_SPIN_ID = 28;
+        public static final int LEFT_SPIN_ID = 28;
+        public static final int RIGHT_SPIN_ID = 27;
 
-        public static final double ROTOR_TO_PINION_RATIO = 2.0 / 1;
+        public static final double LEFT_ROTOR_TO_PINION_RATIO = 34.0 / 12; // 34:12 gear
+        public static final double RIGHT_ROTOR_TO_PINION_RATIO = 50.0 / 17; // 50:17 belt
         public static final Distance PINION_PITCH_RADIUS = Inches.of(0.5);
 
         // public static final Slot0Configs RIGHT_RACK_GAINS = new Slot0Configs()
@@ -524,12 +548,12 @@ public final class Constants {
         //         .withKV(0.23)
         //         .withKS(0.4);
 
-        public static final Slot0Configs RACK_GAINS = new Slot0Configs()
-                .withKP(15.0)
-                .withKD(0.1)
+        public static final Slot0Configs LEFT_RACK_GAINS = new Slot0Configs()
+                .withKP(21)
+                .withKD(0.15)
                 .withKA(0.0)
-                .withKV(2.0)
-                .withKS(1.2);
+                .withKV(3.3)
+                .withKS(1.7);
 
         // public static final Slot1Configs RACK_DIFF_GAINS = new Slot1Configs().withKP(0.5);
 
@@ -539,16 +563,13 @@ public final class Constants {
 
         public static final MotorOutputConfigs LEFT_RACK_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Coast)
-                .withInverted(InvertedValue.CounterClockwise_Positive);
+                .withInverted(InvertedValue.Clockwise_Positive);
 
         public static final MotorOutputConfigs SPIN_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Coast)
                 .withInverted(InvertedValue.CounterClockwise_Positive);
 
-        public static final CurrentLimitsConfigs RIGHT_RACK_CURRENT_LIMITS =
-                new CurrentLimitsConfigs().withStatorCurrentLimit(50).withSupplyCurrentLowerLimit(30);
-
-        public static final CurrentLimitsConfigs LEFT_RACK_CURRENT_LIMITS =
+        public static final CurrentLimitsConfigs RACK_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withStatorCurrentLimit(100).withSupplyCurrentLowerLimit(30);
 
         public static final CurrentLimitsConfigs SPIN_CURRENT_LIMITS =

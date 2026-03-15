@@ -19,8 +19,6 @@ import static frc.robot.Constants.TurretConstants.FLYWHEEL_RADIUS;
 import static frc.robot.Constants.TurretConstants.MAX_TURN_ANGLE;
 import static frc.robot.Constants.TurretConstants.MIN_TURN_ANGLE;
 import static frc.robot.Constants.TurretConstants.ROBOT_TO_TURRET_TRANSFORM;
-import static frc.robot.Constants.TurretConstants.SHOT_MAP;
-import static frc.robot.Constants.TurretConstants.TOF_MAP;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,6 +26,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -160,20 +160,25 @@ public class TurretCalculator {
     }
 
     public static ShotData iterativeMovingShotFromMap(
-            Pose2d robot, ChassisSpeeds fieldSpeeds, Translation3d target, int iterations) {
+            Pose2d robot,
+            ChassisSpeeds fieldSpeeds,
+            Translation3d target,
+            int iterations,
+            InterpolatingTreeMap<Double, ShotData> shotMap,
+            InterpolatingDoubleTreeMap tofMap) {
         double distance = getDistanceToTarget(robot, target).in(Meters);
-        ShotData shot = SHOT_MAP.get(distance);
+        ShotData shot = shotMap.get(distance);
         shot = new ShotData(shot.exitVelocity, shot.hoodAngle, target);
-        Time timeOfFlight = Seconds.of(TOF_MAP.get(distance));
+        Time timeOfFlight = Seconds.of(tofMap.get(distance));
         Translation3d predictedTarget = target;
 
         // Iterate the process, getting better time of flight estimations and updating the predicted target accordingly
         for (int i = 0; i < iterations; i++) {
             predictedTarget = predictTargetPos(target, fieldSpeeds, timeOfFlight);
             distance = getDistanceToTarget(robot, predictedTarget).in(Meters);
-            shot = SHOT_MAP.get(distance);
+            shot = shotMap.get(distance);
             shot = new ShotData(shot.exitVelocity, shot.hoodAngle, predictedTarget);
-            timeOfFlight = Seconds.of(TOF_MAP.get(distance));
+            timeOfFlight = Seconds.of(tofMap.get(distance));
         }
 
         return shot;

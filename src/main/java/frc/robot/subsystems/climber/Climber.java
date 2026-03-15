@@ -44,8 +44,8 @@ public class Climber extends SubsystemBase {
     public Climber(ClimberIO io) {
         this.io = io;
 
-        VirtualPD.registerMotor(() -> inputs.frontSupplyCurrent);
-        VirtualPD.registerMotor(() -> inputs.backSupplyCurrent);
+        VirtualPD.registerMotor(() -> inputs.frontSupplyCurrent, "Climb");
+        VirtualPD.registerMotor(() -> inputs.backSupplyCurrent, "Climb");
 
         SmartDashboard.putData("Climb/Climb", climb());
         SmartDashboard.putData("Climb/AutoClimb", autoClimb());

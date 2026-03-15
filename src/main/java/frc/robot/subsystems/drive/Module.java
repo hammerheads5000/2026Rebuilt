@@ -42,8 +42,8 @@ public class Module {
         this.index = index;
         this.constants = constants;
 
-        VirtualPD.registerMotor(() -> Amps.of(inputs.turnSupplyCurrentAmps));
-        VirtualPD.registerMotor(() -> Amps.of(inputs.driveSupplyCurrentAmps));
+        VirtualPD.registerMotor(() -> Amps.of(inputs.turnSupplyCurrentAmps), "Drive");
+        VirtualPD.registerMotor(() -> Amps.of(inputs.driveSupplyCurrentAmps), "Drive");
 
         driveDisconnectedAlert =
                 new Alert("Disconnected drive motor on module " + Integer.toString(index) + ".", AlertType.kError);
