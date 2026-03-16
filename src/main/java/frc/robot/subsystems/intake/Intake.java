@@ -4,14 +4,20 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.DEPLOY_POS;
 import static frc.robot.Constants.IntakeConstants.DEPLOY_TOLERANCE;
 import static frc.robot.Constants.IntakeConstants.LEFT_RACK_GAINS;
 import static frc.robot.Constants.IntakeConstants.LEFT_ROTOR_TO_PINION_RATIO;
+import static frc.robot.Constants.IntakeConstants.PRESS_IN_TIME;
+import static frc.robot.Constants.IntakeConstants.PRESS_IN_VOLTAGE;
+import static frc.robot.Constants.IntakeConstants.PRESS_OUT_TIME;
+import static frc.robot.Constants.IntakeConstants.PRESS_OUT_VOLTAGE;
 import static frc.robot.Constants.IntakeConstants.RACK_MOTION_MAGIC;
 import static frc.robot.Constants.IntakeConstants.RACK_STALL_CURRENT;
 import static frc.robot.Constants.IntakeConstants.RACK_STALL_VEL;
+import static frc.robot.Constants.IntakeConstants.REVERSE_SPIN_VOLTAGE;
 import static frc.robot.Constants.IntakeConstants.RIGHT_ROTOR_TO_PINION_RATIO;
 import static frc.robot.Constants.IntakeConstants.SPIN_STALL_ANGULAR_VELOCITY;
 import static frc.robot.Constants.IntakeConstants.SPIN_STALL_CURRENT;
@@ -71,10 +77,18 @@ public class Intake extends SubsystemBase {
             new LoggedTunableNumber("Intakes/maxAccRotPerSecPerSec", RACK_MOTION_MAGIC.MotionMagicAcceleration);
     private final LoggedTunableNumber spinVoltage =
             new LoggedTunableNumber("Intakes/Spin Voltage", SPIN_VOLTAGE.in(Volts));
-    // private final LoggedTunableNumber reverseSpinVoltage =
-    //         new LoggedTunableNumber("Intakes/Reverse Spin Voltage", REVERSE_SPIN_VOLTAGE.in(Volts));
+    private final LoggedTunableNumber reverseSpinVoltage =
+            new LoggedTunableNumber("Intakes/Reverse Spin Voltage", REVERSE_SPIN_VOLTAGE.in(Volts));
     private final LoggedTunableNumber deployPos =
             new LoggedTunableNumber("Intakes/DeployPosInches", DEPLOY_POS.in(Inches));
+    private final LoggedTunableNumber pressInVoltage =
+            new LoggedTunableNumber("Intakes/Press In Voltage", PRESS_IN_VOLTAGE.in(Volts));
+    private final LoggedTunableNumber pressOutVoltage =
+            new LoggedTunableNumber("Intakes/Press Out Voltage", PRESS_OUT_VOLTAGE.in(Volts));
+    private final LoggedTunableNumber pressInTime =
+            new LoggedTunableNumber("Intakes/Press In Time", PRESS_IN_TIME.in(Seconds));
+    private final LoggedTunableNumber pressOutTime =
+            new LoggedTunableNumber("Intakes/Press Out Time", PRESS_OUT_TIME.in(Seconds));
 
     private final Alert rackDisconnectedAlert;
     private final Alert spinDisconnectedAlert;
@@ -185,7 +199,13 @@ public class Intake extends SubsystemBase {
                         Commands.sequence(
                                 Commands.runOnce(() -> io.setRackPosition(STOW_POS)),
                                 Commands.waitUntil(rackStallTrigger.negate()),
-                                Commands.runOnce(() -> io.setRackPosition(Inches.of(deployPos.get()))))),
+                                Commands.runOnce(() -> io.setRackPosition(Inches.of(deployPos.get())))),
+                        IntakeGoal.IDLE,
+                        Commands.none(),
+                        IntakeGoal.PRESSING,
+                        Commands.none(),
+                        IntakeGoal.DISABLED,
+                        Commands.none()),
                 () -> this.goal);
     }
 
@@ -205,10 +225,12 @@ public class Intake extends SubsystemBase {
                             io.stopSpin();
                             break;
                         case STOWED:
-                            io.stopSpin();
+                            io.setSpinOutput(Volts.of(reverseSpinVoltage.get()));
                             break;
                         case STOWING:
                             io.setRackPosition(STOW_POS);
+                            break;
+                        case PRESSING:
                             break;
                         case ZEROING:
                             break;
@@ -219,6 +241,16 @@ public class Intake extends SubsystemBase {
                     }
                 })
                 .onlyIf(() -> this.goal != IntakeGoal.DISABLED);
+    }
+
+    // slowly move intake in and out to push balls into indexer
+    public Command press() {
+        return Commands.repeatingSequence(
+                        this.runOnce(() -> io.setRackOutput(Volts.of(pressInVoltage.get()))),
+                        Commands.waitSeconds(pressInTime.get()),
+                        this.runOnce(() -> io.setRackOutput(Volts.of(pressOutVoltage.get()))),
+                        Commands.waitSeconds(pressOutTime.get()))
+                .until(this::stowed);
     }
 
     public Command disable() {
@@ -256,11 +288,11 @@ public class Intake extends SubsystemBase {
             }
         }
 
-        // if (reverseSpinVoltage.hasChanged(hashCode())) {
-        //     if (goal == IntakeGoal.STOWED || goal == IntakeGoal.STOWING) {
-        //         io.setSpinOutput(Volts.of(reverseSpinVoltage.get()));
-        //     }
-        // }
+        if (reverseSpinVoltage.hasChanged(hashCode())) {
+            if (goal == IntakeGoal.STOWED || goal == IntakeGoal.STOWING) {
+                io.setSpinOutput(Volts.of(reverseSpinVoltage.get()));
+            }
+        }
     }
 
     public Distance getPosition() {
@@ -282,6 +314,7 @@ public class Intake extends SubsystemBase {
         DEPLOYING,
         STOWED,
         STOWING,
+        PRESSING,
         ZEROING,
         IDLE,
         DISABLED

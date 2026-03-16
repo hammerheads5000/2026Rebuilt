@@ -105,16 +105,18 @@ public class RobotContainer {
     private final Trigger zeroRightRackTrigger = controller.povRight();
     private final Trigger zeroLeftRackTrigger = controller.povLeft();
     private final Trigger zeroHoodTrigger = controller.povUp();
-    private final Trigger switchIntakesTrigger = controller.rightTrigger();
+    private final Trigger switchIntakesTrigger = controller.rightBumper();
+    private final Trigger intakePressTrigger = controller.leftBumper();
     private final Trigger collectTrigger = controller.leftTrigger();
     private final Trigger turretTuningTrigger = controller.start();
     private final Trigger indexTrigger = controller.back();
-    //     private final Trigger turretScoringTrigger = controller.a();
-    private final Trigger climbTrigger = controller.y();
+    private final Trigger speedUpTrigger = controller.rightTrigger();
+    private final Trigger slowDownTrigger;
+    //     private final Trigger climbTrigger = controller.y();
     //     private final Trigger extendTrigger = controller.start();
     //     private final Trigger stowTrigger = controller.back();
-    private final Trigger manualScoreTrigger = controller.leftBumper();
-    private final Trigger manualPassTrigger = controller.rightBumper();
+    private final Trigger manualScoreTrigger = controller.rightTrigger();
+    private final Trigger manualPassTrigger = controller.leftTrigger();
 
     // Dashboard inputs
     private final LoggedDashboardChooser<String> autoChooser;
@@ -291,6 +293,9 @@ public class RobotContainer {
         turret.turnaroundZoneMaxTrigger.whileTrue(rumbleLeft);
         turret.turnaroundZoneMinTrigger.whileTrue(rumbleRight);
 
+        slowDownTrigger = new Trigger(() -> superstructure.getGoal() == Goal.SCORING);
+        slowDownTrigger.whileTrue(teleopDrive.slowDownCommand());
+
         // Configure the button bindings
         configureButtonBindings();
     }
@@ -305,10 +310,10 @@ public class RobotContainer {
         // Default command, normal field-relative drive
         drive.setDefaultCommand(teleopDrive);
 
-        intakeAutoSwitchTrigger.onTrue(Commands.either(
-                intakes.setGoal(IntakesGoal.STOW),
-                intakes.setGoal(IntakesGoal.AUTOSWITCH),
-                () -> intakes.getGoal() == IntakesGoal.AUTOSWITCH));
+        // intakeAutoSwitchTrigger.onTrue(Commands.either(
+        //         intakes.setGoal(IntakesGoal.STOW),
+        //         intakes.setGoal(IntakesGoal.AUTOSWITCH),
+        //         () -> intakes.getGoal() == IntakesGoal.AUTOSWITCH));
         // deployLeftIntakeTrigger.onFalse(intake.setGoal(IntakeGoal.STOW));
 
         zeroRightRackTrigger.whileTrue(intakes.right.zeroSequence());
@@ -321,9 +326,18 @@ public class RobotContainer {
         zeroHoodTrigger.onFalse(turret.setGoal(TurretGoal.OFF));
 
         switchIntakesTrigger.onTrue(intakes.switchIntakes());
-        collectTrigger.onTrue(superstructure.toggleCollecting());
+        collectTrigger
+                .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)
+                .onTrue(superstructure.setGoal(Goal.COLLECTING));
+        collectTrigger
+                .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)
+                .onFalse(superstructure.stopCollecting());
         // collectTrigger.onFalse(superstructure.stopCollecting().onlyIf(() -> superstructure.getGoal() ==
         // Goal.EXPANDED));
+
+        intakePressTrigger.whileTrue(intakes.press());
+
+        speedUpTrigger.whileTrue(teleopDrive.speedUpCommand());
 
         // turretTuningTrigger.toggleOnTrue(Commands.startEnd(
         //         turret.setFlywheelSpeed(RPM.of(3000))::initialize, turret.setGoal(TurretGoal.OFF)::initialize));
@@ -342,19 +356,23 @@ public class RobotContainer {
                 indexer.setGoal(IndexerGoal.ACTIVE),
                 () -> indexer.getGoal() == IndexerGoal.ACTIVE));
 
-        climbTrigger.toggleOnTrue(
-                intakes.setGoal(IntakesGoal.STOW).andThen(AutoClimb.getAutoClimbCommand(drive, vision, climber)));
+        // climbTrigger.toggleOnTrue(
+        //         intakes.setGoal(IntakesGoal.STOW).andThen(AutoClimb.getAutoClimbCommand(drive, vision, climber)));
         // extendTrigger.toggleOnTrue(intakes.setGoal(IntakesGoal.STOW).andThen(climber.extend()));
         // stowTrigger.toggleOnTrue(climber.stow());
 
-        manualScoreTrigger.whileTrue(turret.manualScore()
-                .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
-                .finallyDo(() -> indexer.stop())
-                .withName("Manual Score"));
-        manualPassTrigger.whileTrue(turret.manualPass()
-                .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
-                .finallyDo(() -> indexer.stop())
-                .withName("Manual Pass"));
+        manualScoreTrigger
+                .and(() -> turret.getGoal() == TurretGoal.MANUAL_OVERRIDE)
+                .whileTrue(turret.manualScore()
+                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
+                        .finallyDo(() -> indexer.stop())
+                        .withName("Manual Score"));
+        manualPassTrigger
+                .and(() -> turret.getGoal() == TurretGoal.MANUAL_OVERRIDE)
+                .whileTrue(turret.manualPass()
+                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
+                        .finallyDo(() -> indexer.stop())
+                        .withName("Manual Pass"));
     }
 
     private void configureFuelSim() {

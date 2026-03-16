@@ -202,6 +202,20 @@ public class TeleopDrive extends Command {
                 });
     }
 
+    public Command slowDownCommand() {
+        return Commands.startEnd(
+                () -> {
+                    setDriveSpeed(SwerveConstants.SLOW_DRIVE_SPEED);
+                    setRotSpeed(SwerveConstants.SLOW_ROT_SPEED);
+                    driveLimiter.setRateLimit(SwerveConstants.SLOW_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
+                },
+                () -> {
+                    setDriveSpeed(SwerveConstants.DEFAULT_DRIVE_SPEED);
+                    setRotSpeed(SwerveConstants.DEFAULT_ROT_SPEED);
+                    driveLimiter.setRateLimit(SwerveConstants.MAX_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
+                });
+    }
+
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {}

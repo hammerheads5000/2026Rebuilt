@@ -125,10 +125,15 @@ public final class Constants {
         public static final LinearVelocity DEFAULT_DRIVE_SPEED = MetersPerSecond.of(3.2);
         public static final AngularVelocity DEFAULT_ROT_SPEED = RotationsPerSecond.of(0.75);
 
-        public static final LinearVelocity FAST_DRIVE_SPEED = MetersPerSecond.of(4.5);
-        public static final AngularVelocity FAST_ROT_SPEED = RotationsPerSecond.of(2);
+        public static final LinearVelocity FAST_DRIVE_SPEED = MetersPerSecond.of(3.5);
+        public static final AngularVelocity FAST_ROT_SPEED = RotationsPerSecond.of(0.75);
 
         public static final LinearAcceleration MAX_TELEOP_ACCEL = MetersPerSecondPerSecond.of(25);
+
+        public static final LinearVelocity SLOW_DRIVE_SPEED = MetersPerSecond.of(2);
+        public static final AngularVelocity SLOW_ROT_SPEED = RotationsPerSecond.of(0.5);
+
+        public static final LinearAcceleration SLOW_TELEOP_ACCEL = MetersPerSecondPerSecond.of(3);
 
         public static final AngularVelocity MAX_MODULE_ROT_SPEED = RotationsPerSecond.of(5);
 
@@ -587,6 +592,11 @@ public final class Constants {
         public static final Distance STOW_TOLERANCE = Inches.of(0.5);
         public static final Distance DEPLOY_TOLERANCE = Inches.of(1);
         public static final Distance DECOUPLE_DISTANCE = Inches.of(3);
+
+        public static final Voltage PRESS_IN_VOLTAGE = Volts.of(-2);
+        public static final Voltage PRESS_OUT_VOLTAGE = Volts.of(2);
+        public static final Time PRESS_IN_TIME = Seconds.of(0.4);
+        public static final Time PRESS_OUT_TIME = Seconds.of(0.2);
 
         public static final LinearVelocity MIN_SWITCH_ROBOT_VELOCITY = MetersPerSecond.of(0.2);
 

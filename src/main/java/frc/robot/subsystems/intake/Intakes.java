@@ -103,7 +103,15 @@ public class Intakes extends SubsystemBase {
         return Commands.either(
                 deployLeft(),
                 deployRight(),
-                () -> (right.getGoal() == IntakeGoal.DEPLOYED || right.getGoal() == IntakeGoal.DEPLOYING));
+                () -> (right.getGoal() == IntakeGoal.DEPLOYED
+                        || right.getGoal() == IntakeGoal.DEPLOYING
+                        || travelingLeft()));
+    }
+
+    public Command press() {
+        return Commands.either(right.press(), left.press(), right.deployedTrigger)
+                .onlyIf(right.deployedTrigger.or(left.deployedTrigger))
+                .withName("Intake Press");
     }
 
     @Override
