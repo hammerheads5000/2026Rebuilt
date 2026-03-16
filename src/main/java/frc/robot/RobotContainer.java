@@ -321,7 +321,8 @@ public class RobotContainer {
         zeroHoodTrigger.onFalse(turret.setGoal(TurretGoal.OFF));
 
         switchIntakesTrigger.onTrue(intakes.switchIntakes());
-        collectTrigger.onTrue(superstructure.toggleCollecting());
+        collectTrigger.onTrue(superstructure.setGoal(Goal.COLLECTING));
+        collectTrigger.onFalse(superstructure.stopCollecting());
         // collectTrigger.onFalse(superstructure.stopCollecting().onlyIf(() -> superstructure.getGoal() ==
         // Goal.EXPANDED));
 
