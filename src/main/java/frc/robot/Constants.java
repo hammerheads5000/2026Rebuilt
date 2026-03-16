@@ -490,10 +490,10 @@ public final class Constants {
             SHOT_MAP.put(5.5, new ShotData(RPM.of(3720), Degrees.of(39)));
             TOF_MAP.put(5.5, 1.46);
 
-            SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(35)));
+            SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(37)));
             TOF_MAP.put(5.18, 1.42);
 
-            SHOT_MAP.put(4.72, new ShotData(RPM.of(3600), Degrees.of(33)));
+            SHOT_MAP.put(4.72, new ShotData(RPM.of(3600), Degrees.of(34)));
             TOF_MAP.put(4.72, 1.42);
 
             SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
@@ -585,7 +585,7 @@ public final class Constants {
                 .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(400));
 
         public static final Distance STOW_POS = Inches.of(0);
-        public static final Distance DEPLOY_POS = Inches.of(11);
+        public static final Distance DEPLOY_POS = Inches.of(12);
         public static final Voltage SPIN_VOLTAGE = Volts.of(12);
         public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(10);
@@ -627,7 +627,7 @@ public final class Constants {
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(50);
 
         public static final CurrentLimitsConfigs FEED_CURRENT_LIMITS =
-                new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(60);
+                new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(100);
 
         public static final Voltage SPIN_VOLTAGE = Volts.of(4);
         public static final Voltage FEED_VOLTAGE = Volts.of(11);

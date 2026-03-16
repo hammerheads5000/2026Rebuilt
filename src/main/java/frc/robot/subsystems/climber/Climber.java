@@ -60,6 +60,11 @@ public class Climber extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Climber", inputs);
+        Logger.recordOutput(
+                "Climber/Current Command",
+                this.getCurrentCommand() == null
+                        ? "None"
+                        : this.getCurrentCommand().getName());
         visualizer.update(inputs.frontPosition, inputs.backPosition);
 
         frontDisconnectedAlert.set(!inputs.frontConnected && Constants.CURRENT_MODE != Mode.SIM);

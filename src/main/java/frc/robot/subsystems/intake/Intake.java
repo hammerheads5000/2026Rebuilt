@@ -240,7 +240,8 @@ public class Intake extends SubsystemBase {
                             break;
                     }
                 })
-                .onlyIf(() -> this.goal != IntakeGoal.DISABLED);
+                .onlyIf(() -> this.goal != IntakeGoal.DISABLED)
+                .withName("Set goal");
     }
 
     // slowly move intake in and out to push balls into indexer
@@ -303,6 +304,11 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Intakes/" + name, inputs);
+        Logger.recordOutput(
+                "Intakes/" + name + "/Current Command",
+                this.getCurrentCommand() == null
+                        ? "None"
+                        : this.getCurrentCommand().getName());
         updateTunables();
 
         rackDisconnectedAlert.set(!inputs.rackMotorConnected && Constants.CURRENT_MODE != Mode.SIM);

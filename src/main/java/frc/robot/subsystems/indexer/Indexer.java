@@ -62,6 +62,11 @@ public class Indexer extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Indexer", inputs);
+        Logger.recordOutput(
+                "Indexer/Current Command",
+                this.getCurrentCommand() == null
+                        ? "None"
+                        : this.getCurrentCommand().getName());
 
         if ((spinVoltage.hasChanged(hashCode()) || feedVoltage.hasChanged(hashCode())) && goal == IndexerGoal.ACTIVE) {
             io.setSpinOutput(Volts.of(spinVoltage.get()));
@@ -110,15 +115,12 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command activate() {
-        return this.runOnce(() -> {
-                    io.setFeedOutput(Volts.of(feedVoltage.get()));
-                    // io.setSpinOutput(SPIN_VOLTAGE);
-                })
-                .andThen(Commands.waitSeconds(0.5))
-                .andThen(this.runOnce(() -> {
-                    io.setSpinOutput(Volts.of(spinVoltage.get()));
-                    // io.stopSpin();
-                }))
+        return Commands.sequence(
+                        this.runOnce(() -> io.setFeedOutput(UNJAM_FEED_VOLTAGE)),
+                        Commands.waitSeconds(0.1),
+                        this.runOnce(() -> io.setFeedOutput(Volts.of(feedVoltage.get()))),
+                        Commands.waitSeconds(0.3),
+                        this.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
                 // .andThen(Commands.waitUntil(() -> inputs.feedVelocity.abs(RPM) >= FEED_THRESHOLD.in(RPM)))
                 // .andThen(this.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
                 .withName("IndexerActivate");

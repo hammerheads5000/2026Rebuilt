@@ -41,8 +41,6 @@ import frc.robot.Constants.Mode;
 import frc.robot.subsystems.turret.TurretCalculator.ShotData;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.VirtualPD;
-import frc.robot.util.Zones;
-import java.util.Set;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -85,12 +83,6 @@ public class Turret extends SubsystemBase {
     public final Trigger turnaroundZoneMinTrigger = new Trigger(this::inTurnaroundZoneMin).debounce(0.05);
 
     @AutoLogOutput
-    public final Trigger underTrenchTrigger;
-
-    @AutoLogOutput
-    private TurretGoal nonDuckingGoal = goal;
-
-    @AutoLogOutput
     private MutAngularVelocity flywheelFudgeFactor = RPM.of(0).mutableCopy();
 
     private Angle[] turnVelFilterPos = new Angle[] {Radians.zero(), Radians.zero()};
@@ -120,11 +112,6 @@ public class Turret extends SubsystemBase {
         hoodStalledTrigger = new Trigger(() -> inputs.hoodCurrent.abs(Amps) >= HOOD_STALL_CURRENT.abs(Amps)
                 && inputs.hoodVelocity.abs(RadiansPerSecond) <= HOOD_STALL_ANGULAR_VELOCITY.abs(RadiansPerSecond));
 
-        underTrenchTrigger = Zones.TRENCH_DUCK_ZONES.willContain(poseSupplier, fieldSpeedsSupplier, DUCK_TIME);
-
-        underTrenchTrigger.onTrue(duck());
-        underTrenchTrigger.onFalse(unduck());
-
         turretVisualizer = new TurretVisualizer(
                 () -> new Pose3d(poseSupplier
                                 .get()
@@ -141,13 +128,6 @@ public class Turret extends SubsystemBase {
     public Command setGoal(TurretGoal goal) {
         return this.runOnce(() -> {
                     if (this.goal == TurretGoal.DISABLED || this.goal == TurretGoal.MANUAL_OVERRIDE) {
-                        return;
-                    }
-                    // don't interrupt ducking with another goal
-                    if (goal != TurretGoal.DISABLED
-                            && this.goal == TurretGoal.DUCKING
-                            && underTrenchTrigger.getAsBoolean()) {
-                        this.nonDuckingGoal = goal;
                         return;
                     }
                     this.goal = goal;
@@ -204,14 +184,6 @@ public class Turret extends SubsystemBase {
     private Command decreaseFudgeFactor() {
         return Commands.runOnce(() -> this.flywheelFudgeFactor.mut_minus(FLYWHEEL_FUDGE_AMOUNT))
                 .withName("Fudge Down");
-    }
-
-    private Command duck() {
-        return this.setGoal(TurretGoal.DUCKING).beforeStarting(() -> nonDuckingGoal = this.goal);
-    }
-
-    private Command unduck() {
-        return Commands.defer(() -> this.setGoal(nonDuckingGoal), Set.of());
     }
 
     public TurretGoal getGoal() {
@@ -327,6 +299,11 @@ public class Turret extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("Turret", inputs);
+        Logger.recordOutput(
+                "Turret/Current Command",
+                this.getCurrentCommand() == null
+                        ? "None"
+                        : this.getCurrentCommand().getName());
 
         Pose2d pose = poseSupplier.get();
 

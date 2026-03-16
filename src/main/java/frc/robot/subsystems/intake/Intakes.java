@@ -19,6 +19,7 @@ import frc.robot.subsystems.intake.Intake.IntakeGoal;
 import java.util.Map;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 public class Intakes extends SubsystemBase {
     public final Intake left;
@@ -82,7 +83,8 @@ public class Intakes extends SubsystemBase {
                                 left.off().alongWith(right.off()),
                                 IntakesGoal.STOW,
                                 left.stow().alongWith(right.stow())),
-                        () -> goal));
+                        () -> goal))
+                .withName("Set goal");
     }
 
     public IntakesGoal getGoal() {
@@ -118,6 +120,11 @@ public class Intakes extends SubsystemBase {
     public void periodic() {
         measuredVisualizer.setLeftPosition(left.getPosition());
         measuredVisualizer.setRightPosition(right.getPosition());
+        Logger.recordOutput(
+                "Intakes/Current Command",
+                this.getCurrentCommand() == null
+                        ? "None"
+                        : this.getCurrentCommand().getName());
     }
 
     public enum IntakesGoal {
