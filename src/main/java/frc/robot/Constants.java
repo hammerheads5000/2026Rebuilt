@@ -607,6 +607,9 @@ public final class Constants {
 
         public static final Current SPIN_STALL_CURRENT = Amps.of(20);
         public static final AngularVelocity SPIN_STALL_ANGULAR_VELOCITY = RadiansPerSecond.of(0.5);
+
+        public static final Angle DEPLOY_ANGLE = Degrees.of(69);
+        public static final Distance MAX_EXTENSION = DEPLOY_POS.times(Math.sin(DEPLOY_ANGLE.in(Radians)));
     }
 
     public static class IndexerConstants {

@@ -263,7 +263,7 @@ public class RobotContainer {
             autoChooser.addOption(option, AutoConstants.PREBUILT_AUTOS.get(option));
         }
 
-        teleopDrive = new TeleopDrive(drive, controller);
+        teleopDrive = new TeleopDrive(drive, controller, intakes.left.deployedTrigger, intakes.right.deployedTrigger);
         Logger.recordOutput("ZeroedRobotComponents", new Pose3d[] {new Pose3d(), new Pose3d(), new Pose3d()});
 
         Zones.logAllZones();
