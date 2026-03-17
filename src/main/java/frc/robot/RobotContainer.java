@@ -141,8 +141,8 @@ public class RobotContainer {
                         new ModuleIOTalonFX(SwerveConstants.BackRight.MODULE_CONSTANTS));
                 intakes = new Intakes(
                         // new IntakeIO() {},
-                        // new IntakeIOTalonFX(IntakeConstants.LEFT_RACK_ID, IntakeConstants.LEFT_SPIN_ID),
-                        new IntakeIO() {},
+                        new IntakeIOTalonFX(IntakeConstants.LEFT_RACK_ID, IntakeConstants.LEFT_SPIN_ID),
+                        // new IntakeIO() {},
                         new IntakeIOTalonFX(IntakeConstants.RIGHT_RACK_ID, IntakeConstants.RIGHT_SPIN_ID),
                         drive::getChassisSpeeds);
                 indexer = new Indexer(new IndexerIOTalonFX());
@@ -287,6 +287,8 @@ public class RobotContainer {
                         .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
                         .finallyDo(() -> indexer.stop()));
 
+        SmartDashboard.putData("Overrides/Slow Drive", teleopDrive.slowDownCommand());
+
         systemChecks = new SystemChecks(turret, intakes, indexer, climber);
 
         // Turret turnaround danger zone controller rumble
@@ -326,6 +328,9 @@ public class RobotContainer {
         zeroHoodTrigger.onFalse(turret.setGoal(TurretGoal.OFF));
 
         switchIntakesTrigger.onTrue(intakes.switchIntakes());
+        intakes.switchIntakes().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
+        intakes.deployLeft().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
+        intakes.deployRight().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
         collectTrigger
                 .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)
                 .onTrue(superstructure.setGoal(Goal.COLLECTING));

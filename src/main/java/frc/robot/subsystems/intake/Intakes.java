@@ -92,22 +92,38 @@ public class Intakes extends SubsystemBase {
     }
 
     public Command deployLeft() {
-        return Commands.sequence(right.stow(), Commands.waitUntil(right.stowedTrigger), left.deploy())
+        return Commands.sequence(
+                        right.stow()
+                                .onlyIf(() -> right.getGoal() != IntakeGoal.DISABLED)
+                                .asProxy(),
+                        Commands.waitUntil(right.stowedTrigger).onlyIf(() -> right.getGoal() != IntakeGoal.DISABLED),
+                        left.deploy().asProxy())
                 .withName("Deploy Left");
     }
 
     public Command deployRight() {
-        return Commands.sequence(left.stow(), Commands.waitUntil(left.stowedTrigger), right.deploy())
+        return Commands.sequence(
+                        left.stow()
+                                .onlyIf(() -> left.getGoal() != IntakeGoal.DISABLED)
+                                .asProxy(),
+                        Commands.waitUntil(left.stowedTrigger).onlyIf(() -> left.getGoal() != IntakeGoal.DISABLED),
+                        right.deploy().asProxy())
                 .withName("Deploy Right");
     }
 
     public Command switchIntakes() {
-        return Commands.either(
-                deployLeft(),
-                deployRight(),
-                () -> (right.getGoal() == IntakeGoal.DEPLOYED
-                        || right.getGoal() == IntakeGoal.DEPLOYING
-                        || travelingLeft()));
+        return Commands.either(deployRight(), deployLeft(), this::shouldSwitchToRight);
+    }
+
+    private boolean shouldSwitchToRight() {
+        boolean leftDisabled = left.getGoal() == IntakeGoal.DISABLED;
+        boolean rightDisabled = right.getGoal() == IntakeGoal.DISABLED;
+        boolean leftDeploy = left.getGoal() == IntakeGoal.DEPLOYED || left.getGoal() == IntakeGoal.DEPLOYING;
+        boolean rightDeploy = right.getGoal() == IntakeGoal.DEPLOYED || right.getGoal() == IntakeGoal.DEPLOYING;
+        return (leftDisabled && !rightDeploy)
+                || (rightDisabled && leftDeploy)
+                || (!(rightDisabled || leftDeploy || rightDeploy) && travelingRight())
+                || (!(rightDisabled || leftDisabled) && !rightDeploy);
     }
 
     public Command press() {

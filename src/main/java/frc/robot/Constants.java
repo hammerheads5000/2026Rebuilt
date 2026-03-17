@@ -587,15 +587,16 @@ public final class Constants {
         public static final Distance STOW_POS = Inches.of(0);
         public static final Distance DEPLOY_POS = Inches.of(12);
         public static final Voltage SPIN_VOLTAGE = Volts.of(12);
-        public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-2);
+        public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-0);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(10);
         public static final Distance STOW_TOLERANCE = Inches.of(0.5);
         public static final Distance DEPLOY_TOLERANCE = Inches.of(1);
         public static final Distance DECOUPLE_DISTANCE = Inches.of(3);
 
+        public static final Distance PRESS_STOP_SPIN = Inches.of(5);
         public static final Voltage PRESS_IN_VOLTAGE = Volts.of(-2);
-        public static final Voltage PRESS_OUT_VOLTAGE = Volts.of(2);
-        public static final Time PRESS_IN_TIME = Seconds.of(0.4);
+        public static final Voltage PRESS_OUT_VOLTAGE = Volts.of(1.5);
+        public static final Time PRESS_IN_TIME = Seconds.of(0.6);
         public static final Time PRESS_OUT_TIME = Seconds.of(0.2);
 
         public static final LinearVelocity MIN_SWITCH_ROBOT_VELOCITY = MetersPerSecond.of(0.2);

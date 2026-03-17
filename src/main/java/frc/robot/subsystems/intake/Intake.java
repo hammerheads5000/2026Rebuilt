@@ -14,6 +14,7 @@ import static frc.robot.Constants.IntakeConstants.PRESS_IN_TIME;
 import static frc.robot.Constants.IntakeConstants.PRESS_IN_VOLTAGE;
 import static frc.robot.Constants.IntakeConstants.PRESS_OUT_TIME;
 import static frc.robot.Constants.IntakeConstants.PRESS_OUT_VOLTAGE;
+import static frc.robot.Constants.IntakeConstants.PRESS_STOP_SPIN;
 import static frc.robot.Constants.IntakeConstants.RACK_MOTION_MAGIC;
 import static frc.robot.Constants.IntakeConstants.RACK_STALL_CURRENT;
 import static frc.robot.Constants.IntakeConstants.RACK_STALL_VEL;
@@ -32,6 +33,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -92,6 +94,7 @@ public class Intake extends SubsystemBase {
 
     private final Alert rackDisconnectedAlert;
     private final Alert spinDisconnectedAlert;
+    private final Alert disabledAlert;
 
     public Intake(IntakeIO io, IntakeSide side) {
         this.io = io;
@@ -111,6 +114,7 @@ public class Intake extends SubsystemBase {
 
         rackDisconnectedAlert = new Alert(name + " Intake Rack Motor Disconnected!", AlertType.kError);
         spinDisconnectedAlert = new Alert(name + " Intake Spin Motor Disconnected!", AlertType.kError);
+        disabledAlert = new Alert(name + " Disabled", AlertType.kWarning);
 
         spinStallTrigger = new Trigger(this::spinStalled).debounce(0.1);
         rackStallTrigger = new Trigger(this::rackStalled).debounce(0.1);
@@ -251,13 +255,30 @@ public class Intake extends SubsystemBase {
                         Commands.waitSeconds(pressInTime.get()),
                         this.runOnce(() -> io.setRackOutput(Volts.of(pressOutVoltage.get()))),
                         Commands.waitSeconds(pressOutTime.get()))
-                .until(this::stowed);
+                .alongWith(
+                        Commands.waitUntil(() -> inputs.rackPosition.lte(PRESS_STOP_SPIN)),
+                        Commands.runOnce(io::stopSpin))
+                .until(this::stowed)
+                .finallyDo(() -> {
+                    this.goal = IntakeGoal.DEPLOYING;
+                    io.setRackPosition(Inches.of(deployPos.get()));
+                    io.setSpinOutput(Volts.of(spinVoltage.get()));
+                })
+                .withName("Press intake " + side.name());
     }
 
     public Command disable() {
-        return this.runOnce(() -> goal = IntakeGoal.DISABLED)
+        return this.runOnce(() -> {
+                    goal = IntakeGoal.DISABLED;
+                    disabledAlert.set(true);
+                })
                 .andThen(Commands.idle())
-                .finallyDo(() -> goal = IntakeGoal.IDLE)
+                .finallyDo(() -> {
+                    goal = IntakeGoal.IDLE;
+                    disabledAlert.set(false);
+                })
+                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+                .ignoringDisable(true)
                 .withName("Disable Intake " + side.name());
     }
 

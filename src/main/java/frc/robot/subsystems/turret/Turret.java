@@ -94,6 +94,8 @@ public class Turret extends SubsystemBase {
     private final Alert flywheelDisconnectedAlert = new Alert("Turret Flywheel Motor Disconnected!", AlertType.kError);
     private final Alert hoodDisconnectedAlert = new Alert("Turret Hood Motor Disconnected!", AlertType.kError);
     private final Alert turnDisconnectedAlert = new Alert("Turret Turn Motor Disconnected!", AlertType.kError);
+    private final Alert disabledAlert = new Alert("Turret Disabled", AlertType.kWarning);
+    private final Alert manualOverrideAlert = new Alert("Turret Override", AlertType.kWarning);
 
     public Turret(TurretIO io, Supplier<Pose2d> poseSupplier, Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
         this.io = io;
@@ -245,19 +247,26 @@ public class Turret extends SubsystemBase {
 
     public Command disable() {
         return setGoal(TurretGoal.DISABLED)
+                .beforeStarting(() -> disabledAlert.set(true))
                 .andThen(Commands.idle())
-                .finallyDo(() -> goal = TurretGoal.OFF)
+                .finallyDo(() -> {
+                    goal = TurretGoal.OFF;
+                    disabledAlert.set(false);
+                })
                 .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+                .ignoringDisable(true)
                 .withName("Disable Turret");
     }
 
     public Command manualOverride() {
         return setGoal(TurretGoal.MANUAL_OVERRIDE)
+                .beforeStarting(() -> manualOverrideAlert.set(true))
                 .andThen(Commands.idle())
                 .finallyDo(() -> {
                     if (goal != TurretGoal.DISABLED) {
                         goal = TurretGoal.OFF;
                     }
+                    manualOverrideAlert.set(false);
                 })
                 .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
                 .withName("Turret Manual Override");

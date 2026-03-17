@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -40,6 +41,7 @@ public class Climber extends SubsystemBase {
 
     private final Alert frontDisconnectedAlert = new Alert("Climber Front Motor Disconnected", AlertType.kError);
     private final Alert backDisconnectedAlert = new Alert("Climber Front Motor Disconnected", AlertType.kError);
+    private final Alert disabledAlert = new Alert("Climber Disabled", AlertType.kWarning);
 
     public Climber(ClimberIO io) {
         this.io = io;
@@ -155,9 +157,17 @@ public class Climber extends SubsystemBase {
     }
 
     public Command disable() {
-        return this.runOnce(() -> disabled = true)
+        return this.runOnce(() -> {
+                    disabled = true;
+                    disabledAlert.set(true);
+                })
                 .andThen(Commands.idle())
-                .finallyDo(() -> disabled = false)
+                .finallyDo(() -> {
+                    disabled = false;
+                    disabledAlert.set(false);
+                })
+                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+                .ignoringDisable(true)
                 .withName("Disable Climber");
     }
 }

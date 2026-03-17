@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -42,6 +43,7 @@ public class Indexer extends SubsystemBase {
 
     private final Alert feedDisconnectedAlert = new Alert("Indexer Feed Motor Disconnected", AlertType.kError);
     private final Alert hookDisconnectedAlert = new Alert("Indexer Hook Motor Disconnected", AlertType.kError);
+    private final Alert disabledAlert = new Alert("Indexer Disabled", AlertType.kWarning);
 
     @AutoLogOutput
     private IndexerGoal goal = IndexerGoal.IDLE;
@@ -104,9 +106,17 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command disable() {
-        return this.runOnce(() -> goal = IndexerGoal.DISABLED)
+        return this.runOnce(() -> {
+                    goal = IndexerGoal.DISABLED;
+                    disabledAlert.set(true);
+                })
                 .andThen(Commands.idle())
-                .finallyDo(() -> goal = IndexerGoal.IDLE)
+                .finallyDo(() -> {
+                    goal = IndexerGoal.IDLE;
+                    disabledAlert.set(false);
+                })
+                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
+                .ignoringDisable(true)
                 .withName("Disable Indexer");
     }
 

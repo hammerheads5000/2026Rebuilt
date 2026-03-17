@@ -35,6 +35,7 @@ public class Vision extends SubsystemBase {
     private final VisionIO[] io;
     private final VisionIOInputsAutoLogged[] inputs;
     private final Alert[] disconnectedAlerts;
+    private final Alert disabledAlert = new Alert("Vision Disabled", AlertType.kWarning);
 
     private boolean disabled = false;
     private boolean climbing = false;
@@ -173,9 +174,16 @@ public class Vision extends SubsystemBase {
     }
 
     public Command disable() {
-        return this.runOnce(() -> disabled = true)
+        return this.runOnce(() -> {
+                    disabled = true;
+                    disabledAlert.set(true);
+                })
                 .andThen(Commands.idle())
-                .finallyDo(() -> disabled = false)
+                .finallyDo(() -> {
+                    disabled = false;
+                    disabledAlert.set(false);
+                })
+                .ignoringDisable(true)
                 .withName("Disable Vision");
     }
 
