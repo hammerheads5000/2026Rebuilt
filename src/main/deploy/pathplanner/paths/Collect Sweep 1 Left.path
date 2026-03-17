@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.426741935483871,
-        "y": 7.026637096774193
+        "x": 6.598703047484054,
+        "y": 7.3615237420269315
       },
       "isLocked": false,
       "linkedName": "Trench Exit Left"
@@ -20,12 +20,12 @@
         "y": 5.753911290322581
       },
       "prevControl": {
-        "x": 8.65766935483871,
-        "y": 6.192519548563954
+        "x": 8.533550673281361,
+        "y": 7.052976612331679
       },
       "nextControl": {
-        "x": 8.65766935483871,
-        "y": 5.4852313158681385
+        "x": 8.683223900744212,
+        "y": 5.486449341895517
       },
       "isLocked": false,
       "linkedName": null
@@ -63,7 +63,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1.0,
-      "rotationDegrees": 180.0
+      "rotationDegrees": -156.86973080715083
     },
     {
       "waypointRelativePos": 2.0,

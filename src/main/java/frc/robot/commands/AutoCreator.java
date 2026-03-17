@@ -133,18 +133,31 @@ public class AutoCreator {
                 s = s.substring(0, s.length() - 1);
             }
 
-            StartEndPoint startEnd;
+            StartEndPoint start;
+            StartEndPoint end;
             if (s.contains("Left Bump")) {
-                startEnd = StartEndPoint.BUMP_LEFT;
+                start = StartEndPoint.BUMP_LEFT;
+                end = StartEndPoint.BUMP_LEFT;
             } else if (s.contains("Right Bump")) {
-                startEnd = StartEndPoint.BUMP_RIGHT;
+                start = StartEndPoint.BUMP_RIGHT;
+                end = StartEndPoint.BUMP_RIGHT;
+            } else if (s.contains("to Bump")) {
+                if (s.contains("Left")) {
+                    start = StartEndPoint.TRENCH_LEFT;
+                    end = StartEndPoint.BUMP_LEFT;
+                } else {
+                    start = StartEndPoint.TRENCH_RIGHT;
+                    end = StartEndPoint.BUMP_RIGHT;
+                }
             } else if (s.contains("Left")) {
-                startEnd = StartEndPoint.TRENCH_LEFT;
+                start = StartEndPoint.TRENCH_LEFT;
+                end = StartEndPoint.TRENCH_LEFT;
             } else {
-                startEnd = StartEndPoint.TRENCH_RIGHT;
+                start = StartEndPoint.TRENCH_RIGHT;
+                end = StartEndPoint.TRENCH_RIGHT;
             }
 
-            return new AutoPath(startEnd, startEnd, s, collect, 0);
+            return new AutoPath(start, end, s, collect, 0);
         }
 
         /** returns {@link PathPlannerPath} represented by this AutoPath */
