@@ -790,6 +790,10 @@ public final class Constants {
         public static final Distance BUMP_WIDTH = Inches.of(73); // y width of bump
 
         public static final Distance TRENCH_CENTER = TRENCH_WIDTH.div(2);
+
+        public static final Distance TOWER_X = Inches.of(49.25);
+        public static final Distance TOWER_CENTER_Y = FIELD_WIDTH.div(2).minus(Inches.of(11.46));
+        public static final Distance TOWER_WIDTH = Inches.of(47);
     }
 
     public static class AutoConstants {

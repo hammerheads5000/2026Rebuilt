@@ -112,7 +112,7 @@ public class RobotContainer {
     private final Trigger switchIntakesTrigger = controller.rightBumper();
     private final Trigger intakePressTrigger = controller.leftBumper();
     private final Trigger collectTrigger = controller.leftTrigger();
-    private final Trigger turretTuningTrigger = controller.start();
+    private final Trigger turretModeTrigger = controller.start();
     private final Trigger indexTrigger = controller.back();
     private final Trigger speedUpTrigger = controller.rightTrigger();
     private final Trigger slowDownTrigger;
@@ -367,10 +367,13 @@ public class RobotContainer {
 
         // turretTuningTrigger.toggleOnTrue(Commands.startEnd(
         //         turret.setFlywheelSpeed(RPM.of(3000))::initialize, turret.setGoal(TurretGoal.OFF)::initialize));
-        turretTuningTrigger.onTrue(Commands.either(
+        turretModeTrigger.onTrue(Commands.either(
+                Commands.either(
+                        turret.setGoal(TurretGoal.SCORING),
+                        turret.setGoal(TurretGoal.PASSING),
+                        superstructure.inAllianceZoneTrigger),
                 turret.setGoal(TurretGoal.OFF),
-                turret.setGoal(TurretGoal.SCORING),
-                () -> turret.getGoal() == TurretGoal.SCORING));
+                () -> turret.getGoal() == TurretGoal.OFF));
 
         // turretScoringTrigger.onTrue(Commands.either(
         //         superstructure.setGoal(Goal.IDLE),

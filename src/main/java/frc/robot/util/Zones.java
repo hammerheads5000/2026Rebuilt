@@ -197,6 +197,15 @@ public class Zones {
     public static final PredictiveXZoneCollection BUMP_ZONES =
             new PredictiveXZoneCollection(BLUE_BOTTOM_BUMP, BLUE_TOP_BUMP, RED_BOTTOM_BUMP, RED_TOP_BUMP);
 
+    private static final BaseZone BLUE_TOWER = new BaseZone(
+            Meters.zero(),
+            FieldConstants.TOWER_X,
+            FieldConstants.TOWER_CENTER_Y.minus(FieldConstants.TOWER_WIDTH.div(2)),
+            FieldConstants.TOWER_CENTER_Y.plus(FieldConstants.TOWER_WIDTH.div(2)));
+    private static final BaseZone RED_TOWER = BLUE_TOWER.mirroredX().mirroredY();
+
+    public static final ZoneCollection TOWER_ZONES = new ZoneCollection(BLUE_TOWER, RED_TOWER);
+
     public static void logAllZones() {
         Logger.recordOutput("Zones/Trenches/Blue Bottom", BLUE_BOTTOM_TRENCH.getCorners());
         Logger.recordOutput("Zones/Trenches/Blue Top", BLUE_TOP_TRENCH.getCorners());

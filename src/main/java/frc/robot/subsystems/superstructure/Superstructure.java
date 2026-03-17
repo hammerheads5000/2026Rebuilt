@@ -52,6 +52,9 @@ public class Superstructure extends SubsystemBase {
     public final Trigger inAllianceZoneTrigger = new Trigger(this::inAllianceZone);
 
     @AutoLogOutput
+    public final Trigger behindTowerTrigger;
+
+    @AutoLogOutput
     private boolean shiftOverride = false;
 
     /**
@@ -118,12 +121,16 @@ public class Superstructure extends SubsystemBase {
                         .withName("Idle"));
 
         underTrenchTrigger = Zones.TRENCH_DUCK_ZONES.willContain(poseSupplier, fieldSpeedsSupplier, DUCK_TIME);
+        behindTowerTrigger = Zones.TOWER_ZONES.contains(poseSupplier);
 
         underTrenchTrigger.onTrue(this.duck());
         underTrenchTrigger.onFalse(this.unduck());
         inAllianceZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
         // inactiveInZoneTrigger.onTrue(this.setGoal(Goal.COLLECTING));
         leaveZoneTrigger.onTrue(this.setGoal(Goal.PASSING).onlyIf(() -> this.goal != Goal.COLLECTING));
+        behindTowerTrigger.onTrue(indexer.setGoal(IndexerGoal.IDLE));
+        behindTowerTrigger.onFalse(
+                indexer.setGoal(IndexerGoal.ACTIVE).onlyIf(() -> goal == Goal.SCORING || goal == Goal.PASSING));
 
         // turret.underTrenchTrigger.onTrue(indexer.runOnce(() -> indexer.stop(false)));
         // turret.underTrenchTrigger.onFalse(Commands.defer(() -> indexer.setGoal(indexer.getGoal()), Set.of()));
