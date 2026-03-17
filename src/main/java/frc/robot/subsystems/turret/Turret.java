@@ -178,13 +178,15 @@ public class Turret extends SubsystemBase {
                 .withName("Set Turret Goal");
     }
 
-    private Command increaseFudgeFactor() {
+    public Command increaseFudgeFactor() {
         return Commands.runOnce(() -> this.flywheelFudgeFactor.mut_plus(FLYWHEEL_FUDGE_AMOUNT))
+                .ignoringDisable(true)
                 .withName("Fudge Up");
     }
 
-    private Command decreaseFudgeFactor() {
+    public Command decreaseFudgeFactor() {
         return Commands.runOnce(() -> this.flywheelFudgeFactor.mut_minus(FLYWHEEL_FUDGE_AMOUNT))
+                .ignoringDisable(true)
                 .withName("Fudge Down");
     }
 

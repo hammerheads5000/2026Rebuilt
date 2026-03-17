@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
@@ -66,6 +67,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.FuelSim;
+import frc.robot.util.HubShiftUtil;
 import frc.robot.util.Zones;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -90,6 +92,8 @@ public class RobotContainer {
 
     // Controller
     private final CommandXboxController controller = new CommandXboxController(0);
+    private final CommandGenericHID toggleSwitches = new CommandGenericHID(1);
+    private final CommandGenericHID pushButtons = new CommandGenericHID(2);
 
     // Commands
     private final TeleopDrive teleopDrive;
@@ -117,6 +121,23 @@ public class RobotContainer {
     //     private final Trigger stowTrigger = controller.back();
     private final Trigger manualScoreTrigger = controller.rightTrigger();
     private final Trigger manualPassTrigger = controller.leftTrigger();
+
+    private final Trigger disableIndexer = toggleSwitches.button(1);
+    private final Trigger disableVision = toggleSwitches.button(2);
+    private final Trigger disableTurret = toggleSwitches.button(3);
+    private final Trigger disableLeftIntake = toggleSwitches.button(4);
+    private final Trigger disableRightIntake = toggleSwitches.button(5);
+    private final Trigger manualOverrideTurret = toggleSwitches.button(6);
+    private final Trigger disableWallAvoidance = toggleSwitches.button(7);
+    private final Trigger flashLEDs = toggleSwitches.button(8);
+    private final Trigger hubShiftOverride = toggleSwitches.button(9);
+    private final Trigger slowDrive = toggleSwitches.button(10);
+
+    private final Trigger fudgeDown = pushButtons.button(1);
+    private final Trigger fudgeUp = pushButtons.button(2);
+    private final Trigger zeroHood = pushButtons.button(3);
+    private final Trigger zeroLeftIntake = pushButtons.button(4);
+    private final Trigger zeroRightIntake = pushButtons.button(5);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<String> autoChooser;
@@ -378,6 +399,23 @@ public class RobotContainer {
                         .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
                         .finallyDo(() -> indexer.stop())
                         .withName("Manual Pass"));
+
+        disableIndexer.whileTrue(indexer.disable());
+        disableVision.whileTrue(vision.disable());
+        disableTurret.whileTrue(turret.disable());
+        disableLeftIntake.whileTrue(intakes.left.disable());
+        disableRightIntake.whileTrue(intakes.right.disable());
+        manualOverrideTurret.whileTrue(turret.manualOverride());
+        disableWallAvoidance.whileTrue(teleopDrive.disableWallAvoidance());
+        // flashLEDs.whileTrue();
+        HubShiftUtil.setAlwaysActiveOverride(hubShiftOverride::getAsBoolean);
+        slowDrive.whileTrue(teleopDrive.slowDownCommand());
+
+        fudgeDown.whileTrue(turret.decreaseFudgeFactor());
+        fudgeUp.whileTrue(turret.increaseFudgeFactor());
+        zeroHood.whileTrue(turret.zeroHoodSequence());
+        zeroLeftIntake.whileTrue(intakes.left.zeroSequence());
+        zeroRightIntake.whileTrue(intakes.right.zeroSequence());
     }
 
     private void configureFuelSim() {

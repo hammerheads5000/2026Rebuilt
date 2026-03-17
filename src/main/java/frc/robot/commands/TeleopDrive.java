@@ -8,12 +8,15 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static frc.robot.Constants.IntakeConstants.MAX_EXTENSION;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -23,14 +26,17 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.Dimensions;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.SlewRateLimiter2d;
 import frc.robot.util.TunableControls.TunablePIDController;
 import frc.robot.util.Zones;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 
 /** Default drive command to run that drives based on controller input */
 public class TeleopDrive extends Command {
@@ -38,6 +44,8 @@ public class TeleopDrive extends Command {
     private final DoubleSupplier xSupplier;
     private final DoubleSupplier ySupplier;
     private final DoubleSupplier omegaSupplier;
+    private final BooleanSupplier leftIntakeDeployed;
+    private final BooleanSupplier rightIntakeDeployed;
     private final SlewRateLimiter2d driveLimiter;
     private int flipFactor = 1; // 1 for normal, -1 for flipped
 
@@ -50,6 +58,9 @@ public class TeleopDrive extends Command {
     @AutoLogOutput
     private final Trigger inBumpZoneTrigger;
 
+    @AutoLogOutput
+    private boolean wallAvoidance = true;
+
     private final TunablePIDController trenchYController =
             new TunablePIDController(SwerveConstants.TRENCH_TRANSLATION_CONSTANTS);
     private final TunablePIDController rotationController =
@@ -59,12 +70,18 @@ public class TeleopDrive extends Command {
     private DriveMode currentDriveMode = DriveMode.NORMAL;
 
     /** Creates a new TeleopDrive. */
-    public TeleopDrive(Drive drive, CommandXboxController controller) {
+    public TeleopDrive(
+            Drive drive,
+            CommandXboxController controller,
+            BooleanSupplier leftIntakeDeployed,
+            BooleanSupplier rightIntakeDeployed) {
         this.drive = drive;
         this.xSupplier = () -> -controller.getLeftY() * flipFactor;
         this.ySupplier = () -> -controller.getLeftX() * flipFactor;
         this.omegaSupplier = () -> -controller.getRightX();
         this.driveLimiter = new SlewRateLimiter2d(SwerveConstants.MAX_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
+        this.leftIntakeDeployed = leftIntakeDeployed;
+        this.rightIntakeDeployed = rightIntakeDeployed;
 
         inTrenchZoneTrigger = Zones.TRENCH_ZONES
                 .willContain(drive::getPose, drive::getFieldSpeeds, SwerveConstants.TRENCH_ALIGN_TIME)
@@ -142,13 +159,21 @@ public class TeleopDrive extends Command {
 
         double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), ControllerConstants.CONTROLLER_DEADBAND);
         omega = Math.copySign(omega * omega, omega); // square for more precise rotation control
+        AngularVelocity angularVelocity = maxRotSpeed.times(omega);
+
+        Logger.recordOutput(
+                "TeleopDrive/Raw Speeds",
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        linearVelocity.getMeasureX().per(Second),
+                        linearVelocity.getMeasureY().per(Second),
+                        angularVelocity,
+                        drive.getRotation()));
 
         switch (currentDriveMode) {
             case NORMAL:
-                drive.driveFieldCentric(
-                        MetersPerSecond.of(linearVelocity.getX()),
-                        MetersPerSecond.of(linearVelocity.getY()),
-                        maxRotSpeed.times(omega));
+                if (wallAvoidance) {
+                    linearVelocity = applyWallAvoidance(linearVelocity);
+                }
                 break;
             case TRENCH_LOCK:
                 trenchYController.setSetpoint(getTrenchY().in(Meters));
@@ -162,10 +187,8 @@ public class TeleopDrive extends Command {
                 if (rotationController.atSetpoint()) {
                     rotSpeedToStraight = 0;
                 }
-                drive.driveFieldCentric(
-                        MetersPerSecond.of(linearVelocity.getX()),
-                        MetersPerSecond.of(yVel),
-                        RadiansPerSecond.of(rotSpeedToStraight));
+                linearVelocity = new Translation2d(linearVelocity.getX(), yVel);
+                angularVelocity = RadiansPerSecond.of(rotSpeedToStraight);
                 break;
             case BUMP_LOCK:
                 rotationController.setSetpoint(getBumpLockAngle().getRadians());
@@ -174,12 +197,20 @@ public class TeleopDrive extends Command {
                 if (rotationController.atSetpoint()) {
                     rotSpeedToDiagonal = 0;
                 }
-                drive.driveFieldCentric(
-                        MetersPerSecond.of(linearVelocity.getX()),
-                        MetersPerSecond.of(linearVelocity.getY()),
-                        RadiansPerSecond.of(rotSpeedToDiagonal));
+                angularVelocity = RadiansPerSecond.of(rotSpeedToDiagonal);
                 break;
         }
+
+        Logger.recordOutput(
+                "TeleopDrive/Adjusted Speeds",
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        linearVelocity.getMeasureX().per(Second),
+                        linearVelocity.getMeasureY().per(Second),
+                        angularVelocity,
+                        drive.getRotation()));
+
+        drive.driveFieldCentric(
+                MetersPerSecond.of(linearVelocity.getX()), MetersPerSecond.of(linearVelocity.getY()), angularVelocity);
     }
 
     private void setDriveSpeed(LinearVelocity speed) {
@@ -192,28 +223,96 @@ public class TeleopDrive extends Command {
 
     public Command speedUpCommand() {
         return Commands.startEnd(
-                () -> {
-                    setDriveSpeed(SwerveConstants.FAST_DRIVE_SPEED);
-                    setRotSpeed(SwerveConstants.FAST_ROT_SPEED);
-                },
-                () -> {
-                    setDriveSpeed(SwerveConstants.DEFAULT_DRIVE_SPEED);
-                    setRotSpeed(SwerveConstants.DEFAULT_ROT_SPEED);
-                });
+                        () -> {
+                            setDriveSpeed(SwerveConstants.FAST_DRIVE_SPEED);
+                            setRotSpeed(SwerveConstants.FAST_ROT_SPEED);
+                        },
+                        () -> {
+                            setDriveSpeed(SwerveConstants.DEFAULT_DRIVE_SPEED);
+                            setRotSpeed(SwerveConstants.DEFAULT_ROT_SPEED);
+                        })
+                .withName("Speed Up");
     }
 
     public Command slowDownCommand() {
         return Commands.startEnd(
-                () -> {
-                    setDriveSpeed(SwerveConstants.SLOW_DRIVE_SPEED);
-                    setRotSpeed(SwerveConstants.SLOW_ROT_SPEED);
-                    driveLimiter.setRateLimit(SwerveConstants.SLOW_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
-                },
-                () -> {
-                    setDriveSpeed(SwerveConstants.DEFAULT_DRIVE_SPEED);
-                    setRotSpeed(SwerveConstants.DEFAULT_ROT_SPEED);
-                    driveLimiter.setRateLimit(SwerveConstants.MAX_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
-                });
+                        () -> {
+                            setDriveSpeed(SwerveConstants.SLOW_DRIVE_SPEED);
+                            setRotSpeed(SwerveConstants.SLOW_ROT_SPEED);
+                            driveLimiter.setRateLimit(SwerveConstants.SLOW_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
+                        },
+                        () -> {
+                            setDriveSpeed(SwerveConstants.DEFAULT_DRIVE_SPEED);
+                            setRotSpeed(SwerveConstants.DEFAULT_ROT_SPEED);
+                            driveLimiter.setRateLimit(SwerveConstants.MAX_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
+                        })
+                .withName("Slow Down");
+    }
+
+    public Command disableWallAvoidance() {
+        return Commands.startEnd(() -> wallAvoidance = false, () -> wallAvoidance = true)
+                .withName("Disable Wall Avoidance");
+    }
+
+    public Translation2d applyWallAvoidance(Translation2d vel) {
+        Translation2d frontLeftCorner = new Translation2d(
+                Dimensions.FULL_LENGTH.div(2),
+                Dimensions.FULL_WIDTH.div(2).plus(leftIntakeDeployed.getAsBoolean() ? MAX_EXTENSION : Meters.of(0)));
+        Translation2d backLeftCorner = new Translation2d(
+                Dimensions.FULL_LENGTH.div(2).unaryMinus(),
+                Dimensions.FULL_WIDTH.div(2).plus(leftIntakeDeployed.getAsBoolean() ? MAX_EXTENSION : Meters.of(0)));
+        Translation2d frontRightCorner = new Translation2d(
+                        Dimensions.FULL_LENGTH.div(2),
+                        Dimensions.FULL_WIDTH
+                                .div(2)
+                                .plus(rightIntakeDeployed.getAsBoolean() ? MAX_EXTENSION : Meters.of(0)))
+                .unaryMinus();
+        Translation2d backRightCorner = new Translation2d(
+                        Dimensions.FULL_LENGTH.div(2).unaryMinus(),
+                        Dimensions.FULL_WIDTH
+                                .div(2)
+                                .plus(rightIntakeDeployed.getAsBoolean() ? MAX_EXTENSION : Meters.of(0)))
+                .unaryMinus();
+
+        Pose2d pose = drive.getPose();
+        frontLeftCorner = pose.transformBy(new Transform2d(frontLeftCorner, Rotation2d.kZero))
+                .getTranslation();
+        backLeftCorner = pose.transformBy(new Transform2d(backLeftCorner, Rotation2d.kZero))
+                .getTranslation();
+        frontRightCorner = pose.transformBy(new Transform2d(frontRightCorner, Rotation2d.kZero))
+                .getTranslation();
+        backRightCorner = pose.transformBy(new Transform2d(backRightCorner, Rotation2d.kZero))
+                .getTranslation();
+
+        double maxX = Math.max(
+                Math.max(Math.max(frontLeftCorner.getX(), backLeftCorner.getX()), frontRightCorner.getX()),
+                backRightCorner.getX());
+        double minX = Math.min(
+                Math.min(Math.min(frontLeftCorner.getX(), backLeftCorner.getX()), frontRightCorner.getX()),
+                backRightCorner.getX());
+        double maxY = Math.max(
+                Math.max(Math.max(frontLeftCorner.getY(), backLeftCorner.getY()), frontRightCorner.getY()),
+                backRightCorner.getY());
+        double minY = Math.min(
+                Math.min(Math.min(frontLeftCorner.getY(), backLeftCorner.getY()), frontRightCorner.getY()),
+                backRightCorner.getY());
+
+        double xVel = vel.getX();
+        double yVel = vel.getY();
+
+        if (maxX > FieldConstants.FIELD_LENGTH.in(Meters)) {
+            xVel = Math.min(xVel, 0);
+        } else if (minX < 0) {
+            xVel = Math.max(xVel, 0);
+        }
+
+        if (maxY > FieldConstants.FIELD_WIDTH.in(Meters)) {
+            yVel = Math.min(yVel, 0);
+        } else if (minY < 0) {
+            yVel = Math.max(yVel, 0);
+        }
+
+        return new Translation2d(xVel, yVel);
     }
 
     // Called once the command ends or is interrupted.

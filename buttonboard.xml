@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="us-ascii" standalone="yes"?>
+<Boards>
+  <board1>
+    <Type>2</Type>
+    <delay>4</delay>
+    <pin00 ByteOne="B0" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin01 ByteOne="AF" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin02 ByteOne="AE" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin04 ByteOne="AD" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin05 ByteOne="93" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin06 ByteOne="8E" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin07 ByteOne="8F" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin08 ByteOne="90" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin09 ByteOne="91" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin10 ByteOne="92" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin11 ByteOne="AB" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin12 ByteOne="AA" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin13 ByteOne="A9" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin14 ByteOne="A8" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin15 ByteOne="A7" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin17 ByteOne="AB" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin18 ByteOne="94" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin19 ByteOne="94" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin20 ByteOne="95" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="True" HasLED="False" Function="Gamepad&#xA;" />
+    <pin21 ByteOne="A2" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin22 ByteOne="A1" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin23 ByteOne="93" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin24 ByteOne="92" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin25 ByteOne="91" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin26 ByteOne="90" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin27 ByteOne="8F" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin28 ByteOne="8E" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin29 ByteOne="9A" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin30 ByteOne="99" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin31 ByteOne="9B" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin32 ByteOne="9C" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <Axis1 Scale="10" Offset="1" />
+    <Axis2 Scale="16" Offset="1" />
+    <Axis3 Scale="16" Offset="128" />
+    <Axis4 Scale="16" Offset="128" />
+    <Axis5 Scale="16" Offset="128" />
+    <Axis6 Scale="16" Offset="128" />
+    <Axis7 Scale="16" Offset="128" />
+    <Axis8 Scale="16" Offset="128" />
+  </board1>
+</Boards>

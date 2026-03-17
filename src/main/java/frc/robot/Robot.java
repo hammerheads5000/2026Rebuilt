@@ -100,6 +100,7 @@ public class Robot extends LoggedRobot {
         // the Command-based framework to work.
         CommandScheduler.getInstance().run();
         SmartDashboard.putData(CommandScheduler.getInstance());
+        Logger.recordOutput("Commands", SmartDashboard.getStringArray("Scheduler/Names", new String[0]));
         // Return to non-RT thread priority (do not modify the first argument)
         // Threads.setCurrentThreadPriority(false, 10);
     }
