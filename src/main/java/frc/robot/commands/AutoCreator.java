@@ -452,19 +452,24 @@ public class AutoCreator {
                 } else if (path.start == StartEndPoint.BUMP_RIGHT) {
                     toAdd = toAdd.deadlineFor(intakes.deployRight());
                 }
-            } else if (!((path.start == StartEndPoint.TRENCH_START_LEFT && path.end == StartEndPoint.TRENCH_LEFT)
-                    || (path.start == StartEndPoint.TRENCH_START_RIGHT && path.end == StartEndPoint.TRENCH_RIGHT)
-                    || (path.start == StartEndPoint.TRENCH_MID_START_LEFT && path.end == StartEndPoint.TRENCH_LEFT)
-                    || (path.start == StartEndPoint.TRENCH_MID_START_RIGHT && path.end == StartEndPoint.TRENCH_RIGHT)
-                    || (path.start == StartEndPoint.BUMP_START_LEFT && path.end == StartEndPoint.BUMP_LEFT)
-                    || (path.start == StartEndPoint.BUMP_START_RIGHT
-                            && path.end == StartEndPoint.BUMP_RIGHT))) { // if not passing through trench or over bump
-                // set turret to score when possible
-                toAdd = toAdd.deadlineFor(Commands.waitUntil(superstructure.inAllianceZoneTrigger)
-                        .andThen(turret.setGoal(TurretGoal.SCORING)
-                                .asProxy()
-                                .alongWith(Commands.waitTime(AutoConstants.START_SPIN_UP_TIME)
-                                        .andThen(indexer.setGoal(IndexerGoal.ACTIVE)))));
+            } else {
+                // if passing through trench or over bump
+                if ((path.start == StartEndPoint.TRENCH_START_LEFT && path.end == StartEndPoint.TRENCH_LEFT)
+                        || (path.start == StartEndPoint.TRENCH_MID_START_LEFT && path.end == StartEndPoint.TRENCH_LEFT)
+                        || (path.start == StartEndPoint.BUMP_START_LEFT && path.end == StartEndPoint.BUMP_LEFT)) {
+                    toAdd = toAdd.deadlineFor(intakes.deployLeft());
+                } else if ((path.start == StartEndPoint.TRENCH_START_RIGHT && path.end == StartEndPoint.TRENCH_RIGHT)
+                        || (path.start == StartEndPoint.TRENCH_MID_START_RIGHT && path.end == StartEndPoint.TRENCH_RIGHT)
+                        || (path.start == StartEndPoint.BUMP_START_RIGHT&& path.end == StartEndPoint.BUMP_RIGHT)) {
+                    toAdd = toAdd.deadlineFor(intakes.deployRight());
+                } else {
+                    // set turret to score when possible
+                    toAdd = toAdd.deadlineFor(Commands.waitUntil(superstructure.inAllianceZoneTrigger)
+                            .andThen(turret.setGoal(TurretGoal.SCORING)
+                                    .asProxy()
+                                    .alongWith(Commands.waitTime(AutoConstants.START_SPIN_UP_TIME)
+                                            .andThen(indexer.setGoal(IndexerGoal.ACTIVE)))));
+                }
             }
 
             if (path.dumpTime > 0) {

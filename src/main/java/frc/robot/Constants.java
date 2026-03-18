@@ -364,7 +364,7 @@ public final class Constants {
         private static final ControlConstants ROTATION_BASE_CONSTANTS =
                 new ControlConstants().withPID(5, 0, 0).withTolerance(0.08).withContinuous(-Math.PI, Math.PI);
 
-        public static final TunableControlConstants TRENCH_TRANSLATION_CONSTANTS =
+        public static final TunableControlConstants TRANSLATION_CONSTANTS =
                 new TunableControlConstants("Swerve/Trench Translation", TRENCH_TRANSLATION_BASE_CONSTANTS);
         public static final TunableControlConstants ROTATION_CONSTANTS =
                 new TunableControlConstants("Swerve/Rotation", ROTATION_BASE_CONSTANTS);
@@ -793,6 +793,7 @@ public final class Constants {
 
         public static final Distance TOWER_X = Inches.of(49.25);
         public static final Distance TOWER_CENTER_Y = FIELD_WIDTH.div(2).minus(Inches.of(11.46));
+        public static final Distance TOWER_CENTER_X = Inches.of(18);
         public static final Distance TOWER_WIDTH = Inches.of(47);
     }
 
