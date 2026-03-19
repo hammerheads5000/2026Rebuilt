@@ -442,7 +442,7 @@ public final class Constants {
                 new Transform3d(new Translation3d(Inches.zero(), Inches.zero(), Inches.of(18)), Rotation3d.kZero);
         public static final Distance FLYWHEEL_RADIUS = Inches.of(2);
         public static final Distance SHOOT_RADIUS = Inches.of(1);
-        public static final int LOOKAHEAD_ITERATIONS = 3;
+        public static final int LOOKAHEAD_ITERATIONS = 5;
 
         public static final Angle MIN_TURN_ANGLE = Degrees.of(-255);
         public static final Angle MAX_TURN_ANGLE = Degrees.of(210);
@@ -458,13 +458,13 @@ public final class Constants {
         public static final AngularVelocity HOOD_STALL_ANGULAR_VELOCITY = RadiansPerSecond.of(0.3);
         public static final Voltage HOOD_ZEROING_VOLTAGE = Volts.of(-1);
 
-        public static final AngularVelocity FLYWHEEL_FUDGE_AMOUNT = RPM.of(10);
+        public static final double FLYWHEEL_FUDGE_AMOUNT = 0.01;
 
-        public static final AngularVelocity FLYWHEEL_SCORING_OVERRIDE = RPM.of(2700);
-        public static final Angle HOOD_SCORING_OVERRIDE = Degrees.of(25);
+        public static final AngularVelocity FLYWHEEL_SCORING_OVERRIDE = RPM.of(3300);
+        public static final Angle HOOD_SCORING_OVERRIDE = Degrees.of(30);
 
-        public static final AngularVelocity FLYWHEEL_PASSING_OVERRIDE = RPM.of(2800);
-        public static final Angle HOOD_PASSING_OVERRIDE = Degrees.of(27);
+        public static final AngularVelocity FLYWHEEL_PASSING_OVERRIDE = RPM.of(3600);
+        public static final Angle HOOD_PASSING_OVERRIDE = Degrees.of(47);
 
         public static final Translation3d PASSING_SPOT_LEFT = new Translation3d(
                 Inches.of(90), FieldConstants.FIELD_WIDTH.div(2).plus(Inches.of(85)), Inches.zero());
@@ -484,23 +484,23 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            SHOT_MAP.put(6.3, new ShotData(RPM.of(3720), Degrees.of(43)));
-            TOF_MAP.put(6.3, 1.5);
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3820), Degrees.of(43)));
+            TOF_MAP.put(6.3, 1.3);
 
-            SHOT_MAP.put(5.5, new ShotData(RPM.of(3700), Degrees.of(42)));
-            TOF_MAP.put(5.5, 1.46);
+            SHOT_MAP.put(5.5, new ShotData(RPM.of(3800), Degrees.of(42)));
+            TOF_MAP.put(5.5, 1.29);
 
             //     SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(37)));
             //     TOF_MAP.put(5.18, 1.42);
 
-            SHOT_MAP.put(4.72, new ShotData(RPM.of(3500), Degrees.of(35)));
-            TOF_MAP.put(4.72, 1.42);
+            SHOT_MAP.put(4.72, new ShotData(RPM.of(3600), Degrees.of(37)));
+            TOF_MAP.put(4.72, 1.25);
 
             //     SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
             //     TOF_MAP.put(4.24, 1.41);
 
-            SHOT_MAP.put(3.87, new ShotData(RPM.of(3200), Degrees.of(35)));
-            TOF_MAP.put(3.87, 1.41);
+            SHOT_MAP.put(3.87, new ShotData(RPM.of(3300), Degrees.of(35)));
+            TOF_MAP.put(3.87, 1.2);
 
             SHOT_MAP.put(3.29, new ShotData(RPM.of(3120), Degrees.of(33)));
             TOF_MAP.put(3.29, 1.30);
@@ -584,7 +584,7 @@ public final class Constants {
                 .withMotionMagicCruiseVelocity(RotationsPerSecond.of(240))
                 .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(400));
 
-        public static final Distance STOW_POS = Inches.of(0);
+        public static final Distance STOW_POS = Inches.of(0.2);
         public static final Distance DEPLOY_POS = Inches.of(11.5);
         public static final Voltage SPIN_VOLTAGE = Volts.of(12);
         public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-0);

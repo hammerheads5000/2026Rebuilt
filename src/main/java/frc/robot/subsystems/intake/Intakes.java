@@ -123,7 +123,7 @@ public class Intakes extends SubsystemBase {
         return (leftDisabled && !rightDeploy)
                 || (rightDisabled && leftDeploy)
                 || (!(rightDisabled || leftDeploy || rightDeploy) && travelingRight())
-                || (!(rightDisabled || leftDisabled) && !rightDeploy);
+                || (!(rightDisabled || leftDisabled) && leftDeploy);
     }
 
     public Command press() {

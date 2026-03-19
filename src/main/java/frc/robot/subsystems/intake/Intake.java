@@ -130,7 +130,7 @@ public class Intake extends SubsystemBase {
                 .and(() -> this.goal != IntakeGoal.ZEROING && this.goal != IntakeGoal.IDLE)
                 .onTrue(unjam());
         deployedTrigger.onTrue(setGoal(IntakeGoal.DEPLOYED));
-        stowedTrigger.onTrue(setGoal(IntakeGoal.STOWED));
+        stowedTrigger.and(() -> this.goal == IntakeGoal.STOWING).onTrue(setGoal(IntakeGoal.STOWED));
 
         SmartDashboard.putData("Overrides/" + side.name() + " Intake", disable());
     }

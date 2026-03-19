@@ -418,7 +418,9 @@ public class RobotContainer {
         fudgeUp.whileTrue(turret.increaseFudgeFactor());
         zeroHood.whileTrue(turret.zeroHoodSequence());
         zeroLeftIntake.whileTrue(intakes.left.zeroSequence());
+        zeroLeftIntake.onFalse(intakes.left.stow());
         zeroRightIntake.whileTrue(intakes.right.zeroSequence());
+        zeroRightIntake.onFalse(intakes.right.stow());
     }
 
     private void configureFuelSim() {
