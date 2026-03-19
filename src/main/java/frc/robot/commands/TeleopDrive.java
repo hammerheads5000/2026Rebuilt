@@ -60,10 +60,13 @@ public class TeleopDrive extends Command {
     private final Trigger inBumpZoneTrigger;
 
     @AutoLogOutput
+    private final Trigger inTowerZoneTrigger;
+
+    @AutoLogOutput
     private boolean wallAvoidance = true;
 
-    private final TunablePIDController trenchYController =
-            new TunablePIDController(SwerveConstants.TRENCH_TRANSLATION_CONSTANTS);
+    private final TunablePIDController translationController =
+            new TunablePIDController(SwerveConstants.TRANSLATION_CONSTANTS);
     private final TunablePIDController rotationController =
             new TunablePIDController(SwerveConstants.ROTATION_CONSTANTS);
 
@@ -92,9 +95,12 @@ public class TeleopDrive extends Command {
                 .willContain(drive::getPose, drive::getFieldSpeeds, SwerveConstants.BUMP_ALIGN_TIME)
                 .debounce(0.1);
 
+        inTowerZoneTrigger = Zones.TOWER_ZONES.contains(drive::getPose).debounce(0.1);
+
         inTrenchZoneTrigger.onTrue(updateDriveMode(DriveMode.TRENCH_LOCK));
         inBumpZoneTrigger.onTrue(updateDriveMode(DriveMode.BUMP_LOCK));
-        inTrenchZoneTrigger.or(inBumpZoneTrigger).onFalse(updateDriveMode(DriveMode.NORMAL));
+        inTrenchZoneTrigger.or(inBumpZoneTrigger).or(inTowerZoneTrigger).onFalse(updateDriveMode(DriveMode.NORMAL));
+        inTowerZoneTrigger.onTrue(updateDriveMode(DriveMode.TOWER_LOCK));
 
         addRequirements(drive);
     }
@@ -121,11 +127,27 @@ public class TeleopDrive extends Command {
         return FieldConstants.TRENCH_CENTER;
     }
 
+    private Distance getTowerX() {
+        Pose2d robotPose = drive.getPose();
+        if (robotPose.getMeasureX().gte(FieldConstants.FIELD_LENGTH.div(2))) {
+            return FieldConstants.FIELD_LENGTH.minus(FieldConstants.TOWER_CENTER_X);
+        }
+        return FieldConstants.TOWER_CENTER_X;
+    }
+
     private Rotation2d getTrenchLockAngle() {
         if (Math.abs(MathUtil.inputModulus(drive.getRotation().getDegrees() - 90, -180, 180)) < 90) {
             return Rotation2d.kCCW_90deg;
         } else {
             return Rotation2d.kCW_90deg;
+        }
+    }
+
+    private Rotation2d getTowerLockAngle() {
+        if (Math.abs(MathUtil.inputModulus(drive.getRotation().getDegrees(), -180, 180)) < 90) {
+            return Rotation2d.kZero;
+        } else {
+            return Rotation2d.k180deg;
         }
     }
 
@@ -177,9 +199,9 @@ public class TeleopDrive extends Command {
                 }
                 break;
             case TRENCH_LOCK:
-                trenchYController.setSetpoint(getTrenchY().in(Meters));
-                double yVel = trenchYController.calculate(drive.getPose().getY());
-                if (trenchYController.atSetpoint()) {
+                translationController.setSetpoint(getTrenchY().in(Meters));
+                double yVel = translationController.calculate(drive.getPose().getY());
+                if (translationController.atSetpoint()) {
                     yVel = 0;
                 }
                 rotationController.setSetpoint(getTrenchLockAngle().getRadians());
@@ -199,6 +221,18 @@ public class TeleopDrive extends Command {
                     rotSpeedToDiagonal = 0;
                 }
                 angularVelocity = RadiansPerSecond.of(rotSpeedToDiagonal);
+                break;
+            case TOWER_LOCK:
+                translationController.setSetpoint(getTowerX().in(Meters));
+                double xVel = translationController.calculate(drive.getPose().getX());
+                if (translationController.atSetpoint()) {
+                    xVel = 0;
+                }
+                rotationController.setSetpoint(getTowerLockAngle().getRadians());
+                double rotSpeedToForward =
+                        rotationController.calculate(drive.getRotation().getRadians());
+                linearVelocity = new Translation2d(xVel, linearVelocity.getY());
+                angularVelocity = RadiansPerSecond.of(rotSpeedToForward);
                 break;
         }
 
@@ -329,6 +363,7 @@ public class TeleopDrive extends Command {
     private enum DriveMode {
         NORMAL,
         TRENCH_LOCK,
-        BUMP_LOCK
+        BUMP_LOCK,
+        TOWER_LOCK
     }
 }
