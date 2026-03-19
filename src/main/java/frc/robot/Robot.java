@@ -108,9 +108,9 @@ public class Robot extends LoggedRobot {
     /** This function is called once when the robot is disabled. */
     @Override
     public void disabledInit() {
-        if (isReal()) {
-            Elastic.selectTab("Disabled");
-        }
+        // if (isReal()) {
+        //     Elastic.selectTab("Disabled");
+        // }
     }
 
     /** This function is called periodically when disabled. */
@@ -168,7 +168,7 @@ public class Robot extends LoggedRobot {
     /** This function is called once when the robot is first started up. */
     @Override
     public void simulationInit() {
-        Elastic.selectTab("Sim");
+        // Elastic.selectTab("Sim");
     }
 
     /** This function is called periodically whilst in simulation. */

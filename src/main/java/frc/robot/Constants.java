@@ -594,10 +594,10 @@ public final class Constants {
         public static final Distance DECOUPLE_DISTANCE = Inches.of(3);
 
         public static final Distance PRESS_STOP_SPIN = Inches.of(5);
-        public static final Voltage PRESS_IN_VOLTAGE = Volts.of(-2);
+        public static final Voltage PRESS_IN_VOLTAGE = Volts.of(-3);
         public static final Voltage PRESS_OUT_VOLTAGE = Volts.of(1.5);
-        public static final Time PRESS_IN_TIME = Seconds.of(0.6);
-        public static final Time PRESS_OUT_TIME = Seconds.of(0.2);
+        public static final Time PRESS_IN_TIME = Seconds.of(0.5);
+        public static final Time PRESS_OUT_TIME = Seconds.of(0.1);
 
         public static final LinearVelocity MIN_SWITCH_ROBOT_VELOCITY = MetersPerSecond.of(0.2);
 
@@ -861,9 +861,9 @@ public final class Constants {
                 "Right Single Sweep",
                         "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep and Return 1 Right!;Trench Right to Dump Right=4.0",
                 "Left Double Sweep",
-                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sideways 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep 1 Left!;Trench Left to Dump Left=3.0",
+                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep and Return 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep and Return 2 Left!;Trench Left to Dump Left=3.0",
                 "Right Double Sweep",
-                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sideways 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep 1 Right!;Trench Right to Dump Right=3.0",
+                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep and Return 1 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return 2 Right!;Trench Right to Dump Right=3.0",
                 "Left Single Sweep + Climb",
                         "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep and Return 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Climb Left",
                 "Right Single Sweep + Climb",

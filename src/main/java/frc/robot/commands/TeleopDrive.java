@@ -100,7 +100,7 @@ public class TeleopDrive extends Command {
         inTrenchZoneTrigger.onTrue(updateDriveMode(DriveMode.TRENCH_LOCK));
         inBumpZoneTrigger.onTrue(updateDriveMode(DriveMode.BUMP_LOCK));
         inTrenchZoneTrigger.or(inBumpZoneTrigger).or(inTowerZoneTrigger).onFalse(updateDriveMode(DriveMode.NORMAL));
-        inTowerZoneTrigger.onTrue(updateDriveMode(DriveMode.TOWER_LOCK));
+        inTowerZoneTrigger.and(() -> wallAvoidance).onTrue(updateDriveMode(DriveMode.TOWER_LOCK));
 
         addRequirements(drive);
     }

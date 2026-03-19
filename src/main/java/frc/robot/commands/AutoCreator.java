@@ -475,7 +475,7 @@ public class AutoCreator {
             }
 
             if (path.dumpTime > 0) {
-                toAdd = toAdd.andThen(Commands.waitSeconds(path.dumpTime));
+                toAdd = toAdd.andThen(Commands.waitSeconds(path.dumpTime).deadlineFor(intakes.press()));
             }
 
             // add climbing to the end if applicable
