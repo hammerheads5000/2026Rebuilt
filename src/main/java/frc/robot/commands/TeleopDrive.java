@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Second;
+import static frc.robot.Constants.IntakeConstants.DISTANCE_INTO_WALL;
 import static frc.robot.Constants.IntakeConstants.MAX_EXTENSION;
 
 import edu.wpi.first.math.MathUtil;
@@ -300,15 +301,15 @@ public class TeleopDrive extends Command {
         double xVel = vel.getX();
         double yVel = vel.getY();
 
-        if (maxX > FieldConstants.FIELD_LENGTH.in(Meters)) {
+        if (maxX > FieldConstants.FIELD_LENGTH.plus(DISTANCE_INTO_WALL).in(Meters)) {
             xVel = Math.min(xVel, 0);
-        } else if (minX < 0) {
+        } else if (minX < -DISTANCE_INTO_WALL.in(Meters)) {
             xVel = Math.max(xVel, 0);
         }
 
-        if (maxY > FieldConstants.FIELD_WIDTH.in(Meters)) {
+        if (maxY > FieldConstants.FIELD_WIDTH.plus(DISTANCE_INTO_WALL).in(Meters)) {
             yVel = Math.min(yVel, 0);
-        } else if (minY < 0) {
+        } else if (minY < -DISTANCE_INTO_WALL.in(Meters)) {
             yVel = Math.max(yVel, 0);
         }
 

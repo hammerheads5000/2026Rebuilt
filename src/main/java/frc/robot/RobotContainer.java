@@ -375,10 +375,10 @@ public class RobotContainer {
                 turret.setGoal(TurretGoal.OFF),
                 () -> turret.getGoal() == TurretGoal.OFF));
 
-        // turretScoringTrigger.onTrue(Commands.either(
-        //         superstructure.setGoal(Goal.IDLE),
-        //         superstructure.setGoal(Goal.SCORING),
-        //         () -> superstructure.getGoal() == Goal.SCORING));
+        // turretModeTrigger.onTrue(Commands.either(
+        //         turret.setGoal(TurretGoal.OFF),
+        //         turret.setGoal(TurretGoal.TUNING),
+        //         () -> turret.getGoal() == TurretGoal.TUNING));
 
         indexTrigger.onTrue(Commands.either(
                 indexer.setGoal(IndexerGoal.IDLE),

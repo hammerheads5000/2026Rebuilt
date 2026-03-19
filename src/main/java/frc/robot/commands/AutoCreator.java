@@ -434,11 +434,11 @@ public class AutoCreator {
             if (path.name.contains("Collect")) {
                 if (path.collect) {
                     toAdd = toAdd.deadlineFor(
-                            indexer.setGoal(IndexerGoal.IDLE),
+                            indexer.setGoal(IndexerGoal.IDLE).asProxy(),
                             turret.setGoal(TurretGoal.IDLE).asProxy());
                 } else {
                     toAdd = toAdd.deadlineFor(
-                            indexer.setGoal(IndexerGoal.ACTIVE),
+                            indexer.setGoal(IndexerGoal.ACTIVE).asProxy(),
                             turret.setGoal(TurretGoal.PASSING).asProxy());
                 }
 
@@ -464,7 +464,8 @@ public class AutoCreator {
                         .andThen(turret.setGoal(TurretGoal.SCORING)
                                 .asProxy()
                                 .alongWith(Commands.waitTime(AutoConstants.START_SPIN_UP_TIME)
-                                        .andThen(indexer.setGoal(IndexerGoal.ACTIVE)))));
+                                        .andThen(indexer.setGoal(IndexerGoal.ACTIVE)
+                                                .asProxy()))));
             }
 
             if (path.dumpTime > 0) {
@@ -507,12 +508,13 @@ public class AutoCreator {
                     Commands.parallel(
                             turret.setGoal(TurretGoal.SCORING).asProxy(),
                             Commands.waitTime(AutoConstants.START_SPIN_UP_TIME)
-                                    .andThen(indexer.setGoal(IndexerGoal.ACTIVE)),
+                                    .andThen(indexer.setGoal(IndexerGoal.ACTIVE).asProxy()),
                             Commands.waitTime(AutoConstants.START_SPIN_UP_TIME.plus(AutoConstants.START_DUMP_TIME))));
         } else {
             commands.add(
                     0,
                     indexer.setGoal(IndexerGoal.IDLE)
+                            .asProxy()
                             .alongWith(turret.setGoal(TurretGoal.IDLE).asProxy()));
         }
 

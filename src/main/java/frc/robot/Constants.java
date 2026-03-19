@@ -412,7 +412,7 @@ public final class Constants {
                 .withSensorToMechanismRatio(ENCODER_TO_TURRET_RATIO)
                 .withRotorToSensorRatio(TURN_TO_TURRET_RATIO / ENCODER_TO_TURRET_RATIO)
                 .withFeedbackRotorOffset(0)
-                .withVelocityFilterTimeConstant(0.01);
+                .withVelocityFilterTimeConstant(0.02);
 
         public static final MotorOutputConfigs HOOD_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withInverted(InvertedValue.Clockwise_Positive)
@@ -427,7 +427,7 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(-0.2724609375)
+                .withMagnetOffset(-0.31201171875)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
                 .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
 
@@ -484,38 +484,38 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            SHOT_MAP.put(6.3, new ShotData(RPM.of(3720), Degrees.of(42)));
-            TOF_MAP.put(6.3, 1.5);
+            //     SHOT_MAP.put(6.3, new ShotData(RPM.of(3720), Degrees.of(42)));
+            //     TOF_MAP.put(6.3, 1.5);
 
-            SHOT_MAP.put(5.5, new ShotData(RPM.of(3720), Degrees.of(39)));
+            SHOT_MAP.put(5.5, new ShotData(RPM.of(3700), Degrees.of(42)));
             TOF_MAP.put(5.5, 1.46);
 
-            SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(37)));
-            TOF_MAP.put(5.18, 1.42);
+            //     SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(37)));
+            //     TOF_MAP.put(5.18, 1.42);
 
-            SHOT_MAP.put(4.72, new ShotData(RPM.of(3600), Degrees.of(34)));
+            SHOT_MAP.put(4.72, new ShotData(RPM.of(3370), Degrees.of(35)));
             TOF_MAP.put(4.72, 1.42);
 
-            SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
-            TOF_MAP.put(4.24, 1.41);
+            //     SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
+            //     TOF_MAP.put(4.24, 1.41);
 
-            SHOT_MAP.put(3.87, new ShotData(RPM.of(3450), Degrees.of(31)));
+            SHOT_MAP.put(3.87, new ShotData(RPM.of(3150), Degrees.of(35)));
             TOF_MAP.put(3.87, 1.41);
 
-            SHOT_MAP.put(3.29, new ShotData(RPM.of(3300), Degrees.of(29)));
+            SHOT_MAP.put(3.29, new ShotData(RPM.of(3100), Degrees.of(33)));
             TOF_MAP.put(3.29, 1.30);
 
-            SHOT_MAP.put(2.84, new ShotData(RPM.of(3260), Degrees.of(26)));
+            SHOT_MAP.put(2.84, new ShotData(RPM.of(3100), Degrees.of(30)));
             TOF_MAP.put(2.84, 1.30);
 
-            SHOT_MAP.put(2.45, new ShotData(RPM.of(3100), Degrees.of(25)));
-            TOF_MAP.put(2.45, 1.25);
+            //     SHOT_MAP.put(2.45, new ShotData(RPM.of(3100), Degrees.of(25)));
+            //     TOF_MAP.put(2.45, 1.25);
 
             SHOT_MAP.put(2.09, new ShotData(RPM.of(3000), Degrees.of(22.5)));
             TOF_MAP.put(2.09, 1.17);
 
-            SHOT_MAP.put(1.73, new ShotData(RPM.of(2900), Degrees.of(20)));
-            TOF_MAP.put(1.73, 1.17);
+            //     SHOT_MAP.put(1.73, new ShotData(RPM.of(2900), Degrees.of(20)));
+            //     TOF_MAP.put(1.73, 1.17);
 
             SHOT_MAP.put(1.37, new ShotData(RPM.of(2800), Degrees.of(17)));
             TOF_MAP.put(1.37, 1.09);
@@ -610,6 +610,7 @@ public final class Constants {
 
         public static final Angle DEPLOY_ANGLE = Degrees.of(69);
         public static final Distance MAX_EXTENSION = DEPLOY_POS.times(Math.sin(DEPLOY_ANGLE.in(Radians)));
+        public static final Distance DISTANCE_INTO_WALL = Inches.of(6);
     }
 
     public static class IndexerConstants {
@@ -710,7 +711,7 @@ public final class Constants {
 
     public static class VisionConstants {
         // Standard deviation baselines for 1 meter distance to single tag
-        public static final double[] LINEAR_STD_DEV_BASELINES = {0.2, 0.2, 0.07, 0.3, 0.3, 0.3}; // Meters
+        public static final double[] LINEAR_STD_DEV_BASELINES = {0.2, 0.2, 0.1, 0.2, 0.2, 0.15}; // Meters
         public static final double ANGULAR_STD_DEV_BASELINE = 1.0; // Radians
 
         public static final String[] CAMERA_NAMES = {
