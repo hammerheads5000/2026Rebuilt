@@ -385,7 +385,7 @@ public final class Constants {
                 50.0 / 14 * 22.0 / 20 * 156.0 / 10; // 50:14 gear, 22:20 belt, 156:10 rack
 
         public static final Slot0Configs TURN_GAINS =
-                new Slot0Configs().withKP(300).withKD(0.0).withKS(2).withKV(0.0);
+                new Slot0Configs().withKP(200).withKD(0.0).withKS(0);
 
         public static final Slot0Configs HOOD_GAINS =
                 new Slot0Configs().withKP(800).withKD(5).withKS(0.28);
@@ -412,7 +412,7 @@ public final class Constants {
                 .withSensorToMechanismRatio(ENCODER_TO_TURRET_RATIO)
                 .withRotorToSensorRatio(TURN_TO_TURRET_RATIO / ENCODER_TO_TURRET_RATIO)
                 .withFeedbackRotorOffset(0)
-                .withVelocityFilterTimeConstant(0.02);
+                .withVelocityFilterTimeConstant(0.01);
 
         public static final MotorOutputConfigs HOOD_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withInverted(InvertedValue.Clockwise_Positive)
@@ -427,7 +427,7 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(-0.31201171875)
+                .withMagnetOffset(-0.05029296875)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
                 .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
 
@@ -444,7 +444,7 @@ public final class Constants {
         public static final Distance SHOOT_RADIUS = Inches.of(1);
         public static final int LOOKAHEAD_ITERATIONS = 3;
 
-        public static final Angle MIN_TURN_ANGLE = Degrees.of(-230);
+        public static final Angle MIN_TURN_ANGLE = Degrees.of(-255);
         public static final Angle MAX_TURN_ANGLE = Degrees.of(210);
         public static final Angle TURNAROUND_ZONE = Degrees.of(30);
 
@@ -484,8 +484,8 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            //     SHOT_MAP.put(6.3, new ShotData(RPM.of(3720), Degrees.of(42)));
-            //     TOF_MAP.put(6.3, 1.5);
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3720), Degrees.of(43)));
+            TOF_MAP.put(6.3, 1.5);
 
             SHOT_MAP.put(5.5, new ShotData(RPM.of(3700), Degrees.of(42)));
             TOF_MAP.put(5.5, 1.46);
@@ -493,16 +493,16 @@ public final class Constants {
             //     SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(37)));
             //     TOF_MAP.put(5.18, 1.42);
 
-            SHOT_MAP.put(4.72, new ShotData(RPM.of(3370), Degrees.of(35)));
+            SHOT_MAP.put(4.72, new ShotData(RPM.of(3500), Degrees.of(35)));
             TOF_MAP.put(4.72, 1.42);
 
             //     SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
             //     TOF_MAP.put(4.24, 1.41);
 
-            SHOT_MAP.put(3.87, new ShotData(RPM.of(3150), Degrees.of(35)));
+            SHOT_MAP.put(3.87, new ShotData(RPM.of(3200), Degrees.of(35)));
             TOF_MAP.put(3.87, 1.41);
 
-            SHOT_MAP.put(3.29, new ShotData(RPM.of(3100), Degrees.of(33)));
+            SHOT_MAP.put(3.29, new ShotData(RPM.of(3120), Degrees.of(33)));
             TOF_MAP.put(3.29, 1.30);
 
             SHOT_MAP.put(2.84, new ShotData(RPM.of(3100), Degrees.of(30)));
@@ -585,7 +585,7 @@ public final class Constants {
                 .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(400));
 
         public static final Distance STOW_POS = Inches.of(0);
-        public static final Distance DEPLOY_POS = Inches.of(12);
+        public static final Distance DEPLOY_POS = Inches.of(11.5);
         public static final Voltage SPIN_VOLTAGE = Volts.of(12);
         public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-0);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(10);
@@ -711,7 +711,7 @@ public final class Constants {
 
     public static class VisionConstants {
         // Standard deviation baselines for 1 meter distance to single tag
-        public static final double[] LINEAR_STD_DEV_BASELINES = {0.2, 0.2, 0.1, 0.2, 0.2, 0.15}; // Meters
+        public static final double[] LINEAR_STD_DEV_BASELINES = {0.4, 0.4, 0.2, 0.4, 0.4, 0.3}; // Meters
         public static final double ANGULAR_STD_DEV_BASELINE = 1.0; // Radians
 
         public static final String[] CAMERA_NAMES = {
