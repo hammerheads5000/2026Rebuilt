@@ -125,6 +125,8 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putData("Overrides/Turret Manual", manualOverride());
         SmartDashboard.putData("Turret/Fudge Up", increaseFudgeFactor());
         SmartDashboard.putData("Turret/Fudge Down", decreaseFudgeFactor());
+
+        Logger.recordOutput("Turret/Shot", new ShotData(0, 0)); // log struct at start to avoid loop overruns
     }
 
     public Command setGoal(TurretGoal goal) {

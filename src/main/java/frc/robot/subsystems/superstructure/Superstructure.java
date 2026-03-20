@@ -125,8 +125,8 @@ public class Superstructure extends SubsystemBase {
 
         underTrenchTrigger.onTrue(this.duck());
         underTrenchTrigger.onFalse(this.unduck());
-        inAllianceZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
-        // inactiveInZoneTrigger.onTrue(this.setGoal(Goal.COLLECTING));
+        activeInZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
+        inactiveInZoneTrigger.onTrue(this.setGoal(Goal.IDLE));
         leaveZoneTrigger.onTrue(this.setGoal(Goal.PASSING).onlyIf(() -> this.goal != Goal.COLLECTING));
         behindTowerTrigger.onTrue(indexer.setGoal(IndexerGoal.IDLE));
         behindTowerTrigger.onFalse(

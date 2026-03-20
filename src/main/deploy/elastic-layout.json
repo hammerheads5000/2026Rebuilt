@@ -1,567 +1,610 @@
 {
-  "version": 1.0,
-  "grid_size": 32,
-  "tabs": [
-    {
-      "name": "Teleoperated",
-      "grid_layout": {
-        "layouts": [],
-        "containers": [
-          {
-            "title": "Scheduler",
-            "x": 512.0,
-            "y": 512.0,
-            "width": 256.0,
-            "height": 384.0,
-            "type": "Scheduler",
-            "properties": {
-              "topic": "/SmartDashboard/Scheduler",
-              "period": 0.06
+    "version": 1.0,
+    "grid_size": 32,
+    "tabs": [
+        {
+            "name": "Teleoperated",
+            "grid_layout": {
+                "layouts": [],
+                "containers": [
+                    {
+                        "title": "Scheduler",
+                        "x": 512.0,
+                        "y": 512.0,
+                        "width": 256.0,
+                        "height": 384.0,
+                        "type": "Scheduler",
+                        "properties": {
+                            "topic": "/SmartDashboard/Scheduler",
+                            "period": 0.06
+                        }
+                    },
+                    {
+                        "title": "FMSInfo",
+                        "x": 0.0,
+                        "y": 768.0,
+                        "width": 384.0,
+                        "height": 128.0,
+                        "type": "FMSInfo",
+                        "properties": {
+                            "topic": "/FMSInfo",
+                            "period": 0.06
+                        }
+                    },
+                    {
+                        "title": "Alerts",
+                        "x": 768.0,
+                        "y": 512.0,
+                        "width": 256.0,
+                        "height": 384.0,
+                        "type": "Alerts",
+                        "properties": {
+                            "topic": "/AdvantageKit/RealOutputs/Alerts",
+                            "period": 0.06
+                        }
+                    },
+                    {
+                        "title": "Utilization",
+                        "x": 0.0,
+                        "y": 640.0,
+                        "width": 128.0,
+                        "height": 128.0,
+                        "type": "Text Display",
+                        "properties": {
+                            "topic": "/AdvantageKit/SystemStats/CANBus/Utilization",
+                            "period": 0.06,
+                            "data_type": "float",
+                            "show_submit_button": false
+                        }
+                    },
+                    {
+                        "title": "Field",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 960.0,
+                        "height": 512.0,
+                        "type": "Field",
+                        "properties": {
+                            "topic": "/SmartDashboard/Field",
+                            "period": 0.06,
+                            "field_game": "Rebuilt",
+                            "robot_width": 0.85,
+                            "robot_length": 0.85,
+                            "show_other_objects": true,
+                            "show_trajectories": true,
+                            "field_rotation": 0.0,
+                            "robot_color": 4294198070,
+                            "trajectory_color": 4294967295,
+                            "show_robot_outside_widget": true
+                        }
+                    },
+                    {
+                        "title": "ActiveHubTrigger",
+                        "x": 384.0,
+                        "y": 768.0,
+                        "width": 128.0,
+                        "height": 128.0,
+                        "type": "Boolean Box",
+                        "properties": {
+                            "topic": "/AdvantageKit/RealOutputs/Superstructure/ActiveHubTrigger",
+                            "period": 0.06,
+                            "data_type": "boolean",
+                            "true_color": 4283215696,
+                            "false_color": 4294198070,
+                            "true_icon": "None",
+                            "false_icon": "None"
+                        }
+                    },
+                    {
+                        "title": "MatchTime",
+                        "x": 1024.0,
+                        "y": 512.0,
+                        "width": 480.0,
+                        "height": 384.0,
+                        "type": "Match Time",
+                        "properties": {
+                            "topic": "/AdvantageKit/DriverStation/MatchTime",
+                            "period": 0.06,
+                            "data_type": "double",
+                            "time_display_mode": "Minutes and Seconds",
+                            "red_start_time": 20,
+                            "yellow_start_time": 30
+                        }
+                    },
+                    {
+                        "title": "TurnPosition",
+                        "x": 128.0,
+                        "y": 512.0,
+                        "width": 256.0,
+                        "height": 256.0,
+                        "type": "Radial Gauge",
+                        "properties": {
+                            "topic": "/AdvantageKit/Turret/TurnPosition",
+                            "period": 0.06,
+                            "data_type": "double",
+                            "start_angle": -180.0,
+                            "end_angle": 180.0,
+                            "min_value": -3.14,
+                            "max_value": 3.14,
+                            "number_of_labels": 8,
+                            "wrap_value": false,
+                            "show_pointer": true,
+                            "show_ticks": true
+                        }
+                    },
+                    {
+                        "title": "Left RackPosition",
+                        "x": 384.0,
+                        "y": 512.0,
+                        "width": 128.0,
+                        "height": 128.0,
+                        "type": "Large Text Display",
+                        "properties": {
+                            "topic": "/AdvantageKit/Intakes/Left/RackPosition",
+                            "period": 0.06,
+                            "data_type": "double"
+                        }
+                    },
+                    {
+                        "title": "Right RackPosition",
+                        "x": 384.0,
+                        "y": 640.0,
+                        "width": 128.0,
+                        "height": 128.0,
+                        "type": "Large Text Display",
+                        "properties": {
+                            "topic": "/AdvantageKit/Intakes/Right/RackPosition",
+                            "period": 0.06,
+                            "data_type": "double"
+                        }
+                    },
+                    {
+                        "title": "Shift Time",
+                        "x": 960.0,
+                        "y": 0.0,
+                        "width": 544.0,
+                        "height": 512.0,
+                        "type": "Match Time",
+                        "properties": {
+                            "topic": "/AdvantageKit/RealOutputs/Superstructure/Shift Time",
+                            "period": 0.06,
+                            "data_type": "double",
+                            "time_display_mode": "Seconds Only",
+                            "red_start_time": 5,
+                            "yellow_start_time": 15
+                        }
+                    },
+                    {
+                        "title": "FlywheelFudgeFactor",
+                        "x": 0.0,
+                        "y": 512.0,
+                        "width": 128.0,
+                        "height": 128.0,
+                        "type": "Large Text Display",
+                        "properties": {
+                            "topic": "/AdvantageKit/RealOutputs/Turret/FlywheelFudgeFactor",
+                            "period": 0.06,
+                            "data_type": "double"
+                        }
+                    }
+                ]
             }
-          },
-          {
-            "title": "FMSInfo",
-            "x": 0.0,
-            "y": 768.0,
-            "width": 384.0,
-            "height": 128.0,
-            "type": "FMSInfo",
-            "properties": {
-              "topic": "/FMSInfo",
-              "period": 0.06
+        },
+        {
+            "name": "Autonomous",
+            "grid_layout": {
+                "layouts": [
+                    {
+                        "title": "System Checks",
+                        "x": 256.0,
+                        "y": 96.0,
+                        "width": 256.0,
+                        "height": 448.0,
+                        "type": "List Layout",
+                        "properties": {
+                            "label_position": "TOP"
+                        },
+                        "children": [
+                            {
+                                "title": "Climber",
+                                "x": 0.0,
+                                "y": 0.0,
+                                "width": 256.0,
+                                "height": 128.0,
+                                "type": "Command",
+                                "properties": {
+                                    "topic": "/SmartDashboard/System Checks/Climber",
+                                    "period": 0.06,
+                                    "show_type": true,
+                                    "maximize_button_space": false
+                                }
+                            },
+                            {
+                                "title": "Indexer",
+                                "x": 0.0,
+                                "y": 0.0,
+                                "width": 256.0,
+                                "height": 128.0,
+                                "type": "Command",
+                                "properties": {
+                                    "topic": "/SmartDashboard/System Checks/Indexer",
+                                    "period": 0.06,
+                                    "show_type": true,
+                                    "maximize_button_space": false
+                                }
+                            },
+                            {
+                                "title": "Intakes",
+                                "x": 0.0,
+                                "y": 0.0,
+                                "width": 256.0,
+                                "height": 128.0,
+                                "type": "Command",
+                                "properties": {
+                                    "topic": "/SmartDashboard/System Checks/Intakes",
+                                    "period": 0.06,
+                                    "show_type": true,
+                                    "maximize_button_space": false
+                                }
+                            },
+                            {
+                                "title": "Turret",
+                                "x": 0.0,
+                                "y": 0.0,
+                                "width": 256.0,
+                                "height": 128.0,
+                                "type": "Command",
+                                "properties": {
+                                    "topic": "/SmartDashboard/System Checks/Turret",
+                                    "period": 0.06,
+                                    "show_type": true,
+                                    "maximize_button_space": false
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "containers": [
+                    {
+                        "title": "TurretTurn",
+                        "x": 800.0,
+                        "y": 96.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/System Checks/TurretTurn",
+                            "period": 0.06,
+                            "show_type": true,
+                            "maximize_button_space": false
+                        }
+                    },
+                    {
+                        "title": "Selection",
+                        "x": 544.0,
+                        "y": 224.0,
+                        "width": 864.0,
+                        "height": 128.0,
+                        "type": "Text Display",
+                        "properties": {
+                            "topic": "Autos/Selection",
+                            "period": 0.06,
+                            "data_type": "string",
+                            "show_submit_button": false
+                        }
+                    },
+                    {
+                        "title": "Use Prebuilt Autos",
+                        "x": 672.0,
+                        "y": 384.0,
+                        "width": 128.0,
+                        "height": 128.0,
+                        "type": "Boolean Box",
+                        "properties": {
+                            "topic": "Autos/Use Prebuilt Autos",
+                            "period": 0.06,
+                            "data_type": "boolean",
+                            "true_color": 4283215696,
+                            "false_color": 4294198070,
+                            "true_icon": "None",
+                            "false_icon": "None"
+                        }
+                    },
+                    {
+                        "title": "Dump At Start",
+                        "x": 672.0,
+                        "y": 576.0,
+                        "width": 128.0,
+                        "height": 128.0,
+                        "type": "Toggle Switch",
+                        "properties": {
+                            "topic": "Autos/Dump At Start",
+                            "period": 0.06,
+                            "data_type": "boolean"
+                        }
+                    },
+                    {
+                        "title": "Prebuilt Autos",
+                        "x": 992.0,
+                        "y": 384.0,
+                        "width": 128.0,
+                        "height": 128.0,
+                        "type": "ComboBox Chooser",
+                        "properties": {
+                            "topic": "/SmartDashboard/Prebuilt Autos",
+                            "period": 0.06,
+                            "sort_options": false
+                        }
+                    }
+                ]
             }
-          },
-          {
-            "title": "Alerts",
-            "x": 768.0,
-            "y": 512.0,
-            "width": 256.0,
-            "height": 384.0,
-            "type": "Alerts",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Alerts",
-              "period": 0.06
+        },
+        {
+            "name": "Overrides",
+            "grid_layout": {
+                "layouts": [
+                    {
+                        "title": "Turret",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 256.0,
+                        "height": 256.0,
+                        "type": "List Layout",
+                        "properties": {
+                            "label_position": "HIDDEN"
+                        },
+                        "children": [
+                            {
+                                "title": "Turret Disable",
+                                "x": 0.0,
+                                "y": 0.0,
+                                "width": 256.0,
+                                "height": 128.0,
+                                "type": "Command",
+                                "properties": {
+                                    "topic": "/SmartDashboard/Overrides/Turret Disable",
+                                    "period": 0.06,
+                                    "show_type": false,
+                                    "maximize_button_space": true
+                                }
+                            },
+                            {
+                                "title": "Turret Manual",
+                                "x": 0.0,
+                                "y": 0.0,
+                                "width": 256.0,
+                                "height": 128.0,
+                                "type": "Command",
+                                "properties": {
+                                    "topic": "/SmartDashboard/Overrides/Turret Manual",
+                                    "period": 0.06,
+                                    "show_type": false,
+                                    "maximize_button_space": true
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Intakes",
+                        "x": 256.0,
+                        "y": 0.0,
+                        "width": 256.0,
+                        "height": 256.0,
+                        "type": "List Layout",
+                        "properties": {
+                            "label_position": "HIDDEN"
+                        },
+                        "children": [
+                            {
+                                "title": "Right Intake",
+                                "x": 0.0,
+                                "y": 0.0,
+                                "width": 256.0,
+                                "height": 128.0,
+                                "type": "Command",
+                                "properties": {
+                                    "topic": "/SmartDashboard/Overrides/Right Intake",
+                                    "period": 0.06,
+                                    "show_type": false,
+                                    "maximize_button_space": true
+                                }
+                            },
+                            {
+                                "title": "Left Intake",
+                                "x": 0.0,
+                                "y": 0.0,
+                                "width": 256.0,
+                                "height": 128.0,
+                                "type": "Command",
+                                "properties": {
+                                    "topic": "/SmartDashboard/Overrides/Left Intake",
+                                    "period": 0.06,
+                                    "show_type": false,
+                                    "maximize_button_space": true
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "containers": [
+                    {
+                        "title": "Shift",
+                        "x": 0.0,
+                        "y": 256.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/Overrides/Shift",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    },
+                    {
+                        "title": "Vision",
+                        "x": 256.0,
+                        "y": 256.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/Overrides/Vision",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    },
+                    {
+                        "title": "Indexer",
+                        "x": 0.0,
+                        "y": 384.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/Overrides/Indexer",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    },
+                    {
+                        "title": "Climber",
+                        "x": 256.0,
+                        "y": 384.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/Overrides/Climber",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    }
+                ]
             }
-          },
-          {
-            "title": "Utilization",
-            "x": 1152.0,
-            "y": 768.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/SystemStats/CANBus/Utilization",
-              "period": 0.06,
-              "data_type": "float",
-              "show_submit_button": false
+        },
+        {
+            "name": "System Checks",
+            "grid_layout": {
+                "layouts": [],
+                "containers": [
+                    {
+                        "title": "Indexer",
+                        "x": 0.0,
+                        "y": 0.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/System Checks/Indexer",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    },
+                    {
+                        "title": "Intakes",
+                        "x": 256.0,
+                        "y": 0.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/System Checks/Intakes",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    },
+                    {
+                        "title": "LeftIntake",
+                        "x": 256.0,
+                        "y": 128.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/System Checks/LeftIntake",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    },
+                    {
+                        "title": "RightIntake",
+                        "x": 256.0,
+                        "y": 256.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/System Checks/RightIntake",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    },
+                    {
+                        "title": "Turret",
+                        "x": 512.0,
+                        "y": 0.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/System Checks/Turret",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    },
+                    {
+                        "title": "TurretFlywheels",
+                        "x": 512.0,
+                        "y": 128.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/System Checks/TurretFlywheels",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    },
+                    {
+                        "title": "TurretHood",
+                        "x": 512.0,
+                        "y": 256.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/System Checks/TurretHood",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    },
+                    {
+                        "title": "TurretTurn",
+                        "x": 512.0,
+                        "y": 384.0,
+                        "width": 256.0,
+                        "height": 128.0,
+                        "type": "Command",
+                        "properties": {
+                            "topic": "/SmartDashboard/System Checks/TurretTurn",
+                            "period": 0.06,
+                            "show_type": false,
+                            "maximize_button_space": true
+                        }
+                    }
+                ]
             }
-          },
-          {
-            "title": "Field",
-            "x": 512.0,
-            "y": 0.0,
-            "width": 960.0,
-            "height": 512.0,
-            "type": "Field",
-            "properties": {
-              "topic": "/SmartDashboard/Field",
-              "period": 0.06,
-              "field_game": "Rebuilt",
-              "robot_width": 0.85,
-              "robot_length": 0.85,
-              "show_other_objects": true,
-              "show_trajectories": true,
-              "field_rotation": 0.0,
-              "robot_color": 4294198070,
-              "trajectory_color": 4294967295,
-              "show_robot_outside_widget": true
-            }
-          },
-          {
-            "title": "ActiveHubTrigger",
-            "x": 1024.0,
-            "y": 768.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Boolean Box",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Superstructure/ActiveHubTrigger",
-              "period": 0.06,
-              "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
-              "true_icon": "None",
-              "false_icon": "None"
-            }
-          },
-          {
-            "title": "MatchTime",
-            "x": 0.0,
-            "y": 448.0,
-            "width": 512.0,
-            "height": 320.0,
-            "type": "Match Time",
-            "properties": {
-              "topic": "/AdvantageKit/DriverStation/MatchTime",
-              "period": 0.06,
-              "data_type": "double",
-              "time_display_mode": "Minutes and Seconds",
-              "red_start_time": 20,
-              "yellow_start_time": 30
-            }
-          },
-          {
-            "title": "TurnPosition",
-            "x": 1024.0,
-            "y": 512.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Radial Gauge",
-            "properties": {
-              "topic": "/AdvantageKit/Turret/TurnPosition",
-              "period": 0.06,
-              "data_type": "double",
-              "start_angle": -180.0,
-              "end_angle": 180.0,
-              "min_value": -3.14,
-              "max_value": 3.14,
-              "number_of_labels": 8,
-              "wrap_value": false,
-              "show_pointer": true,
-              "show_ticks": true
-            }
-          },
-          {
-            "title": "Left RackPosition",
-            "x": 1280.0,
-            "y": 512.0,
-            "width": 192.0,
-            "height": 128.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/Intakes/Left/RackPosition",
-              "period": 0.06,
-              "data_type": "double"
-            }
-          },
-          {
-            "title": "Right RackPosition",
-            "x": 1280.0,
-            "y": 640.0,
-            "width": 192.0,
-            "height": 128.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/Intakes/Right/RackPosition",
-              "period": 0.06,
-              "data_type": "double"
-            }
-          },
-          {
-            "title": "Shift Time",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 512.0,
-            "height": 448.0,
-            "type": "Match Time",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Superstructure/Shift Time",
-              "period": 0.06,
-              "data_type": "double",
-              "time_display_mode": "Seconds Only",
-              "red_start_time": 20,
-              "yellow_start_time": 30
-            }
-          },
-          {
-            "title": "FlywheelFudgeFactor",
-            "x": 384.0,
-            "y": 768.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/AdvantageKit/RealOutputs/Turret/FlywheelFudgeFactor",
-              "period": 0.06,
-              "data_type": "double"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Autonomous",
-      "grid_layout": {
-        "layouts": [
-          {
-            "title": "System Checks",
-            "x": 256.0,
-            "y": 96.0,
-            "width": 256.0,
-            "height": 448.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Climber",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/System Checks/Climber",
-                  "period": 0.06,
-                  "show_type": true,
-                  "maximize_button_space": false
-                }
-              },
-              {
-                "title": "Indexer",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/System Checks/Indexer",
-                  "period": 0.06,
-                  "show_type": true,
-                  "maximize_button_space": false
-                }
-              },
-              {
-                "title": "Intakes",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/System Checks/Intakes",
-                  "period": 0.06,
-                  "show_type": true,
-                  "maximize_button_space": false
-                }
-              },
-              {
-                "title": "Turret",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/System Checks/Turret",
-                  "period": 0.06,
-                  "show_type": true,
-                  "maximize_button_space": false
-                }
-              }
-            ]
-          }
-        ],
-        "containers": [
-          {
-            "title": "TurretTurn",
-            "x": 800.0,
-            "y": 96.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/System Checks/TurretTurn",
-              "period": 0.06,
-              "show_type": true,
-              "maximize_button_space": false
-            }
-          },
-          {
-            "title": "Selection",
-            "x": 544.0,
-            "y": 224.0,
-            "width": 864.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "Autos/Selection",
-              "period": 0.06,
-              "data_type": "string",
-              "show_submit_button": false
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Overrides",
-      "grid_layout": {
-        "layouts": [
-          {
-            "title": "Turret",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "HIDDEN"
-            },
-            "children": [
-              {
-                "title": "Turret Disable",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Overrides/Turret Disable",
-                  "period": 0.06,
-                  "show_type": false,
-                  "maximize_button_space": true
-                }
-              },
-              {
-                "title": "Turret Manual",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Overrides/Turret Manual",
-                  "period": 0.06,
-                  "show_type": false,
-                  "maximize_button_space": true
-                }
-              }
-            ]
-          },
-          {
-            "title": "Intakes",
-            "x": 256.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "HIDDEN"
-            },
-            "children": [
-              {
-                "title": "Right Intake",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Overrides/Right Intake",
-                  "period": 0.06,
-                  "show_type": false,
-                  "maximize_button_space": true
-                }
-              },
-              {
-                "title": "Left Intake",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 256.0,
-                "height": 128.0,
-                "type": "Command",
-                "properties": {
-                  "topic": "/SmartDashboard/Overrides/Left Intake",
-                  "period": 0.06,
-                  "show_type": false,
-                  "maximize_button_space": true
-                }
-              }
-            ]
-          }
-        ],
-        "containers": [
-          {
-            "title": "Shift",
-            "x": 0.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/Overrides/Shift",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          },
-          {
-            "title": "Vision",
-            "x": 256.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/Overrides/Vision",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          },
-          {
-            "title": "Indexer",
-            "x": 0.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/Overrides/Indexer",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          },
-          {
-            "title": "Climber",
-            "x": 256.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/Overrides/Climber",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "System Checks",
-      "grid_layout": {
-        "layouts": [],
-        "containers": [
-          {
-            "title": "Indexer",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/System Checks/Indexer",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          },
-          {
-            "title": "Intakes",
-            "x": 256.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/System Checks/Intakes",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          },
-          {
-            "title": "LeftIntake",
-            "x": 256.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/System Checks/LeftIntake",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          },
-          {
-            "title": "RightIntake",
-            "x": 256.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/System Checks/RightIntake",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          },
-          {
-            "title": "Turret",
-            "x": 512.0,
-            "y": 0.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/System Checks/Turret",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          },
-          {
-            "title": "TurretFlywheels",
-            "x": 512.0,
-            "y": 128.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/System Checks/TurretFlywheels",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          },
-          {
-            "title": "TurretHood",
-            "x": 512.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/System Checks/TurretHood",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          },
-          {
-            "title": "TurretTurn",
-            "x": 512.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Command",
-            "properties": {
-              "topic": "/SmartDashboard/System Checks/TurretTurn",
-              "period": 0.06,
-              "show_type": false,
-              "maximize_button_space": true
-            }
-          }
-        ]
-      }
-    }
-  ]
+        }
+    ]
 }

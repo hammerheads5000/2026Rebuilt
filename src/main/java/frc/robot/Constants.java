@@ -484,40 +484,40 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            SHOT_MAP.put(6.3, new ShotData(RPM.of(3820), Degrees.of(43)));
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3690), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.3);
 
-            SHOT_MAP.put(5.5, new ShotData(RPM.of(3800), Degrees.of(42)));
+            SHOT_MAP.put(5.5, new ShotData(RPM.of(3667), Degrees.of(42)));
             TOF_MAP.put(5.5, 1.29);
 
             //     SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(37)));
             //     TOF_MAP.put(5.18, 1.42);
 
-            SHOT_MAP.put(4.72, new ShotData(RPM.of(3600), Degrees.of(37)));
+            SHOT_MAP.put(4.72, new ShotData(RPM.of(3474), Degrees.of(37)));
             TOF_MAP.put(4.72, 1.25);
 
             //     SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
             //     TOF_MAP.put(4.24, 1.41);
 
-            SHOT_MAP.put(3.87, new ShotData(RPM.of(3300), Degrees.of(35)));
+            SHOT_MAP.put(3.87, new ShotData(RPM.of(3185), Degrees.of(35)));
             TOF_MAP.put(3.87, 1.2);
 
-            SHOT_MAP.put(3.29, new ShotData(RPM.of(3120), Degrees.of(33)));
+            SHOT_MAP.put(3.29, new ShotData(RPM.of(3010), Degrees.of(33)));
             TOF_MAP.put(3.29, 1.30);
 
-            SHOT_MAP.put(2.84, new ShotData(RPM.of(3100), Degrees.of(30)));
+            SHOT_MAP.put(2.84, new ShotData(RPM.of(3000), Degrees.of(30)));
             TOF_MAP.put(2.84, 1.30);
 
             //     SHOT_MAP.put(2.45, new ShotData(RPM.of(3100), Degrees.of(25)));
             //     TOF_MAP.put(2.45, 1.25);
 
-            SHOT_MAP.put(2.09, new ShotData(RPM.of(3000), Degrees.of(22.5)));
+            SHOT_MAP.put(2.09, new ShotData(RPM.of(2900), Degrees.of(22.5)));
             TOF_MAP.put(2.09, 1.17);
 
             //     SHOT_MAP.put(1.73, new ShotData(RPM.of(2900), Degrees.of(20)));
             //     TOF_MAP.put(1.73, 1.17);
 
-            SHOT_MAP.put(1.37, new ShotData(RPM.of(2800), Degrees.of(17)));
+            SHOT_MAP.put(1.37, new ShotData(RPM.of(2700), Degrees.of(17)));
             TOF_MAP.put(1.37, 1.09);
 
             PASSING_MAP.put(12.6, new ShotData(RPM.of(5000), Degrees.of(47)));
@@ -635,7 +635,7 @@ public final class Constants {
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(100);
 
         public static final Voltage SPIN_VOLTAGE = Volts.of(4);
-        public static final Voltage FEED_VOLTAGE = Volts.of(11);
+        public static final Voltage FEED_VOLTAGE = Volts.of(8);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-5);
 
@@ -808,7 +808,7 @@ public final class Constants {
         public static final DoubleArrayTopic TRAJECTORY_TIMESTAMPS =
                 INST.getDoubleArrayTopic("Autos/Trajectory Timestamps");
         public static final DoubleTopic TIMESTAMP = INST.getDoubleTopic("Autos/timestamp");
-        public static final LoggedNetworkBoolean DUMP_AT_START = new LoggedNetworkBoolean("Autos/Dump At Start", true);
+        public static final LoggedNetworkBoolean DUMP_AT_START = new LoggedNetworkBoolean("Autos/Dump At Start", false);
 
         public static final RobotConfig PP_CONFIG = new RobotConfig(
                 Pounds.of(130),
