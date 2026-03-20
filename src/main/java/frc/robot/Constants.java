@@ -520,7 +520,7 @@ public final class Constants {
             SHOT_MAP.put(1.37, new ShotData(RPM.of(2700), Degrees.of(17)));
             TOF_MAP.put(1.37, 1.09);
 
-            PASSING_MAP.put(12.6, new ShotData(RPM.of(5000), Degrees.of(47)));
+            PASSING_MAP.put(12.6, new ShotData(RPM.of(5700), Degrees.of(47)));
             PASS_TOF_MAP.put(12.6, 1.5);
 
             PASSING_MAP.put(7.7, new ShotData(RPM.of(3600), Degrees.of(47)));
