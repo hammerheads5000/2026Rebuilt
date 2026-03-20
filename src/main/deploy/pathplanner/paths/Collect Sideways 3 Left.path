@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.4516963226571775,
-        "y": 6.956120996441281
+        "x": 8.28075919335706,
+        "y": 7.429525504151838
       },
       "isLocked": false,
       "linkedName": "Trench Exit Left"
@@ -52,8 +52,8 @@
         "y": 7.440683333333332
       },
       "prevControl": {
-        "x": 6.939390503189228,
-        "y": 7.445088589652728
+        "x": 7.086488730723607,
+        "y": 7.3219335705812565
       },
       "nextControl": null,
       "isLocked": false,
