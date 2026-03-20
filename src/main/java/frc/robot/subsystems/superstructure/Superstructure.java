@@ -40,7 +40,7 @@ public class Superstructure extends SubsystemBase {
     private final Supplier<ChassisSpeeds> fieldSpeedsSupplier;
 
     @AutoLogOutput
-    private Goal goal = Goal.IDLE;
+    private Goal goal = Goal.SCORING;
 
     @AutoLogOutput
     private Goal nonDuckingGoal = goal;
