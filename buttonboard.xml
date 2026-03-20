@@ -7,7 +7,7 @@
     <pin01 ByteOne="AF" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
     <pin02 ByteOne="AE" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
     <pin04 ByteOne="AD" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
-    <pin05 ByteOne="93" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
+    <pin05 ByteOne="AC" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
     <pin06 ByteOne="8E" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
     <pin07 ByteOne="8F" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />
     <pin08 ByteOne="90" ByteTwo="00" ByteThree="01" ByteFour="00" SwopKey="False" HasLED="False" Function="Gamepad&#xA;" />

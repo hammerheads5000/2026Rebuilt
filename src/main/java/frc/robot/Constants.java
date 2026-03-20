@@ -581,8 +581,8 @@ public final class Constants {
                 new CurrentLimitsConfigs().withStatorCurrentLimit(65).withSupplyCurrentLowerLimit(30);
 
         public static final MotionMagicConfigs RACK_MOTION_MAGIC = new MotionMagicConfigs()
-                .withMotionMagicCruiseVelocity(RotationsPerSecond.of(240))
-                .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(400));
+                .withMotionMagicCruiseVelocity(RotationsPerSecond.of(400))
+                .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(800));
 
         public static final Distance STOW_POS = Inches.of(0.2);
         public static final Distance DEPLOY_POS = Inches.of(11.5);
@@ -635,7 +635,7 @@ public final class Constants {
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(100);
 
         public static final Voltage SPIN_VOLTAGE = Volts.of(4);
-        public static final Voltage FEED_VOLTAGE = Volts.of(8);
+        public static final Voltage FEED_VOLTAGE = Volts.of(7);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-5);
 

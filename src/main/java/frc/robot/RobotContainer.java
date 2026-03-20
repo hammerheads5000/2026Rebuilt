@@ -127,9 +127,9 @@ public class RobotContainer {
     private final Trigger disableTurret = toggleSwitches.button(3);
     private final Trigger disableLeftIntake = toggleSwitches.button(4);
     private final Trigger disableRightIntake = toggleSwitches.button(5);
-    private final Trigger manualOverrideTurret = toggleSwitches.button(6);
+    private final Trigger manualOverrideTurret = toggleSwitches.button(8);
     private final Trigger disableWallAvoidance = toggleSwitches.button(7);
-    private final Trigger flashLEDs = toggleSwitches.button(8);
+//     private final Trigger flashLEDs = toggleSwitches.button(8);
     private final Trigger hubShiftOverride = toggleSwitches.button(9);
     private final Trigger slowDrive = toggleSwitches.button(10);
 
