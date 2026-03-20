@@ -603,7 +603,7 @@ public final class Constants {
 
         public static final Current RACK_STALL_CURRENT = Amps.of(40);
         public static final LinearVelocity RACK_STALL_VEL = InchesPerSecond.of(1);
-        public static final Voltage ZEROING_VOLTAGE = Volts.of(-5);
+        public static final Voltage ZEROING_VOLTAGE = Volts.of(-3);
 
         public static final Current SPIN_STALL_CURRENT = Amps.of(20);
         public static final AngularVelocity SPIN_STALL_ANGULAR_VELOCITY = RadiansPerSecond.of(0.5);
