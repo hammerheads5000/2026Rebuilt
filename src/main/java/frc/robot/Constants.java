@@ -122,7 +122,7 @@ public final class Constants {
     }
 
     public static class SwerveConstants {
-        public static final LinearVelocity DEFAULT_DRIVE_SPEED = MetersPerSecond.of(3.2);
+        public static final LinearVelocity DEFAULT_DRIVE_SPEED = MetersPerSecond.of(3);
         public static final AngularVelocity DEFAULT_ROT_SPEED = RotationsPerSecond.of(0.75);
 
         public static final LinearVelocity FAST_DRIVE_SPEED = MetersPerSecond.of(3.5);
@@ -130,10 +130,10 @@ public final class Constants {
 
         public static final LinearAcceleration MAX_TELEOP_ACCEL = MetersPerSecondPerSecond.of(25);
 
-        public static final LinearVelocity SLOW_DRIVE_SPEED = MetersPerSecond.of(2);
+        public static final LinearVelocity SLOW_DRIVE_SPEED = MetersPerSecond.of(1.5);
         public static final AngularVelocity SLOW_ROT_SPEED = RotationsPerSecond.of(0.5);
 
-        public static final LinearAcceleration SLOW_TELEOP_ACCEL = MetersPerSecondPerSecond.of(3);
+        public static final LinearAcceleration SLOW_TELEOP_ACCEL = MetersPerSecondPerSecond.of(4);
 
         public static final AngularVelocity MAX_MODULE_ROT_SPEED = RotationsPerSecond.of(5);
 
@@ -484,22 +484,22 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            SHOT_MAP.put(6.3, new ShotData(RPM.of(3690), Degrees.of(43)));
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3650), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.3);
 
-            SHOT_MAP.put(5.5, new ShotData(RPM.of(3667), Degrees.of(42)));
+            SHOT_MAP.put(5.5, new ShotData(RPM.of(3630), Degrees.of(42)));
             TOF_MAP.put(5.5, 1.29);
 
             //     SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(37)));
             //     TOF_MAP.put(5.18, 1.42);
 
-            SHOT_MAP.put(4.72, new ShotData(RPM.of(3474), Degrees.of(37)));
+            SHOT_MAP.put(4.72, new ShotData(RPM.of(3440), Degrees.of(37)));
             TOF_MAP.put(4.72, 1.25);
 
             //     SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
             //     TOF_MAP.put(4.24, 1.41);
 
-            SHOT_MAP.put(3.87, new ShotData(RPM.of(3185), Degrees.of(35)));
+            SHOT_MAP.put(3.87, new ShotData(RPM.of(3150), Degrees.of(35)));
             TOF_MAP.put(3.87, 1.2);
 
             SHOT_MAP.put(3.29, new ShotData(RPM.of(3010), Degrees.of(33)));
@@ -581,8 +581,8 @@ public final class Constants {
                 new CurrentLimitsConfigs().withStatorCurrentLimit(65).withSupplyCurrentLowerLimit(30);
 
         public static final MotionMagicConfigs RACK_MOTION_MAGIC = new MotionMagicConfigs()
-                .withMotionMagicCruiseVelocity(RotationsPerSecond.of(400))
-                .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(800));
+                .withMotionMagicCruiseVelocity(RotationsPerSecond.of(240))
+                .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(400));
 
         public static final Distance STOW_POS = Inches.of(0.2);
         public static final Distance DEPLOY_POS = Inches.of(11.5);
@@ -634,7 +634,7 @@ public final class Constants {
         public static final CurrentLimitsConfigs FEED_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(100);
 
-        public static final Voltage SPIN_VOLTAGE = Volts.of(4);
+        public static final Voltage SPIN_VOLTAGE = Volts.of(4.2);
         public static final Voltage FEED_VOLTAGE = Volts.of(7);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-5);
