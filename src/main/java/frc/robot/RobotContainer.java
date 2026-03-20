@@ -140,7 +140,7 @@ public class RobotContainer {
     private final Trigger zeroRightIntake = pushButtons.button(5);
 
     // Dashboard inputs
-    private final LoggedDashboardChooser<Command> autoChooser;
+    private final LoggedDashboardChooser<String> autoChooser;
     private final LoggedNetworkBoolean usePrebuiltAuto;
 
     public final AutoCreator autoCreator;
@@ -279,21 +279,9 @@ public class RobotContainer {
         autoChooser = new LoggedDashboardChooser<>("Prebuilt Autos");
         usePrebuiltAuto = new LoggedNetworkBoolean("Autos/Use Prebuilt Autos", true);
 
-        autoChooser.addDefaultOption("None", Commands.none());
-
+        autoChooser.addDefaultOption("None", "");
         for (String option : AutoConstants.PREBUILT_AUTOS.keySet()) {
-            autoChooser.addOption(
-                    option,
-                    AutoCreator.buildAuto(
-                            drive,
-                            vision,
-                            intakes,
-                            indexer,
-                            turret,
-                            climber,
-                            superstructure,
-                            AutoCreator.autoPathsFromString(option),
-                            false));
+            autoChooser.addOption(option, AutoConstants.PREBUILT_AUTOS.get(option));
         }
 
         teleopDrive = new TeleopDrive(drive, controller, intakes.left.deployedTrigger, intakes.right.deployedTrigger);
@@ -483,6 +471,15 @@ public class RobotContainer {
             return autoCreator.buildAuto(drive, vision, intakes, indexer, turret, climber, superstructure);
         }
 
-        return autoChooser.get();
+        return AutoCreator.buildAuto(
+                drive,
+                vision,
+                intakes,
+                indexer,
+                turret,
+                climber,
+                superstructure,
+                AutoCreator.autoPathsFromString(autoChooser.get()),
+                AutoConstants.DUMP_AT_START.get());
     }
 }
