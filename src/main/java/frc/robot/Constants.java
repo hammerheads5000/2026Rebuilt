@@ -542,7 +542,7 @@ public final class Constants {
         public static final int LEFT_SPIN_ID = 28;
         public static final int RIGHT_SPIN_ID = 27;
 
-        public static final double LEFT_ROTOR_TO_PINION_RATIO = 34.0 / 12; // 34:12 gear
+        public static final double LEFT_ROTOR_TO_PINION_RATIO = 34.0 / 14; // 34:12 gear
         public static final double RIGHT_ROTOR_TO_PINION_RATIO = 50.0 / 17; // 50:17 belt
         public static final Distance PINION_PITCH_RADIUS = Inches.of(0.5);
 

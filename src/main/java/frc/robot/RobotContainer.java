@@ -140,7 +140,7 @@ public class RobotContainer {
     private final Trigger zeroRightIntake = pushButtons.button(5);
 
     // Dashboard inputs
-    private final LoggedDashboardChooser<String> autoChooser;
+    private final LoggedDashboardChooser<Command> autoChooser;
     private final LoggedNetworkBoolean usePrebuiltAuto;
 
     public final AutoCreator autoCreator;
@@ -279,9 +279,21 @@ public class RobotContainer {
         autoChooser = new LoggedDashboardChooser<>("Prebuilt Autos");
         usePrebuiltAuto = new LoggedNetworkBoolean("Autos/Use Prebuilt Autos", true);
 
-        autoChooser.addDefaultOption("None", "");
+        autoChooser.addDefaultOption("None", Commands.none());
+
         for (String option : AutoConstants.PREBUILT_AUTOS.keySet()) {
-            autoChooser.addOption(option, AutoConstants.PREBUILT_AUTOS.get(option));
+            autoChooser.addOption(
+                    option,
+                    AutoCreator.buildAuto(
+                            drive,
+                            vision,
+                            intakes,
+                            indexer,
+                            turret,
+                            climber,
+                            superstructure,
+                            AutoCreator.autoPathsFromString(AutoConstants.PREBUILT_AUTOS.get(option)),
+                            false));
         }
 
         teleopDrive = new TeleopDrive(drive, controller, intakes.left.deployedTrigger, intakes.right.deployedTrigger);
@@ -471,15 +483,6 @@ public class RobotContainer {
             return autoCreator.buildAuto(drive, vision, intakes, indexer, turret, climber, superstructure);
         }
 
-        return AutoCreator.buildAuto(
-                drive,
-                vision,
-                intakes,
-                indexer,
-                turret,
-                climber,
-                superstructure,
-                AutoCreator.autoPathsFromString(autoChooser.get()),
-                AutoConstants.DUMP_AT_START.get());
+        return autoChooser.get();
     }
 }
