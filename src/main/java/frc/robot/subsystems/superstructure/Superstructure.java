@@ -175,7 +175,11 @@ public class Superstructure extends SubsystemBase {
     }
 
     public Command unduck() {
-        return Commands.defer(() -> this.setGoal(nonDuckingGoal == Goal.SCORING && inAllianceZone() ? Goal.SCORING : Goal.COLLECTING), Set.of(this)).withName("Unduck");
+        return Commands.defer(
+                        () -> this.setGoal(
+                                nonDuckingGoal == Goal.SCORING && inAllianceZone() ? Goal.SCORING : Goal.COLLECTING),
+                        Set.of(this))
+                .withName("Unduck");
     }
 
     public Command enableShiftOverride() {
