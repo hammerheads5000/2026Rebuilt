@@ -126,7 +126,7 @@ public class Superstructure extends SubsystemBase {
         underTrenchTrigger.onTrue(this.duck());
         underTrenchTrigger.onFalse(this.unduck());
         activeInZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
-        inactiveInZoneTrigger.onTrue(this.setGoal(Goal.COLLECTING));
+        inactiveInZoneTrigger.onTrue(this.setGoal(Goal.IDLE));
         leaveZoneTrigger.onTrue(this.setGoal(Goal.PASSING).onlyIf(() -> this.goal != Goal.COLLECTING));
         behindTowerTrigger.onTrue(indexer.setGoal(IndexerGoal.IDLE));
         behindTowerTrigger.onFalse(
@@ -176,8 +176,9 @@ public class Superstructure extends SubsystemBase {
 
     public Command unduck() {
         return Commands.defer(
-                        () -> this.setGoal(
-                                nonDuckingGoal == Goal.SCORING && inAllianceZone() ? Goal.SCORING : Goal.COLLECTING),
+                        () -> this.setGoal(nonDuckingGoal), // == Goal.SCORING
+                        //         ? (inAllianceZone() ? Goal.SCORING : Goal.COLLECTING)
+                        //         : nonDuckingGoal),
                         Set.of(this))
                 .withName("Unduck");
     }
