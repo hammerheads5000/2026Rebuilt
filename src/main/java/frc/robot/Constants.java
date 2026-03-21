@@ -856,10 +856,12 @@ public final class Constants {
 
         public static final Map<String, String> PREBUILT_AUTOS = Map.of(
                 "Stay in Place", "",
-                "Left Single Sweep",
-                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep and Return 1 Left!;Trench Left to Dump Left=4.0",
-                "Right Single Sweep",
-                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep and Return 1 Right!;Trench Right to Dump Right=4.0",
+                // "Left Single Sweep",
+                //         "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep and Return 1
+                // Left!;Trench Left to Dump Left=4.0",
+                // "Right Single Sweep",
+                //         "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep and Return 1
+                // Right!;Trench Right to Dump Right=4.0",
                 "Left Double Sweep",
                         "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep and Return 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep and Return 2 Left!;Trench Left to Dump Left=3.0",
                 "Right Double Sweep",
@@ -872,6 +874,10 @@ public final class Constants {
                         "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return 2 Left!;Trench Left to Dump Left=4.0",
                 "Right Double Sweep Less",
                         "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return 2 Right!;Trench Right to Dump Right=4.0",
+                "Left Double Steal",
+                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Steal 1 Left;Trench Left to Dump Left=2.0;Dump Left to Trench Left;Collect Steal 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left",
+                "Right Double Steal",
+                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Steal 1 Right;Trench Right to Dump Right=2.0;Dump Right to Trench Right;Collect Steal 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right"
                 // "Left Single Sweep + Climb",
                 //         "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep and Return 1
                 // Left!;Trench Left to Dump Left=3.0;Dump Left to Climb Left",
@@ -882,8 +888,11 @@ public final class Constants {
                 //         "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sideways 2 Left!;Trench
                 // Left to Dump Left=2.0;Dump Left to Trench Left;Collect Sweep 1 Left!;Trench Left to Dump
                 // Left=1.0;Dump Left to Climb Left",
-                "Right Double Sweep + Climb",
-                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sideways 2 Right!;Trench Right to Dump Right=2.0;Dump Right to Trench Right;Collect Sweep 1 Right!;Trench Right to Dump Right=1.0;Dump Right to Climb Right");
+                // "Right Double Sweep + Climb",
+                //         "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sideways 2
+                // Right!;Trench Right to Dump Right=2.0;Dump Right to Trench Right;Collect Sweep 1 Right!;Trench Right
+                // to Dump Right=1.0;Dump Right to Climb Right"
+                );
     }
 
     private Constants() {}
