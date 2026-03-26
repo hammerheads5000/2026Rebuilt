@@ -264,6 +264,9 @@ public class Turret extends SubsystemBase {
                 .finallyDo(() -> {
                     if (goal != TurretGoal.DISABLED) {
                         goal = TurretGoal.IDLE;
+                        io.stopFlywheel();
+                        io.stopHood();
+                        io.stopTurn();
                     }
                     manualOverrideAlert.set(false);
                 })
@@ -280,7 +283,7 @@ public class Turret extends SubsystemBase {
                         },
                         () -> {
                             io.stopFlywheel();
-                            io.setHoodAngle(Radians.zero());
+                            io.setHoodAngle(MIN_HOOD_ANGLE);
                             io.setTurnSetpoint(Radians.zero(), RadiansPerSecond.zero());
                         })
                 .onlyIf(() -> goal == TurretGoal.MANUAL_OVERRIDE)
@@ -296,7 +299,7 @@ public class Turret extends SubsystemBase {
                         },
                         () -> {
                             io.stopFlywheel();
-                            io.setHoodAngle(Radians.zero());
+                            io.setHoodAngle(MIN_HOOD_ANGLE);
                             io.setTurnSetpoint(Radians.zero(), RadiansPerSecond.zero());
                         })
                 .onlyIf(() -> goal == TurretGoal.MANUAL_OVERRIDE)

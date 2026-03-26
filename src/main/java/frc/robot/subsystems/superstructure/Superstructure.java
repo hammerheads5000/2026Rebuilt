@@ -8,6 +8,8 @@ import static frc.robot.Constants.TurretConstants.DUCK_TIME;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -53,6 +55,8 @@ public class Superstructure extends SubsystemBase {
 
     @AutoLogOutput
     private boolean shiftOverride = false;
+
+    private Alert shiftOverrideAlert = new Alert("Shift Override", AlertType.kInfo);
 
     /**
      * Will trigger when hub is active, or when there is less than ACTIVE_PRESHOOT_TIME until the next active period
@@ -172,8 +176,17 @@ public class Superstructure extends SubsystemBase {
     }
 
     public Command enableShiftOverride() {
-        return Commands.startEnd(() -> shiftOverride = true, () -> shiftOverride = false)
-                .withName("Override active first");
+        return Commands.startEnd(
+                        () -> {
+                            shiftOverride = true;
+                            shiftOverrideAlert.set(true);
+                        },
+                        () -> {
+                            shiftOverride = false;
+                            shiftOverrideAlert.set(false);
+                        })
+                .ignoringDisable(true)
+                .withName("Override shift");
     }
 
     public Goal getGoal() {

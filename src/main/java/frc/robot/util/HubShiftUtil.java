@@ -13,7 +13,6 @@ import static frc.robot.Constants.TurretConstants.ACTIVE_PRESHOOT_TIME;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
-import java.util.function.BooleanSupplier;
 
 public class HubShiftUtil {
     public enum ShiftEnum {
@@ -41,16 +40,6 @@ public class HubShiftUtil {
     public static final double teleopDuration = 140.0;
     private static final boolean[] activeSchedule = {true, true, false, true, false, true};
     private static final boolean[] inactiveSchedule = {true, false, true, false, true, true};
-
-    private static BooleanSupplier alwaysActiveOverride = () -> false;
-
-    public static boolean getAlwaysActiveOverride() {
-        return alwaysActiveOverride.getAsBoolean();
-    }
-
-    public static void setAlwaysActiveOverride(BooleanSupplier allianceWinOverride) {
-        HubShiftUtil.alwaysActiveOverride = allianceWinOverride;
-    }
 
     public static Alliance getFirstActiveAlliance() {
         var alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
@@ -146,7 +135,7 @@ public class HubShiftUtil {
     }
 
     public static ShiftInfo getOfficialShiftInfo() {
-        return getOfficialShiftInfo(alwaysActiveOverride.getAsBoolean());
+        return getOfficialShiftInfo(false);
     }
 
     public static ShiftInfo getShiftedShiftInfo(boolean override) {
@@ -171,6 +160,6 @@ public class HubShiftUtil {
     }
 
     public static ShiftInfo getShiftedShiftInfo() {
-        return getShiftedShiftInfo(alwaysActiveOverride.getAsBoolean());
+        return getShiftedShiftInfo(false);
     }
 }

@@ -634,13 +634,13 @@ public final class Constants {
         public static final CurrentLimitsConfigs FEED_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(100);
 
-        public static final Voltage SPIN_VOLTAGE = Volts.of(5);
+        public static final Voltage SPIN_VOLTAGE = Volts.of(4);
         public static final Voltage FEED_VOLTAGE = Volts.of(6);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-5);
 
-        public static final AngularVelocity SPIN_STALL_ANGULAR_VELOCITY = RPM.of(1000);
-        public static final Current SPIN_STALL_CURRENT = Amps.of(30);
+        public static final AngularVelocity FEED_STALL_ANGULAR_VELOCITY = RPM.of(1000);
+        public static final Current FEED_STALL_CURRENT = Amps.of(30);
     }
 
     public static class ClimberConstants {

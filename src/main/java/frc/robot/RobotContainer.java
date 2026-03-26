@@ -67,7 +67,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.FuelSim;
-import frc.robot.util.HubShiftUtil;
 import frc.robot.util.Zones;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -377,7 +376,9 @@ public class RobotContainer {
 
         intakePressTrigger.whileTrue(intakes.press());
 
-        speedUpTrigger.whileTrue(teleopDrive.speedUpCommand());
+        speedUpTrigger
+                .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)
+                .whileTrue(teleopDrive.speedUpCommand());
 
         // turretTuningTrigger.toggleOnTrue(Commands.startEnd(
         //         turret.setFlywheelSpeed(RPM.of(3000))::initialize, turret.setGoal(TurretGoal.IDLE)::initialize));
@@ -407,13 +408,13 @@ public class RobotContainer {
         manualScoreTrigger
                 .and(() -> turret.getGoal() == TurretGoal.MANUAL_OVERRIDE)
                 .whileTrue(turret.manualScore()
-                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
+                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE).asProxy())
                         .finallyDo(() -> indexer.stop())
                         .withName("Manual Score"));
         manualPassTrigger
                 .and(() -> turret.getGoal() == TurretGoal.MANUAL_OVERRIDE)
                 .whileTrue(turret.manualPass()
-                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
+                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE).asProxy())
                         .finallyDo(() -> indexer.stop())
                         .withName("Manual Pass"));
 
@@ -425,7 +426,7 @@ public class RobotContainer {
         manualOverrideTurret.whileTrue(turret.manualOverride());
         disableWallAvoidance.whileTrue(teleopDrive.disableWallAvoidance());
         // flashLEDs.whileTrue();
-        HubShiftUtil.setAlwaysActiveOverride(hubShiftOverride::getAsBoolean);
+        hubShiftOverride.whileTrue(superstructure.enableShiftOverride());
         slowDrive.whileTrue(teleopDrive.slowDownCommand());
 
         fudgeDown.whileTrue(turret.decreaseFudgeFactor());

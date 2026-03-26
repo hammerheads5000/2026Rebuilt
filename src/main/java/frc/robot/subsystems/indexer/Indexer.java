@@ -3,9 +3,9 @@ package frc.robot.subsystems.indexer;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
+import static frc.robot.Constants.IndexerConstants.FEED_STALL_ANGULAR_VELOCITY;
+import static frc.robot.Constants.IndexerConstants.FEED_STALL_CURRENT;
 import static frc.robot.Constants.IndexerConstants.FEED_VOLTAGE;
-import static frc.robot.Constants.IndexerConstants.SPIN_STALL_ANGULAR_VELOCITY;
-import static frc.robot.Constants.IndexerConstants.SPIN_STALL_CURRENT;
 import static frc.robot.Constants.IndexerConstants.SPIN_VOLTAGE;
 import static frc.robot.Constants.IndexerConstants.UNJAM_FEED_VOLTAGE;
 import static frc.robot.Constants.IndexerConstants.UNJAM_SPIN_VOLTAGE;
@@ -35,9 +35,9 @@ public class Indexer extends SubsystemBase {
     private final LoggedTunableNumber feedVoltage =
             new LoggedTunableNumber("Indexer/Feed Voltage", FEED_VOLTAGE.in(Volts));
 
-    private final Trigger spinStallTrigger = new Trigger(
-                    () -> inputs.spinCurrent.abs(Amps) >= SPIN_STALL_CURRENT.in(Amps)
-                            && inputs.spinVelocity.abs(RPM) <= SPIN_STALL_ANGULAR_VELOCITY.in(RPM))
+    private final Trigger feedStallTrigger = new Trigger(
+                    () -> inputs.feedCurrent.in(Amps) >= FEED_STALL_CURRENT.in(Amps)
+                            && inputs.feedVelocity.abs(RPM) <= FEED_STALL_ANGULAR_VELOCITY.in(RPM))
             .debounce(0.2);
 
     private final IndexerVisualizer visualizer;
@@ -56,7 +56,7 @@ public class Indexer extends SubsystemBase {
         VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent, "Indexer");
         VirtualPD.registerMotor(() -> inputs.feedSupplyCurrent, "Indexer");
 
-        spinStallTrigger.and(() -> this.goal == IndexerGoal.ACTIVE).onTrue(unjam());
+        feedStallTrigger.and(() -> this.goal == IndexerGoal.ACTIVE).onTrue(unjam());
 
         SmartDashboard.putData("Overrides/Indexer", disable());
     }
@@ -125,9 +125,9 @@ public class Indexer extends SubsystemBase {
         return goal;
     }
 
-    public Command activate() {
+    private Command activate() {
         return Commands.sequence(
-                        Commands.runOnce(() -> io.setFeedOutput(UNJAM_FEED_VOLTAGE)),
+                        this.runOnce(() -> io.setFeedOutput(UNJAM_FEED_VOLTAGE)),
                         Commands.waitSeconds(0.1),
                         Commands.runOnce(() -> io.setFeedOutput(Volts.of(feedVoltage.get()))),
                         Commands.waitSeconds(0.3),
@@ -144,7 +144,7 @@ public class Indexer extends SubsystemBase {
     }
 
     private Command unjam() {
-        return Commands.runOnce(() -> {
+        return this.runOnce(() -> {
                     io.setFeedOutput(UNJAM_FEED_VOLTAGE);
                     io.setSpinOutput(UNJAM_SPIN_VOLTAGE);
                 })

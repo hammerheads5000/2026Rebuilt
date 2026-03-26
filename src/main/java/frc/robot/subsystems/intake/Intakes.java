@@ -127,7 +127,7 @@ public class Intakes extends SubsystemBase {
     }
 
     public Command press() {
-        return Commands.either(right.press(), left.press(), right.deployedTrigger)
+        return Commands.either(right.press().asProxy(), left.press().asProxy(), right.deployedTrigger)
                 .onlyIf(right.deployedTrigger.or(left.deployedTrigger))
                 .withName("Intake Press");
     }
