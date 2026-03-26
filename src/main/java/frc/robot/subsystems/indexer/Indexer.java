@@ -132,9 +132,15 @@ public class Indexer extends SubsystemBase {
                         Commands.runOnce(() -> io.setFeedOutput(Volts.of(feedVoltage.get()))),
                         Commands.waitSeconds(0.3),
                         Commands.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
+                .finallyDo((interrupted) -> {
+                    if (interrupted) {
+                        io.stopFeed();
+                        io.stopSpin();
+                    }
+                })
                 // .andThen(Commands.waitUntil(() -> inputs.feedVelocity.abs(RPM) >= FEED_THRESHOLD.in(RPM)))
                 // .andThen(this.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
-                .withName("IndexerActivate");
+                .withName("Indexer Activate");
     }
 
     private Command unjam() {
@@ -146,7 +152,14 @@ public class Indexer extends SubsystemBase {
                 .andThen(Commands.runOnce(() -> {
                     io.setFeedOutput(Volts.of(feedVoltage.get()));
                     io.setSpinOutput(Volts.of(spinVoltage.get()));
-                }));
+                }))
+                .finallyDo((interrupted) -> {
+                    if (interrupted) {
+                        io.stopFeed();
+                        io.stopSpin();
+                    }
+                })
+                .withName("Indexer Unjam");
     }
 
     public void stop() {
