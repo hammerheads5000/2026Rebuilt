@@ -385,7 +385,7 @@ public final class Constants {
                 50.0 / 14 * 22.0 / 20 * 156.0 / 10; // 50:14 gear, 22:20 belt, 156:10 rack
 
         public static final Slot0Configs TURN_GAINS =
-                new Slot0Configs().withKP(200).withKD(0.0).withKS(0);
+                new Slot0Configs().withKP(100).withKD(0.0).withKS(0.6).withKV(2.7);
 
         public static final Slot0Configs HOOD_GAINS =
                 new Slot0Configs().withKP(800).withKD(5).withKS(0.28);
@@ -404,15 +404,15 @@ public final class Constants {
 
         public static final MotorOutputConfigs TURN_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withInverted(InvertedValue.CounterClockwise_Positive)
-                .withNeutralMode(NeutralModeValue.Brake);
+                .withNeutralMode(NeutralModeValue.Coast);
 
         public static final FeedbackConfigs TURN_FEEDBACK_CONFIGS = new FeedbackConfigs()
                 .withFeedbackRemoteSensorID(ENCODER_ID)
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+                .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder)
                 .withSensorToMechanismRatio(ENCODER_TO_TURRET_RATIO)
                 .withRotorToSensorRatio(TURN_TO_TURRET_RATIO / ENCODER_TO_TURRET_RATIO)
                 .withFeedbackRotorOffset(0)
-                .withVelocityFilterTimeConstant(0.01);
+                .withVelocityFilterTimeConstant(0.0);
 
         public static final MotorOutputConfigs HOOD_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withInverted(InvertedValue.Clockwise_Positive)
@@ -427,7 +427,7 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(-0.05029296875)
+                .withMagnetOffset(-0.429931640625)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
                 .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
 
@@ -444,8 +444,8 @@ public final class Constants {
         public static final Distance SHOOT_RADIUS = Inches.of(1);
         public static final int LOOKAHEAD_ITERATIONS = 5;
 
-        public static final Angle MIN_TURN_ANGLE = Degrees.of(-255);
-        public static final Angle MAX_TURN_ANGLE = Degrees.of(210);
+        public static final Angle MIN_TURN_ANGLE = Degrees.of(-250);
+        public static final Angle MAX_TURN_ANGLE = Degrees.of(195);
         public static final Angle TURNAROUND_ZONE = Degrees.of(30);
 
         public static final Distance EXTRA_DUCK_DISTANCE = Meters.of(0.3);
@@ -634,8 +634,8 @@ public final class Constants {
         public static final CurrentLimitsConfigs FEED_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(100);
 
-        public static final Voltage SPIN_VOLTAGE = Volts.of(4);
-        public static final Voltage FEED_VOLTAGE = Volts.of(8);
+        public static final Voltage SPIN_VOLTAGE = Volts.of(5);
+        public static final Voltage FEED_VOLTAGE = Volts.of(6);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-5);
 
