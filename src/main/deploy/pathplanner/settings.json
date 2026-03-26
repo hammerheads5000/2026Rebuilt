@@ -4,9 +4,11 @@
     "holonomicMode": true,
     "pathFolders": [
         "Climbs",
-        "Collection",
-        "Inside Zone",
+        "Collection Rev Intake",
         "Dumping",
+        "Inside Zone",
+        "Collection",
+        "Old Collection",
         "Starts"
     ],
     "autoFolders": [],

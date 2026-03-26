@@ -57,7 +57,7 @@ public class Turret extends SubsystemBase {
             : FieldConstants.HUB_RED;
 
     @AutoLogOutput
-    private TurretGoal goal = TurretGoal.OFF;
+    private TurretGoal goal = TurretGoal.IDLE;
 
     private final TurretVisualizer turretVisualizer;
 
@@ -160,11 +160,6 @@ public class Turret extends SubsystemBase {
                                             poseSupplier.get(), desired, inputs.turnPosition),
                                     RadiansPerSecond.of(0));
                             break;
-                        case OFF:
-                            io.stopFlywheel();
-                            io.stopHood();
-                            io.stopTurn();
-                            break;
                         case DISABLED:
                             io.stopFlywheel();
                             io.stopHood();
@@ -254,7 +249,7 @@ public class Turret extends SubsystemBase {
                 .beforeStarting(() -> disabledAlert.set(true))
                 .andThen(Commands.idle())
                 .finallyDo(() -> {
-                    goal = TurretGoal.OFF;
+                    goal = TurretGoal.IDLE;
                     disabledAlert.set(false);
                 })
                 .withInterruptBehavior(InterruptionBehavior.kCancelIncoming)
@@ -268,7 +263,7 @@ public class Turret extends SubsystemBase {
                 .andThen(Commands.idle())
                 .finallyDo(() -> {
                     if (goal != TurretGoal.DISABLED) {
-                        goal = TurretGoal.OFF;
+                        goal = TurretGoal.IDLE;
                     }
                     manualOverrideAlert.set(false);
                 })
@@ -422,7 +417,6 @@ public class Turret extends SubsystemBase {
         IDLE,
         TUNING,
         DUCKING,
-        OFF,
         MANUAL_OVERRIDE,
         DISABLED
     }

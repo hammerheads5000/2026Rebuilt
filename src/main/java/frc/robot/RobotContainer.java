@@ -245,7 +245,7 @@ public class RobotContainer {
                 break;
         }
 
-        superstructure = new Superstructure(turret, intakes, indexer, drive::getPose, drive::getFieldSpeeds);
+        superstructure = new Superstructure(turret, indexer, drive::getPose, drive::getFieldSpeeds);
 
         // Set up SysId routines
         // autoChooser.addOption(
@@ -292,8 +292,10 @@ public class RobotContainer {
                             turret,
                             climber,
                             superstructure,
-                            AutoCreator.autoPathsFromString(AutoConstants.PREBUILT_AUTOS.get(option)),
-                            false));
+                            AutoCreator.autoPathsFromString(
+                                    AutoConstants.PREBUILT_AUTOS.get(option).substring(2)),
+                            false,
+                            AutoConstants.PREBUILT_AUTOS.get(option).charAt(0) == 'L'));
         }
 
         teleopDrive = new TeleopDrive(drive, controller, intakes.left.deployedTrigger, intakes.right.deployedTrigger);
@@ -358,7 +360,7 @@ public class RobotContainer {
         zeroLeftRackTrigger.onFalse(intakes.setGoal(IntakesGoal.STOW));
 
         zeroHoodTrigger.whileTrue(turret.zeroHoodSequence());
-        zeroHoodTrigger.onFalse(turret.setGoal(TurretGoal.OFF));
+        zeroHoodTrigger.onFalse(turret.setGoal(TurretGoal.IDLE));
 
         switchIntakesTrigger.onTrue(intakes.switchIntakes());
         intakes.switchIntakes().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
@@ -378,17 +380,17 @@ public class RobotContainer {
         speedUpTrigger.whileTrue(teleopDrive.speedUpCommand());
 
         // turretTuningTrigger.toggleOnTrue(Commands.startEnd(
-        //         turret.setFlywheelSpeed(RPM.of(3000))::initialize, turret.setGoal(TurretGoal.OFF)::initialize));
+        //         turret.setFlywheelSpeed(RPM.of(3000))::initialize, turret.setGoal(TurretGoal.IDLE)::initialize));
         turretModeTrigger.onTrue(Commands.either(
                 Commands.either(
                         turret.setGoal(TurretGoal.SCORING),
                         turret.setGoal(TurretGoal.PASSING),
                         superstructure.inAllianceZoneTrigger),
-                turret.setGoal(TurretGoal.OFF),
-                () -> turret.getGoal() == TurretGoal.OFF));
+                turret.setGoal(TurretGoal.IDLE),
+                () -> turret.getGoal() == TurretGoal.IDLE));
 
         // turretModeTrigger.onTrue(Commands.either(
-        //         turret.setGoal(TurretGoal.OFF),
+        //         turret.setGoal(TurretGoal.IDLE),
         //         turret.setGoal(TurretGoal.TUNING),
         //         () -> turret.getGoal() == TurretGoal.TUNING));
 

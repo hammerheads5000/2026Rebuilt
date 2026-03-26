@@ -380,7 +380,7 @@ public final class Constants {
         public static final int ENCODER_ID = 23;
 
         public static final double ENCODER_TO_TURRET_RATIO = 180.0 / 27 * 1.0 / 23; // 180:27 big gear, 1:23 cycloidal
-        public static final double TURN_TO_TURRET_RATIO = 28.0 / 12 * 180.0 / 10; // 28:14 belt, 180:10 big gear
+        public static final double TURN_TO_TURRET_RATIO = 28.0 / 14 * 180.0 / 10; // 28:14 gear, 180:10 big gear
         public static final double HOOD_MOTOR_RATIO =
                 50.0 / 14 * 22.0 / 20 * 156.0 / 10; // 50:14 gear, 22:20 belt, 156:10 rack
 
@@ -809,6 +809,8 @@ public final class Constants {
                 INST.getDoubleArrayTopic("Autos/Trajectory Timestamps");
         public static final DoubleTopic TIMESTAMP = INST.getDoubleTopic("Autos/timestamp");
         public static final LoggedNetworkBoolean DUMP_AT_START = new LoggedNetworkBoolean("Autos/Dump At Start", false);
+        public static final LoggedNetworkBoolean USE_LEFT_INTAKE =
+                new LoggedNetworkBoolean("Autos/Use Left Intake", false);
 
         public static final RobotConfig PP_CONFIG = new RobotConfig(
                 Pounds.of(130),
@@ -855,29 +857,50 @@ public final class Constants {
         public static final Time CLIMB_TIME_REMAINING = Seconds.of(3);
 
         public static final Map<String, String> PREBUILT_AUTOS = Map.of(
-                "Stay in Place", "",
-                // "Left Single Sweep",
-                //         "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep and Return 1
-                // Left!;Trench Left to Dump Left=4.0",
-                // "Right Single Sweep",
-                //         "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep and Return 1
-                // Right!;Trench Right to Dump Right=4.0",
-                "Left Double Sweep",
-                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep and Return 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep and Return 2 Left!;Trench Left to Dump Left=3.0",
-                "Right Double Sweep",
-                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep and Return 1 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return 2 Right!;Trench Right to Dump Right=3.0",
+                "Stay in Place", "L_",
+                "Left Double Sweep Long",
+                        "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Mid 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep and Return Long 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left",
+                "Right Double Sweep Long",
+                        "R_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Mid 1 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return Long 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right",
                 "Left Double Sweep Short",
-                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sideways 3 Left!;Trench Left to Dump Left=5.0;Dump Left to Trench Left;Collect Forward 3 Left!;Trench Left to Dump Left=4.0",
+                        "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Short 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep and Return Mid 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left",
                 "Right Double Sweep Short",
-                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sideways 3 Right!;Trench Right to Dump Right=5.0;Dump Right to Trench Right;Collect Forward 3 Right!;Trench Right to Dump Right=4.0",
-                "Left Double Sweep Less",
-                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return 2 Left!;Trench Left to Dump Left=4.0",
-                "Right Double Sweep Less",
-                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return 2 Right!;Trench Right to Dump Right=4.0",
-                "Left Double Steal",
-                        "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Steal 1 Left;Trench Left to Dump Left=2.0;Dump Left to Trench Left;Collect Steal 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left",
-                "Right Double Steal",
-                        "Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Steal 1 Right;Trench Right to Dump Right=2.0;Dump Right to Trench Right;Collect Steal 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right"
+                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Short 1 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return Mid 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right",
+                "Left Rev Double Sweep Long",
+                        "R_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Mid Rev 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep and Return Long Rev 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left",
+                "Right Rev Double Sweep Long",
+                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Mid Rev 1 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return Long Rev 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right",
+                "Left Rev Double Sweep Short",
+                        "R_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Short Rev 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep and Return Mid Rev 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left",
+                "Right Rev Double Sweep Short",
+                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Short Rev 1 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return Mid Rev 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right"
+                // "Right Double Sweep",
+                //         "R_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep and Return 1
+                // Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return 2
+                // Right!;Trench Right to Dump Right=3.0",
+                // "Left Double Sweep Short",
+                //         "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sideways 3 Left!;Trench
+                // Left to Dump Left=5.0;Dump Left to Trench Left;Collect Forward 3 Left!;Trench Left to Dump Left=4.0",
+                // "Right Double Sweep Short",
+                //         "R_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sideways 3
+                // Right!;Trench Right to Dump Right=5.0;Dump Right to Trench Right;Collect Forward 3 Right!;Trench
+                // Right to Dump Right=4.0",
+                // "Left Double Sweep Less",
+                //         "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep 1 Left!;Trench
+                // Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return 2 Left!;Trench Left to Dump
+                // Left=4.0",
+                // "Right Double Sweep Less",
+                //         "R_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep 1
+                // Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return 2
+                // Right!;Trench Right to Dump Right=4.0",
+                // "Left Double Steal",
+                //         "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Steal 1 Left;Trench
+                // Left to Dump Left=2.0;Dump Left to Trench Left;Collect Steal 2 Left!;Trench Left to Dump
+                // Left=3.0;Dump Left to Trench Left",
+                // "Right Double Steal",
+                //         "R_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Steal 1 Right;Trench
+                // Right to Dump Right=2.0;Dump Right to Trench Right;Collect Steal 2 Right!;Trench Right to Dump
+                // Right=3.0;Dump Right to Trench Right"
                 // "Left Single Sweep + Climb",
                 //         "Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep and Return 1
                 // Left!;Trench Left to Dump Left=3.0;Dump Left to Climb Left",

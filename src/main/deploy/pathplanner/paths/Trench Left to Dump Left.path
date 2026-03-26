@@ -16,27 +16,11 @@
     },
     {
       "anchor": {
-        "x": 3.5439444444444446,
-        "y": 7.440683333333332
-      },
-      "prevControl": {
-        "x": 4.120887834995488,
-        "y": 7.440683333333332
-      },
-      "nextControl": {
-        "x": 3.2939444444444446,
-        "y": 7.440683333333332
-      },
-      "isLocked": false,
-      "linkedName": "Trench Start Left"
-    },
-    {
-      "anchor": {
-        "x": 3.403314393939394,
+        "x": 4.2,
         "y": 7.441
       },
       "prevControl": {
-        "x": 3.653314393939394,
+        "x": 4.45,
         "y": 7.441
       },
       "nextControl": null,
@@ -46,7 +30,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 0.5,
       "rotationDegrees": -90.0
     }
   ],

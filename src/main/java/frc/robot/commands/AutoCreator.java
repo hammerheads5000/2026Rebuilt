@@ -38,7 +38,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.json.simple.parser.ParseException;
 
 /** Builds autos from PathPlanner paths selected using SharkPlanner */
@@ -82,6 +84,20 @@ public class AutoCreator {
             }
             throw new IllegalArgumentException("Invalid start/end point: " + s);
         }
+
+        public static final HashSet<StartEndPoint> STARTS = new HashSet<>(Set.of(
+                StartEndPoint.TRENCH_START_LEFT,
+                StartEndPoint.TRENCH_START_RIGHT,
+                StartEndPoint.TRENCH_MID_START_LEFT,
+                StartEndPoint.TRENCH_MID_START_RIGHT,
+                StartEndPoint.BUMP_START_LEFT,
+                StartEndPoint.BUMP_START_RIGHT));
+
+        public static final HashSet<StartEndPoint> OUTSIDE_ZONE = new HashSet<>(Set.of(
+                StartEndPoint.TRENCH_LEFT,
+                StartEndPoint.TRENCH_RIGHT,
+                StartEndPoint.BUMP_LEFT,
+                StartEndPoint.BUMP_RIGHT));
     }
 
     /** Wrapper of a PathPlanner path to get useful information */
@@ -412,7 +428,8 @@ public class AutoCreator {
                 climber,
                 superstructure,
                 selectedAutoPaths,
-                AutoConstants.DUMP_AT_START.get());
+                AutoConstants.DUMP_AT_START.get(),
+                AutoConstants.USE_LEFT_INTAKE.get());
     }
 
     /**
@@ -427,10 +444,16 @@ public class AutoCreator {
             Climber climber,
             Superstructure superstructure,
             List<AutoPath> selectedAutoPaths,
-            boolean dumpAtStart) {
+            boolean dumpAtStart,
+            boolean useLeftIntake) {
         ArrayList<Command> commands = new ArrayList<>();
-        for (AutoPath path : selectedAutoPaths) {
+        for (int i = 0; i < selectedAutoPaths.size(); i++) {
+            AutoPath path = selectedAutoPaths.get(i);
+
             Command toAdd = AutoBuilder.followPath(path.getPathPlannerPath());
+            if (i == 0) {
+                toAdd = toAdd.alongWith(useLeftIntake ? intakes.deployLeft() : intakes.deployRight());
+            }
             if (path.name.contains("Collect")) {
                 if (path.collect) {
                     toAdd = toAdd.deadlineFor(
@@ -441,37 +464,21 @@ public class AutoCreator {
                             indexer.setGoal(IndexerGoal.ACTIVE).asProxy(),
                             turret.setGoal(TurretGoal.PASSING).asProxy());
                 }
-
-                // deploy appropriate intake
-                if (path.start == StartEndPoint.TRENCH_LEFT) {
-                    toAdd = toAdd.deadlineFor(intakes.deployLeft());
-                } else if (path.start == StartEndPoint.TRENCH_RIGHT) {
-                    toAdd = toAdd.deadlineFor(intakes.deployRight());
-                } else if (path.start == StartEndPoint.BUMP_LEFT) {
-                    toAdd = toAdd.deadlineFor(intakes.deployLeft());
-                } else if (path.start == StartEndPoint.BUMP_RIGHT) {
-                    toAdd = toAdd.deadlineFor(intakes.deployRight());
-                }
-            } else {
-                // if passing through trench or over bump
-                if ((path.start == StartEndPoint.TRENCH_START_LEFT && path.end == StartEndPoint.TRENCH_LEFT)
-                        || (path.start == StartEndPoint.TRENCH_MID_START_LEFT && path.end == StartEndPoint.TRENCH_LEFT)
-                        || (path.start == StartEndPoint.BUMP_START_LEFT && path.end == StartEndPoint.BUMP_LEFT)) {
-                    toAdd = toAdd.deadlineFor(intakes.deployLeft());
-                } else if ((path.start == StartEndPoint.TRENCH_START_RIGHT && path.end == StartEndPoint.TRENCH_RIGHT)
-                        || (path.start == StartEndPoint.TRENCH_MID_START_RIGHT
-                                && path.end == StartEndPoint.TRENCH_RIGHT)
-                        || (path.start == StartEndPoint.BUMP_START_RIGHT && path.end == StartEndPoint.BUMP_RIGHT)) {
-                    toAdd = toAdd.deadlineFor(intakes.deployRight());
-                } else {
-                    // set turret to score when possible
-                    toAdd = toAdd.deadlineFor(Commands.waitUntil(superstructure.inAllianceZoneTrigger)
-                            .andThen(turret.setGoal(TurretGoal.SCORING)
-                                    .asProxy()
-                                    .alongWith(Commands.waitTime(AutoConstants.START_SPIN_UP_TIME)
-                                            .andThen(indexer.setGoal(IndexerGoal.ACTIVE)
-                                                    .asProxy()))));
-                }
+            } else if (!StartEndPoint.OUTSIDE_ZONE.contains(path.start)
+                    && StartEndPoint.OUTSIDE_ZONE.contains(path.end)) {
+                toAdd = Commands.sequence(
+                        indexer.setGoal(IndexerGoal.IDLE).asProxy(),
+                        turret.setGoal(TurretGoal.DUCKING).asProxy(),
+                        toAdd,
+                        turret.setGoal(TurretGoal.IDLE).asProxy());
+            } else if (StartEndPoint.OUTSIDE_ZONE.contains(path.start)
+                    && !StartEndPoint.OUTSIDE_ZONE.contains(path.end)) {
+                toAdd = Commands.sequence(
+                        indexer.setGoal(IndexerGoal.IDLE).asProxy(),
+                        turret.setGoal(TurretGoal.DUCKING).asProxy(),
+                        toAdd,
+                        turret.setGoal(TurretGoal.SCORING).asProxy(),
+                        indexer.setGoal(IndexerGoal.ACTIVE).asProxy());
             }
 
             if (path.dumpTime > 0) {

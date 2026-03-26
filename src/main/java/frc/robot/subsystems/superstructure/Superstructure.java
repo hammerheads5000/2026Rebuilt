@@ -19,8 +19,6 @@ import frc.robot.Constants.Dimensions;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.Indexer.IndexerGoal;
-import frc.robot.subsystems.intake.Intakes;
-import frc.robot.subsystems.intake.Intakes.IntakesGoal;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.Turret.TurretGoal;
 import frc.robot.util.HubShiftUtil;
@@ -33,14 +31,13 @@ import org.littletonrobotics.junction.Logger;
 
 public class Superstructure extends SubsystemBase {
     private final Turret turret;
-    private final Intakes intake;
     private final Indexer indexer;
 
     private final Supplier<Pose2d> poseSupplier;
     private final Supplier<ChassisSpeeds> fieldSpeedsSupplier;
 
     @AutoLogOutput
-    private Goal goal = Goal.SCORING;
+    private Goal goal = Goal.IDLE;
 
     @AutoLogOutput
     private Goal nonDuckingGoal = goal;
@@ -81,12 +78,10 @@ public class Superstructure extends SubsystemBase {
     /** Creates a new Superstructure. */
     public Superstructure(
             Turret turret,
-            Intakes intake,
             Indexer indexer,
             Supplier<Pose2d> poseSupplier,
             Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
         this.turret = turret;
-        this.intake = intake;
         this.indexer = indexer;
         this.poseSupplier = poseSupplier;
         this.fieldSpeedsSupplier = fieldSpeedsSupplier;
@@ -94,43 +89,36 @@ public class Superstructure extends SubsystemBase {
         goalCommands = Map.of(
                 Goal.SCORING,
                 () -> Commands.sequence(
-                                this.turret.setGoal(TurretGoal.SCORING),
-                                // this.intake.setGoal(IntakesGoal.AUTOSWITCH),
-                                this.indexer.setGoal(IndexerGoal.ACTIVE))
+                                this.turret.setGoal(TurretGoal.SCORING), this.indexer.setGoal(IndexerGoal.ACTIVE))
                         .withName("Start scoring"),
                 Goal.PASSING,
                 () -> Commands.sequence(
                                 this.turret.setGoal(TurretGoal.PASSING).onlyIf(inAllianceZoneTrigger.negate()),
-                                // this.intake.setGoal(IntakesGoal.AUTOSWITCH),
                                 this.indexer.setGoal(IndexerGoal.ACTIVE).onlyIf(inAllianceZoneTrigger.negate()))
                         .withName("Start passing"),
                 Goal.COLLECTING,
-                () -> Commands.sequence(
-                                this.turret.setGoal(TurretGoal.IDLE),
-                                this.intake.setGoal(IntakesGoal.MANUAL),
-                                this.indexer.setGoal(IndexerGoal.IDLE))
+                () -> Commands.sequence(this.turret.setGoal(TurretGoal.IDLE), this.indexer.setGoal(IndexerGoal.IDLE))
                         .withName("Start collecting"),
                 Goal.DUCKING,
                 () -> Commands.sequence(this.turret.setGoal(TurretGoal.DUCKING), this.indexer.setGoal(IndexerGoal.IDLE))
                         .withName("Start ducking"),
                 Goal.IDLE,
-                () -> Commands.sequence(
-                                this.turret.setGoal(TurretGoal.IDLE),
-                                this.intake.setGoal(IntakesGoal.STOW),
-                                this.indexer.setGoal(IndexerGoal.IDLE))
+                () -> Commands.sequence(this.turret.setGoal(TurretGoal.IDLE), this.indexer.setGoal(IndexerGoal.IDLE))
                         .withName("Idle"));
 
         underTrenchTrigger = Zones.TRENCH_DUCK_ZONES.willContain(poseSupplier, fieldSpeedsSupplier, DUCK_TIME);
         behindTowerTrigger = Zones.TOWER_ZONES.contains(poseSupplier);
 
-        underTrenchTrigger.onTrue(this.duck());
-        underTrenchTrigger.onFalse(this.unduck());
+        underTrenchTrigger.and(DriverStation::isTeleop).onTrue(this.duck());
+        underTrenchTrigger.and(DriverStation::isTeleop).onFalse(this.unduck());
         activeInZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
         inactiveInZoneTrigger.onTrue(this.setGoal(Goal.IDLE));
         leaveZoneTrigger.onTrue(this.setGoal(Goal.PASSING).onlyIf(() -> this.goal != Goal.COLLECTING));
-        behindTowerTrigger.onTrue(indexer.setGoal(IndexerGoal.IDLE));
-        behindTowerTrigger.onFalse(
-                indexer.setGoal(IndexerGoal.ACTIVE).onlyIf(() -> goal == Goal.SCORING || goal == Goal.PASSING));
+        behindTowerTrigger.and(DriverStation::isTeleop).onTrue(indexer.setGoal(IndexerGoal.IDLE));
+        behindTowerTrigger
+                .and(DriverStation::isTeleop)
+                .onFalse(
+                        indexer.setGoal(IndexerGoal.ACTIVE).onlyIf(() -> goal == Goal.SCORING || goal == Goal.PASSING));
 
         // turret.underTrenchTrigger.onTrue(indexer.runOnce(() -> indexer.stop(false)));
         // turret.underTrenchTrigger.onFalse(Commands.defer(() -> indexer.setGoal(indexer.getGoal()), Set.of()));

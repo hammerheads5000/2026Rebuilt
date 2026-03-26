@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -99,7 +100,7 @@ public class Indexer extends SubsystemBase {
                                 toSchedule = this.runOnce(this::stop);
                             }
                             this.goal = goal;
-                            return toSchedule;
+                            return new ScheduleCommand(toSchedule);
                         },
                         Set.of(this))
                 .onlyIf(() -> this.goal != IndexerGoal.DISABLED);
@@ -126,11 +127,11 @@ public class Indexer extends SubsystemBase {
 
     public Command activate() {
         return Commands.sequence(
-                        this.runOnce(() -> io.setFeedOutput(UNJAM_FEED_VOLTAGE)),
+                        Commands.runOnce(() -> io.setFeedOutput(UNJAM_FEED_VOLTAGE)),
                         Commands.waitSeconds(0.1),
-                        this.runOnce(() -> io.setFeedOutput(Volts.of(feedVoltage.get()))),
+                        Commands.runOnce(() -> io.setFeedOutput(Volts.of(feedVoltage.get()))),
                         Commands.waitSeconds(0.3),
-                        this.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
+                        Commands.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
                 // .andThen(Commands.waitUntil(() -> inputs.feedVelocity.abs(RPM) >= FEED_THRESHOLD.in(RPM)))
                 // .andThen(this.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
                 .withName("IndexerActivate");
@@ -148,14 +149,10 @@ public class Indexer extends SubsystemBase {
                 }));
     }
 
-    public void stop(boolean changeGoal) {
+    public void stop() {
         io.stopSpin();
         io.stopFeed();
-        if (changeGoal) this.goal = IndexerGoal.IDLE;
-    }
-
-    public void stop() {
-        stop(true);
+        this.goal = IndexerGoal.IDLE;
     }
 
     public enum IndexerGoal {

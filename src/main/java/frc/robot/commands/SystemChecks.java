@@ -69,7 +69,7 @@ public class SystemChecks {
     /** Spins flywheels up to 2500 RPM for 3 seconds, then turns them off */
     public Command turretFlywheels() {
         return Commands.sequence(
-                turret.setFlywheelSpeed(RPM.of(2500)), Commands.waitSeconds(3), turret.setGoal(TurretGoal.OFF));
+                turret.setFlywheelSpeed(RPM.of(2500)), Commands.waitSeconds(3), turret.setGoal(TurretGoal.IDLE));
     }
 
     /** Zeroes both intakes then tests left then right */

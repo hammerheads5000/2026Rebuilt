@@ -8,56 +8,40 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.430177935943061,
-        "y": 7.429525504151838
+        "x": 7.723614457831324,
+        "y": 7.43223245924876
       },
       "isLocked": false,
       "linkedName": "Trench Exit Left"
     },
     {
       "anchor": {
-        "x": 6.727264351523742,
-        "y": 5.925422222222221
+        "x": 8.469318181818181,
+        "y": 5.787339015151515
       },
       "prevControl": {
-        "x": 6.259261781811848,
-        "y": 5.925422222222221
+        "x": 8.431387900355872,
+        "y": 7.031435349940688
       },
       "nextControl": {
-        "x": 7.154292053577403,
-        "y": 5.925422222222221
+        "x": 8.477505951198639,
+        "y": 5.518783826958452
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.977666666666666,
-        "y": 5.925422222222221
+        "x": 7.871459957476967,
+        "y": 3.8518001417434435
       },
       "prevControl": {
-        "x": 7.727666666666666,
-        "y": 5.925422222222221
+        "x": 8.571263181557303,
+        "y": 3.6876487681937347
       },
       "nextControl": {
-        "x": 8.227666666666666,
-        "y": 5.925422222222221
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 6.727264351523742,
-        "y": 5.925422222222221
-      },
-      "prevControl": {
-        "x": 7.4662643515237415,
-        "y": 5.925422222222221
-      },
-      "nextControl": {
-        "x": 6.252666519539557,
-        "y": 5.925422222222221
+        "x": 6.999965295555258,
+        "y": 4.056224815527548
       },
       "isLocked": false,
       "linkedName": null
@@ -68,30 +52,25 @@
         "y": 7.440683333333332
       },
       "prevControl": {
-        "x": 6.419418742586004,
-        "y": 7.429525504151838
+        "x": 7.672189936215451,
+        "y": 6.99512402551382
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Trench Exit Left"
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [
+  "rotationTargets": [
     {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.0,
-      "maxWaypointRelativePos": 2.0,
-      "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -18.821624257971635
+    },
+    {
+      "waypointRelativePos": 2.0,
+      "rotationDegrees": 0.0
     }
   ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -107,7 +86,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Old Collection",
+  "folder": "Collection Rev Intake",
   "idealStartingState": {
     "velocity": 2.0,
     "rotation": -90.0

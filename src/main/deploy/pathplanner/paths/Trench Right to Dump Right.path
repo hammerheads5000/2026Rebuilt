@@ -16,27 +16,11 @@
     },
     {
       "anchor": {
-        "x": 3.597538888888889,
+        "x": 4.2,
         "y": 0.65
       },
       "prevControl": {
-        "x": 4.1744822794399346,
-        "y": 0.6499999999999999
-      },
-      "nextControl": {
-        "x": 3.347538888888889,
-        "y": 0.65
-      },
-      "isLocked": false,
-      "linkedName": "Trench Start Right"
-    },
-    {
-      "anchor": {
-        "x": 3.3,
-        "y": 0.65
-      },
-      "prevControl": {
-        "x": 3.55,
+        "x": 4.45,
         "y": 0.65
       },
       "nextControl": null,
