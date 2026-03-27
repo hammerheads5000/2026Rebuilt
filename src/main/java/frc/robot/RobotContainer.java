@@ -114,6 +114,7 @@ public class RobotContainer {
     private final Trigger turretModeTrigger = controller.start();
     private final Trigger indexTrigger = controller.back();
     private final Trigger speedUpTrigger = controller.rightTrigger();
+    private final Trigger intakeReverseTrigger = controller.b();
     private final Trigger slowDownTrigger;
     //     private final Trigger climbTrigger = controller.y();
     //     private final Trigger extendTrigger = controller.start();
@@ -323,6 +324,8 @@ public class RobotContainer {
 
         SmartDashboard.putData("Overrides/Slow Drive", teleopDrive.slowDownCommand());
 
+        SmartDashboard.putData("X Wheels", drive.runOnce(drive::stopWithX));
+
         systemChecks = new SystemChecks(turret, intakes, indexer, climber);
 
         // Turret turnaround danger zone controller rumble
@@ -375,6 +378,7 @@ public class RobotContainer {
         // Goal.EXPANDED));
 
         intakePressTrigger.whileTrue(intakes.press());
+        intakeReverseTrigger.whileTrue(intakes.reverse());
 
         speedUpTrigger
                 .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)

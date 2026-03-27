@@ -132,6 +132,11 @@ public class Intakes extends SubsystemBase {
                 .withName("Intake Press");
     }
 
+    public Command reverse() {
+        return Commands.either(right.reverse().asProxy(), left.reverse().asProxy(), right.deployedTrigger)
+                .withName("Reverse intake");
+    }
+
     @Override
     public void periodic() {
         measuredVisualizer.setLeftPosition(left.getPosition());

@@ -391,7 +391,7 @@ public final class Constants {
                 new Slot0Configs().withKP(800).withKD(5).withKS(0.28);
 
         public static final Slot0Configs FLYWHEEL_GAINS =
-                new Slot0Configs().withKP(12).withKD(0.0).withKS(6).withKV(0.04);
+                new Slot0Configs().withKP(12).withKD(0.0).withKS(3.6).withKV(0.0);
 
         public static final CurrentLimitsConfigs TURN_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30);
@@ -466,12 +466,12 @@ public final class Constants {
         public static final AngularVelocity FLYWHEEL_PASSING_OVERRIDE = RPM.of(3600);
         public static final Angle HOOD_PASSING_OVERRIDE = Degrees.of(47);
 
-        public static final Translation3d PASSING_SPOT_LEFT = new Translation3d(
-                Inches.of(90), FieldConstants.FIELD_WIDTH.div(2).plus(Inches.of(85)), Inches.zero());
+        public static final Translation3d PASSING_SPOT_LEFT =
+                new Translation3d(Inches.of(75), FieldConstants.FIELD_WIDTH.minus(Inches.of(50)), Inches.zero());
         public static final Translation3d PASSING_SPOT_CENTER =
                 new Translation3d(Inches.of(90), FieldConstants.FIELD_WIDTH.div(2), Inches.zero());
-        public static final Translation3d PASSING_SPOT_RIGHT = new Translation3d(
-                Inches.of(90), FieldConstants.FIELD_WIDTH.div(2).minus(Inches.of(85)), Inches.zero());
+        public static final Translation3d PASSING_SPOT_RIGHT =
+                new Translation3d(Inches.of(75), Inches.of(50), Inches.zero());
 
         public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP =
                 new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData::interpolate);
@@ -542,7 +542,7 @@ public final class Constants {
         public static final int LEFT_SPIN_ID = 28;
         public static final int RIGHT_SPIN_ID = 27;
 
-        public static final double LEFT_ROTOR_TO_PINION_RATIO = 34.0 / 14; // 34:12 gear
+        public static final double LEFT_ROTOR_TO_PINION_RATIO = 48.0 / 17; // 48:17 belt
         public static final double RIGHT_ROTOR_TO_PINION_RATIO = 50.0 / 17; // 50:17 belt
         public static final Distance PINION_PITCH_RADIUS = Inches.of(0.5);
 
@@ -586,8 +586,9 @@ public final class Constants {
 
         public static final Distance STOW_POS = Inches.of(0.2);
         public static final Distance DEPLOY_POS = Inches.of(11.5);
+        public static final Distance MAX_POS = Inches.of(12.4);
         public static final Voltage SPIN_VOLTAGE = Volts.of(12);
-        public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-0);
+        public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-5);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(10);
         public static final Distance STOW_TOLERANCE = Inches.of(0.5);
         public static final Distance DEPLOY_TOLERANCE = Inches.of(1);

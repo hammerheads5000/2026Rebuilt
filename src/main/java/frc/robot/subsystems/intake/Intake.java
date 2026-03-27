@@ -10,6 +10,7 @@ import static frc.robot.Constants.IntakeConstants.DEPLOY_POS;
 import static frc.robot.Constants.IntakeConstants.DEPLOY_TOLERANCE;
 import static frc.robot.Constants.IntakeConstants.LEFT_RACK_GAINS;
 import static frc.robot.Constants.IntakeConstants.LEFT_ROTOR_TO_PINION_RATIO;
+import static frc.robot.Constants.IntakeConstants.MAX_POS;
 import static frc.robot.Constants.IntakeConstants.PRESS_IN_TIME;
 import static frc.robot.Constants.IntakeConstants.PRESS_IN_VOLTAGE;
 import static frc.robot.Constants.IntakeConstants.PRESS_OUT_TIME;
@@ -229,7 +230,7 @@ public class Intake extends SubsystemBase {
                             io.stopSpin();
                             break;
                         case STOWED:
-                            io.setSpinOutput(Volts.of(reverseSpinVoltage.get()));
+                            io.stopSpin();
                             break;
                         case STOWING:
                             io.setRackPosition(STOW_POS);
@@ -265,6 +266,24 @@ public class Intake extends SubsystemBase {
                     io.setSpinOutput(Volts.of(spinVoltage.get()));
                 })
                 .withName("Press intake " + side.name());
+    }
+
+    public Command reverse() {
+        return this.startEnd(
+                        () -> {
+                            io.setSpinOutput(Volts.of(reverseSpinVoltage.get()));
+                            io.setRackPosition(MAX_POS);
+                        },
+                        () -> {
+                            if (goal == IntakeGoal.DEPLOYED) {
+                                io.setSpinOutput(Volts.of(spinVoltage.get()));
+                                io.setRackPosition(DEPLOY_POS);
+                            } else {
+                                io.stopSpin();
+                            }
+                        })
+                .onlyWhile(() -> goal == IntakeGoal.DEPLOYED)
+                .withName("Reverse intake " + side.name());
     }
 
     public Command disable() {
@@ -310,11 +329,11 @@ public class Intake extends SubsystemBase {
             }
         }
 
-        if (reverseSpinVoltage.hasChanged(hashCode())) {
-            if (goal == IntakeGoal.STOWED || goal == IntakeGoal.STOWING) {
-                io.setSpinOutput(Volts.of(reverseSpinVoltage.get()));
-            }
-        }
+        // if (reverseSpinVoltage.hasChanged(hashCode())) {
+        //     if (goal == IntakeGoal.STOWED || goal == IntakeGoal.STOWING) {
+        //         io.setSpinOutput(Volts.of(reverseSpinVoltage.get()));
+        //     }
+        // }
     }
 
     public Distance getPosition() {
