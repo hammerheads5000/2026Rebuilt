@@ -65,6 +65,8 @@ public class TeleopDrive extends Command {
     @AutoLogOutput
     private boolean wallAvoidance = true;
 
+    private boolean slowingDown = false;
+
     private final TunablePIDController translationController =
             new TunablePIDController(SwerveConstants.TRANSLATION_CONSTANTS);
     private final TunablePIDController rotationController =
@@ -259,12 +261,27 @@ public class TeleopDrive extends Command {
     public Command speedUpCommand() {
         return Commands.startEnd(
                         () -> {
-                            setDriveSpeed(SwerveConstants.FAST_DRIVE_SPEED);
-                            setRotSpeed(SwerveConstants.FAST_ROT_SPEED);
+                            driveLimiter.setRateLimit(SwerveConstants.MAX_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
+                            if (slowingDown) {
+                                setDriveSpeed(SwerveConstants.DEFAULT_DRIVE_SPEED);
+                                setRotSpeed(SwerveConstants.DEFAULT_ROT_SPEED);
+                            } else {
+                                setDriveSpeed(SwerveConstants.FAST_DRIVE_SPEED);
+                                setRotSpeed(SwerveConstants.FAST_ROT_SPEED);
+                            }
                         },
                         () -> {
-                            setDriveSpeed(SwerveConstants.DEFAULT_DRIVE_SPEED);
-                            setRotSpeed(SwerveConstants.DEFAULT_ROT_SPEED);
+                            if (slowingDown) {
+                                setDriveSpeed(SwerveConstants.SLOW_DRIVE_SPEED);
+                                setRotSpeed(SwerveConstants.SLOW_ROT_SPEED);
+                                driveLimiter.setRateLimit(
+                                        SwerveConstants.SLOW_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
+                            } else {
+                                setDriveSpeed(SwerveConstants.DEFAULT_DRIVE_SPEED);
+                                setRotSpeed(SwerveConstants.DEFAULT_ROT_SPEED);
+                                driveLimiter.setRateLimit(
+                                        SwerveConstants.MAX_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
+                            }
                         })
                 .withName("Speed Up");
     }
@@ -272,11 +289,13 @@ public class TeleopDrive extends Command {
     public Command slowDownCommand() {
         return Commands.startEnd(
                         () -> {
+                            slowingDown = true;
                             setDriveSpeed(SwerveConstants.SLOW_DRIVE_SPEED);
                             setRotSpeed(SwerveConstants.SLOW_ROT_SPEED);
                             driveLimiter.setRateLimit(SwerveConstants.SLOW_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
                         },
                         () -> {
+                            slowingDown = false;
                             setDriveSpeed(SwerveConstants.DEFAULT_DRIVE_SPEED);
                             setRotSpeed(SwerveConstants.DEFAULT_ROT_SPEED);
                             driveLimiter.setRateLimit(SwerveConstants.MAX_TELEOP_ACCEL.in(MetersPerSecondPerSecond));

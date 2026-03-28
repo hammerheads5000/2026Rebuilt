@@ -130,10 +130,10 @@ public final class Constants {
 
         public static final LinearAcceleration MAX_TELEOP_ACCEL = MetersPerSecondPerSecond.of(25);
 
-        public static final LinearVelocity SLOW_DRIVE_SPEED = MetersPerSecond.of(1.5);
+        public static final LinearVelocity SLOW_DRIVE_SPEED = MetersPerSecond.of(2);
         public static final AngularVelocity SLOW_ROT_SPEED = RotationsPerSecond.of(0.5);
 
-        public static final LinearAcceleration SLOW_TELEOP_ACCEL = MetersPerSecondPerSecond.of(4);
+        public static final LinearAcceleration SLOW_TELEOP_ACCEL = MetersPerSecondPerSecond.of(8);
 
         public static final AngularVelocity MAX_MODULE_ROT_SPEED = RotationsPerSecond.of(5);
 
@@ -408,10 +408,10 @@ public final class Constants {
 
         public static final FeedbackConfigs TURN_FEEDBACK_CONFIGS = new FeedbackConfigs()
                 .withFeedbackRemoteSensorID(ENCODER_ID)
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANcoder)
+                .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
                 .withSensorToMechanismRatio(ENCODER_TO_TURRET_RATIO)
                 .withRotorToSensorRatio(TURN_TO_TURRET_RATIO / ENCODER_TO_TURRET_RATIO)
-                .withFeedbackRotorOffset(0)
+                .withFeedbackRotorOffset(0.0)
                 .withVelocityFilterTimeConstant(0.0);
 
         public static final MotorOutputConfigs HOOD_OUTPUT_CONFIGS = new MotorOutputConfigs()
@@ -427,7 +427,7 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(-0.429931640625)
+                .withMagnetOffset(-0.433349609375)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
                 .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
 
@@ -487,38 +487,53 @@ public final class Constants {
             SHOT_MAP.put(6.3, new ShotData(RPM.of(3650), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.3);
 
-            SHOT_MAP.put(5.5, new ShotData(RPM.of(3630), Degrees.of(42)));
-            TOF_MAP.put(5.5, 1.29);
+            SHOT_MAP.put(5.63, new ShotData(RPM.of(3550), Degrees.of(42)));
+            TOF_MAP.put(5.63, 1.2917);
 
-            //     SHOT_MAP.put(5.18, new ShotData(RPM.of(3700), Degrees.of(37)));
-            //     TOF_MAP.put(5.18, 1.42);
+            SHOT_MAP.put(5.25, new ShotData(RPM.of(3500), Degrees.of(39)));
+            TOF_MAP.put(5.25, 1.43);
 
-            SHOT_MAP.put(4.72, new ShotData(RPM.of(3440), Degrees.of(37)));
-            TOF_MAP.put(4.72, 1.25);
+            SHOT_MAP.put(4.75, new ShotData(RPM.of(3440), Degrees.of(37)));
+            TOF_MAP.put(4.75, 1.358);
 
-            //     SHOT_MAP.put(4.24, new ShotData(RPM.of(3500), Degrees.of(32)));
-            //     TOF_MAP.put(4.24, 1.41);
+            SHOT_MAP.put(4.25, new ShotData(RPM.of(3300), Degrees.of(36)));
+            TOF_MAP.put(4.25, 1.29);
 
-            SHOT_MAP.put(3.87, new ShotData(RPM.of(3150), Degrees.of(35)));
-            TOF_MAP.put(3.87, 1.2);
+            SHOT_MAP.put(3.75, new ShotData(RPM.of(3150), Degrees.of(35)));
+            TOF_MAP.put(3.75, 1.22);
 
-            SHOT_MAP.put(3.29, new ShotData(RPM.of(3010), Degrees.of(33)));
-            TOF_MAP.put(3.29, 1.30);
+            SHOT_MAP.put(3.5, new ShotData(RPM.of(3060), Degrees.of(34)));
+            TOF_MAP.put(3.5, 1.26);
 
-            SHOT_MAP.put(2.84, new ShotData(RPM.of(3000), Degrees.of(30)));
-            TOF_MAP.put(2.84, 1.30);
+            SHOT_MAP.put(3.25, new ShotData(RPM.of(3000), Degrees.of(33)));
+            TOF_MAP.put(3.25, 1.19);
 
-            //     SHOT_MAP.put(2.45, new ShotData(RPM.of(3100), Degrees.of(25)));
-            //     TOF_MAP.put(2.45, 1.25);
+            SHOT_MAP.put(3.0, new ShotData(RPM.of(2970), Degrees.of(32)));
+            TOF_MAP.put(3.0, 1.21);
 
-            SHOT_MAP.put(2.09, new ShotData(RPM.of(2900), Degrees.of(22.5)));
-            TOF_MAP.put(2.09, 1.17);
+            SHOT_MAP.put(2.75, new ShotData(RPM.of(2950), Degrees.of(30)));
+            TOF_MAP.put(2.75, 1.21);
 
-            //     SHOT_MAP.put(1.73, new ShotData(RPM.of(2900), Degrees.of(20)));
-            //     TOF_MAP.put(1.73, 1.17);
+            SHOT_MAP.put(2.5, new ShotData(RPM.of(2900), Degrees.of(27)));
+            TOF_MAP.put(2.5, 1.21);
 
-            SHOT_MAP.put(1.37, new ShotData(RPM.of(2700), Degrees.of(17)));
-            TOF_MAP.put(1.37, 1.09);
+            SHOT_MAP.put(2.25, new ShotData(RPM.of(2850), Degrees.of(25)));
+            TOF_MAP.put(2.25, 1.28);
+
+            SHOT_MAP.put(2.0, new ShotData(RPM.of(2800), Degrees.of(24)));
+            TOF_MAP.put(2.0, 1.16);
+
+            SHOT_MAP.put(1.75, new ShotData(RPM.of(2750), Degrees.of(23)));
+            TOF_MAP.put(1.75, 1.16);
+
+            SHOT_MAP.put(1.5, new ShotData(RPM.of(2700), Degrees.of(22)));
+            TOF_MAP.put(1.5, 1.16);
+
+            SHOT_MAP.put(1.07, new ShotData(RPM.of(2700), Degrees.of(16)));
+            TOF_MAP.put(1.07, 1.18);
+
+            SHOT_MAP.put(0.01, new ShotData(RPM.of(2700), Degrees.of(8)));
+            TOF_MAP.put(0.01, 1.19);
 
             PASSING_MAP.put(12.6, new ShotData(RPM.of(5700), Degrees.of(47)));
             PASS_TOF_MAP.put(12.6, 1.5);

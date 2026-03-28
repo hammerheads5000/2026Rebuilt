@@ -386,18 +386,18 @@ public class RobotContainer {
 
         // turretTuningTrigger.toggleOnTrue(Commands.startEnd(
         //         turret.setFlywheelSpeed(RPM.of(3000))::initialize, turret.setGoal(TurretGoal.IDLE)::initialize));
-        turretModeTrigger.onTrue(Commands.either(
-                Commands.either(
-                        turret.setGoal(TurretGoal.SCORING),
-                        turret.setGoal(TurretGoal.PASSING),
-                        superstructure.inAllianceZoneTrigger),
-                turret.setGoal(TurretGoal.IDLE),
-                () -> turret.getGoal() == TurretGoal.IDLE));
-
         // turretModeTrigger.onTrue(Commands.either(
+        //         Commands.either(
+        //                 turret.setGoal(TurretGoal.SCORING),
+        //                 turret.setGoal(TurretGoal.PASSING),
+        //                 superstructure.inAllianceZoneTrigger),
         //         turret.setGoal(TurretGoal.IDLE),
-        //         turret.setGoal(TurretGoal.TUNING),
-        //         () -> turret.getGoal() == TurretGoal.TUNING));
+        //         () -> turret.getGoal() == TurretGoal.IDLE));
+
+        turretModeTrigger.onTrue(Commands.either(
+                turret.setGoal(TurretGoal.IDLE),
+                turret.setGoal(TurretGoal.TUNING),
+                () -> turret.getGoal() == TurretGoal.TUNING));
 
         indexTrigger.onTrue(Commands.either(
                 indexer.setGoal(IndexerGoal.IDLE),
