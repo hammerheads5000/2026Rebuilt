@@ -63,7 +63,7 @@ public class TeleopDrive extends Command {
     private final Trigger inTowerZoneTrigger;
 
     @AutoLogOutput
-    private boolean wallAvoidance = true;
+    private boolean wallAvoidance = false;
 
     private boolean slowingDown = false;
 

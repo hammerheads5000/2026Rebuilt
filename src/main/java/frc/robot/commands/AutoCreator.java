@@ -151,10 +151,10 @@ public class AutoCreator {
 
             StartEndPoint start;
             StartEndPoint end;
-            if (s.contains("Left Bump")) {
+            if (s.contains("Bump Left")) {
                 start = StartEndPoint.BUMP_LEFT;
                 end = StartEndPoint.BUMP_LEFT;
-            } else if (s.contains("Right Bump")) {
+            } else if (s.contains("Bump Right")) {
                 start = StartEndPoint.BUMP_RIGHT;
                 end = StartEndPoint.BUMP_RIGHT;
             } else if (s.contains("to Bump")) {
@@ -184,7 +184,7 @@ public class AutoCreator {
             try {
                 PathPlannerPath path = PathPlannerPath.fromPathFile(name);
                 List<ConstraintsZone> constraintZones = path.getConstraintZones();
-                PathConstraints constraints = AutoConstants.SCORING_CONSTRAINTS;
+                PathConstraints constraints = AutoConstants.CONSTRAINTS;
                 if (name.contains("Collect")) {
                     constraintZones.clear();
                     constraintZones.add(new ConstraintsZone(1, 2, AutoConstants.COLLECT_CONSTRAINTS));
@@ -476,9 +476,13 @@ public class AutoCreator {
                 toAdd = Commands.sequence(
                         indexer.setGoal(IndexerGoal.IDLE).asProxy(),
                         turret.setGoal(TurretGoal.DUCKING).asProxy(),
-                        toAdd,
-                        turret.setGoal(TurretGoal.SCORING).asProxy(),
-                        indexer.setGoal(IndexerGoal.ACTIVE).asProxy());
+                        toAdd.alongWith(Commands.sequence(
+                                Commands.waitUntil(superstructure.inAllianceZoneTrigger),
+                                (path.start == StartEndPoint.BUMP_LEFT || path.start == StartEndPoint.BUMP_RIGHT)
+                                        ? Commands.waitSeconds(1)
+                                        : Commands.none(),
+                                turret.setGoal(TurretGoal.SCORING).asProxy(),
+                                indexer.setGoal(IndexerGoal.ACTIVE).asProxy())));
             }
 
             if (path.dumpTime > 0) {

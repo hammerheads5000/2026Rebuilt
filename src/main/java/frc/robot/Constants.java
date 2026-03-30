@@ -125,8 +125,8 @@ public final class Constants {
         public static final LinearVelocity DEFAULT_DRIVE_SPEED = MetersPerSecond.of(3);
         public static final AngularVelocity DEFAULT_ROT_SPEED = RotationsPerSecond.of(0.75);
 
-        public static final LinearVelocity FAST_DRIVE_SPEED = MetersPerSecond.of(3.5);
-        public static final AngularVelocity FAST_ROT_SPEED = RotationsPerSecond.of(0.75);
+        public static final LinearVelocity FAST_DRIVE_SPEED = MetersPerSecond.of(6);
+        public static final AngularVelocity FAST_ROT_SPEED = RotationsPerSecond.of(1.5);
 
         public static final LinearAcceleration MAX_TELEOP_ACCEL = MetersPerSecondPerSecond.of(25);
 
@@ -150,15 +150,15 @@ public final class Constants {
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
 
         public static final Slot0Configs DRIVE_GAINS = new Slot0Configs()
-                .withKP(2)
+                .withKP(80)
                 .withKI(0.0)
                 .withKD(0.0)
-                .withKS(0.237) // 0.11367, 0.1301, 0.15349, 0.16187 -> 0.140
-                .withKV(0.733) // 0.13879, 0.13555, 0.13894, 0.13109 -> 0.136
+                .withKS(5) // 0.11367, 0.1301, 0.15349, 0.16187 -> 0.140
+                .withKV(0.0) // 0.13879, 0.13555, 0.13894, 0.13109 -> 0.136
                 .withKA(0.0); // 0.016363, 0.016268, 0.0085342, 0.011084 -> 0.013
 
         private static final ClosedLoopOutputType STEER_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.TorqueCurrentFOC;
-        private static final ClosedLoopOutputType DRIVE_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.Voltage;
+        private static final ClosedLoopOutputType DRIVE_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.TorqueCurrentFOC;
 
         private static final DriveMotorArrangement DRIVE_MOTOR_TYPE = DriveMotorArrangement.TalonFX_Integrated;
         private static final SteerMotorArrangement STEER_MOTOR_TYPE = SteerMotorArrangement.TalonFX_Integrated;
@@ -186,7 +186,7 @@ public final class Constants {
         public static final Pigeon2Configuration PIGEON_CONFIGS =
                 new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(Degrees.of(-90)));
 
-        public static final LinearVelocity SPEED_AT_12V = MetersPerSecond.of(5.85); // theoretical free speed
+        public static final LinearVelocity SPEED_AT_12V = MetersPerSecond.of(4.5); // theoretical free speed
 
         // Every 1 rotation of the azimuth results in COUPLE_RATIO drive motor turns;
         private static final double COUPLE_RATIO = 3.375;
@@ -427,7 +427,7 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(-0.433349609375)
+                .withMagnetOffset(-0.263671875)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
                 .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
 
@@ -456,7 +456,7 @@ public final class Constants {
 
         public static final Current HOOD_STALL_CURRENT = Amps.of(10);
         public static final AngularVelocity HOOD_STALL_ANGULAR_VELOCITY = RadiansPerSecond.of(0.3);
-        public static final Voltage HOOD_ZEROING_VOLTAGE = Volts.of(-1);
+        public static final Voltage HOOD_ZEROING_VOLTAGE = Volts.of(-3);
 
         public static final double FLYWHEEL_FUDGE_AMOUNT = 0.01;
 
@@ -467,11 +467,11 @@ public final class Constants {
         public static final Angle HOOD_PASSING_OVERRIDE = Degrees.of(47);
 
         public static final Translation3d PASSING_SPOT_LEFT =
-                new Translation3d(Inches.of(75), FieldConstants.FIELD_WIDTH.minus(Inches.of(50)), Inches.zero());
+                new Translation3d(Inches.of(75), FieldConstants.FIELD_WIDTH.minus(Inches.of(56)), Inches.zero());
         public static final Translation3d PASSING_SPOT_CENTER =
                 new Translation3d(Inches.of(90), FieldConstants.FIELD_WIDTH.div(2), Inches.zero());
         public static final Translation3d PASSING_SPOT_RIGHT =
-                new Translation3d(Inches.of(75), Inches.of(50), Inches.zero());
+                new Translation3d(Inches.of(75), Inches.of(56), Inches.zero());
 
         public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP =
                 new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData::interpolate);
@@ -484,55 +484,55 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            SHOT_MAP.put(6.3, new ShotData(RPM.of(3650), Degrees.of(43)));
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3650 * .98), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.3);
 
-            SHOT_MAP.put(5.63, new ShotData(RPM.of(3550), Degrees.of(42)));
+            SHOT_MAP.put(5.63, new ShotData(RPM.of(3550 * .98), Degrees.of(42)));
             TOF_MAP.put(5.63, 1.2917);
 
-            SHOT_MAP.put(5.25, new ShotData(RPM.of(3500), Degrees.of(39)));
+            SHOT_MAP.put(5.25, new ShotData(RPM.of(3500 * .98), Degrees.of(39)));
             TOF_MAP.put(5.25, 1.43);
 
-            SHOT_MAP.put(4.75, new ShotData(RPM.of(3440), Degrees.of(37)));
+            SHOT_MAP.put(4.75, new ShotData(RPM.of(3440 * .98), Degrees.of(37)));
             TOF_MAP.put(4.75, 1.358);
 
-            SHOT_MAP.put(4.25, new ShotData(RPM.of(3300), Degrees.of(36)));
+            SHOT_MAP.put(4.25, new ShotData(RPM.of(3300 * .98), Degrees.of(36)));
             TOF_MAP.put(4.25, 1.29);
 
-            SHOT_MAP.put(3.75, new ShotData(RPM.of(3150), Degrees.of(35)));
+            SHOT_MAP.put(3.75, new ShotData(RPM.of(3150 * .98), Degrees.of(35)));
             TOF_MAP.put(3.75, 1.22);
 
-            SHOT_MAP.put(3.5, new ShotData(RPM.of(3060), Degrees.of(34)));
+            SHOT_MAP.put(3.5, new ShotData(RPM.of(3060 * .98), Degrees.of(34)));
             TOF_MAP.put(3.5, 1.26);
 
-            SHOT_MAP.put(3.25, new ShotData(RPM.of(3000), Degrees.of(33)));
+            SHOT_MAP.put(3.25, new ShotData(RPM.of(3000 * .98), Degrees.of(33)));
             TOF_MAP.put(3.25, 1.19);
 
-            SHOT_MAP.put(3.0, new ShotData(RPM.of(2970), Degrees.of(32)));
+            SHOT_MAP.put(3.0, new ShotData(RPM.of(2970 * .98), Degrees.of(32)));
             TOF_MAP.put(3.0, 1.21);
 
-            SHOT_MAP.put(2.75, new ShotData(RPM.of(2950), Degrees.of(30)));
+            SHOT_MAP.put(2.75, new ShotData(RPM.of(2950 * .98), Degrees.of(30)));
             TOF_MAP.put(2.75, 1.21);
 
-            SHOT_MAP.put(2.5, new ShotData(RPM.of(2900), Degrees.of(27)));
+            SHOT_MAP.put(2.5, new ShotData(RPM.of(2900 * .98), Degrees.of(27)));
             TOF_MAP.put(2.5, 1.21);
 
-            SHOT_MAP.put(2.25, new ShotData(RPM.of(2850), Degrees.of(25)));
+            SHOT_MAP.put(2.25, new ShotData(RPM.of(2850 * .98), Degrees.of(25)));
             TOF_MAP.put(2.25, 1.28);
 
-            SHOT_MAP.put(2.0, new ShotData(RPM.of(2800), Degrees.of(24)));
+            SHOT_MAP.put(2.0, new ShotData(RPM.of(2800 * .98), Degrees.of(24)));
             TOF_MAP.put(2.0, 1.16);
 
-            SHOT_MAP.put(1.75, new ShotData(RPM.of(2750), Degrees.of(23)));
+            SHOT_MAP.put(1.75, new ShotData(RPM.of(2750 * .98), Degrees.of(23)));
             TOF_MAP.put(1.75, 1.16);
 
-            SHOT_MAP.put(1.5, new ShotData(RPM.of(2700), Degrees.of(22)));
+            SHOT_MAP.put(1.5, new ShotData(RPM.of(2700 * .98), Degrees.of(22)));
             TOF_MAP.put(1.5, 1.16);
 
-            SHOT_MAP.put(1.07, new ShotData(RPM.of(2700), Degrees.of(16)));
+            SHOT_MAP.put(1.07, new ShotData(RPM.of(2700 * .98), Degrees.of(16)));
             TOF_MAP.put(1.07, 1.18);
 
-            SHOT_MAP.put(0.01, new ShotData(RPM.of(2700), Degrees.of(8)));
+            SHOT_MAP.put(0.01, new ShotData(RPM.of(2700 * .98), Degrees.of(8)));
             TOF_MAP.put(0.01, 1.19);
 
             PASSING_MAP.put(12.6, new ShotData(RPM.of(5700), Degrees.of(47)));
@@ -544,7 +544,7 @@ public final class Constants {
             PASSING_MAP.put(5.5, new ShotData(RPM.of(3400), Degrees.of(47)));
             PASS_TOF_MAP.put(5.5, 1.3);
 
-            PASSING_MAP.put(1.0, new ShotData(RPM.of(700), Degrees.of(47)));
+            PASSING_MAP.put(1.0, new ShotData(RPM.of(700), Degrees.of(40)));
             PASS_TOF_MAP.put(1.0, 1.);
         }
 
@@ -655,8 +655,10 @@ public final class Constants {
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-5);
 
+        public static final AngularVelocity HOOK_STALL_ANGULAR_VELOCITY = RPM.of(1000);
+        public static final Current HOOK_STALL_CURRENT = Amps.of(30);
         public static final AngularVelocity FEED_STALL_ANGULAR_VELOCITY = RPM.of(1000);
-        public static final Current FEED_STALL_CURRENT = Amps.of(30);
+        public static final Current FEED_STALL_CURRENT = Amps.of(80);
     }
 
     public static class ClimberConstants {
@@ -727,8 +729,8 @@ public final class Constants {
 
     public static class VisionConstants {
         // Standard deviation baselines for 1 meter distance to single tag
-        public static final double[] LINEAR_STD_DEV_BASELINES = {0.4, 0.4, 0.2, 0.4, 0.4, 0.3}; // Meters
-        public static final double ANGULAR_STD_DEV_BASELINE = 1.0; // Radians
+        public static final double[] LINEAR_STD_DEV_BASELINES = {0.1, 0.1, 0.07, 0.1, 0.1, 0.07}; // Meters
+        public static final double ANGULAR_STD_DEV_BASELINE = 2.0; // Radians
 
         public static final String[] CAMERA_NAMES = {
             "Arducam_OV9281_Front_Left", "Arducam_OV9281_Front_Right",
@@ -736,7 +738,7 @@ public final class Constants {
             "Arducam_OV9281_Back_Right", "Arducam_OV9281_Back_Center"
         };
 
-        public static final double MAX_AMBIGUITY = 0.3;
+        public static final double MAX_AMBIGUITY = 0.2;
         public static final Distance MAX_Z_HEIGHT = Meters.of(0.2);
 
         public static final AprilTagFieldLayout APRIL_TAGS;
@@ -755,11 +757,11 @@ public final class Constants {
         }
 
         public static final Set<Integer> BLUE_HUB_TAG_IDS = Set.of(18, 19, 20, 21, 24, 25, 26, 27);
-        public static final Set<Integer> RED_HUB_TAG_IDS = Set.of(2, 3, 4, 5, 8, 9, 10, 1);
+        public static final Set<Integer> RED_HUB_TAG_IDS = Set.of(2, 3, 4, 5, 8, 9, 10, 11);
         public static final Set<Integer> BLUE_CLIMB_TAG_IDS = Set.of(31, 32);
         public static final Set<Integer> RED_CLIMB_TAG_IDS = Set.of(15, 16);
 
-        public static final double HUB_TAG_STD_DEV_BIAS = 0.08; // added to non-hub tags in hub mode
+        public static final double HUB_TAG_STD_DEV_BIAS = 1.0; // added to non-hub tags in hub mode
         public static final double CLIMB_TAG_STD_DEV_BIAS = 0.08; // added to non-climb tags in climb mode
 
         // Transforms from robot to cameras, (x forward, y left, z up), (roll, pitch,
@@ -774,11 +776,11 @@ public final class Constants {
             new Transform3d(
                     new Translation3d(0.352, 0, 0.529), new Rotation3d(Degrees.zero(), Degrees.of(-21), Degrees.of(0))),
             new Transform3d(
-                    new Translation3d(-0.302, 0.313, 0.529),
-                    new Rotation3d(Degrees.zero(), Degrees.of(-21), Degrees.of(90))),
+                    new Translation3d(-0.309, 0.317, 0.529),
+                    new Rotation3d(Degrees.zero(), Degrees.of(-21), Degrees.of(115))),
             new Transform3d(
-                    new Translation3d(-0.302, -0.313, 0.529),
-                    new Rotation3d(Degrees.zero(), Degrees.of(-21), Degrees.of(-90))),
+                    new Translation3d(-0.309, -0.317, 0.529),
+                    new Rotation3d(Degrees.zero(), Degrees.of(-21), Degrees.of(-115))),
             new Transform3d(
                     new Translation3d(-0.352, 0, 0.529),
                     new Rotation3d(Degrees.zero(), Degrees.of(-21), Degrees.of(180)))
@@ -841,33 +843,33 @@ public final class Constants {
                         1),
                 SwerveConstants.GET_MODULE_POSITIONS.get());
 
-        public static final PIDConstants PP_TRANSLATION_CONSTANTS = new PIDConstants(3, 0.05);
-        public static final PIDConstants PP_ROTATION_CONSTANTS = new PIDConstants(2, 0.05);
+        public static final PIDConstants PP_TRANSLATION_CONSTANTS = new PIDConstants(15, 0.05);
+        public static final PIDConstants PP_ROTATION_CONSTANTS = new PIDConstants(10, 0.05);
 
         public static final PathConstraints CONSTRAINTS = new PathConstraints(
                 MetersPerSecond.of(3),
-                MetersPerSecondPerSecond.of(3.5),
+                MetersPerSecondPerSecond.of(5),
                 DegreesPerSecond.of(360),
-                DegreesPerSecondPerSecond.of(540),
+                DegreesPerSecondPerSecond.of(720),
                 Volts.of(12),
                 false);
 
         public static final PathConstraints SCORING_CONSTRAINTS = new PathConstraints(
-                MetersPerSecond.of(2.5),
-                MetersPerSecondPerSecond.of(2.5),
+                MetersPerSecond.of(3),
+                MetersPerSecondPerSecond.of(5),
                 DegreesPerSecond.of(360),
-                DegreesPerSecondPerSecond.of(360),
+                DegreesPerSecondPerSecond.of(720),
                 Volts.of(12),
                 false);
 
         public static final PathConstraints COLLECT_CONSTRAINTS = new PathConstraints(
-                MetersPerSecond.of(2),
-                MetersPerSecondPerSecond.of(3),
+                MetersPerSecond.of(3),
+                MetersPerSecondPerSecond.of(8),
                 DegreesPerSecond.of(360),
                 DegreesPerSecondPerSecond.of(540),
                 Volts.of(12),
                 false);
-        public static final LinearVelocity HANDOFF_VELOCITY = MetersPerSecond.of(2.5);
+        public static final LinearVelocity HANDOFF_VELOCITY = MetersPerSecond.of(3);
         public static final Time START_DUMP_TIME = Seconds.of(1.5);
         public static final Time START_SPIN_UP_TIME = Seconds.of(0.5);
         public static final Time CLIMB_TIME_REMAINING = Seconds.of(3);
@@ -875,21 +877,21 @@ public final class Constants {
         public static final Map<String, String> PREBUILT_AUTOS = Map.of(
                 "Stay in Place", "L_",
                 "Left Double Sweep Long",
-                        "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Mid 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep and Return Long 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left",
+                        "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Mid 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return Long 2 Left!;Trench Left to Dump Left=4.0",
                 "Right Double Sweep Long",
-                        "R_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Mid 1 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return Long 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right",
+                        "R_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Mid 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return Long 2 Right!;Trench Right to Dump Right=4.0",
                 "Left Double Sweep Short",
-                        "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Short 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep and Return Mid 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left",
+                        "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Short 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return Mid 2 Left!;Trench Left to Dump Left=4.0",
                 "Right Double Sweep Short",
-                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Short 1 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return Mid 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right",
+                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Short 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return Mid 2 Right!;Trench Right to Dump Right=4.0",
                 "Left Rev Double Sweep Long",
-                        "R_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Mid Rev 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep and Return Long Rev 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left",
+                        "R_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Mid Rev 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return Long Rev 2 Left!;Trench Left to Dump Left=4.0",
                 "Right Rev Double Sweep Long",
-                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Mid Rev 1 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return Long Rev 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right",
+                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Mid Rev 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return Long Rev 2 Right!;Trench Right to Dump Right=4.0",
                 "Left Rev Double Sweep Short",
-                        "R_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Short Rev 1 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left;Collect Sweep and Return Mid Rev 2 Left!;Trench Left to Dump Left=3.0;Dump Left to Trench Left",
+                        "R_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Short Rev 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return Mid Rev 2 Left!;Trench Left to Dump Left=4.0",
                 "Right Rev Double Sweep Short",
-                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Short Rev 1 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return Mid Rev 2 Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right"
+                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Short Rev 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return Mid Rev 2 Right!;Trench Right to Dump Right=4.0"
                 // "Right Double Sweep",
                 //         "R_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep and Return 1
                 // Right!;Trench Right to Dump Right=3.0;Dump Right to Trench Right;Collect Sweep and Return 2

@@ -6,6 +6,8 @@ import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IndexerConstants.FEED_STALL_ANGULAR_VELOCITY;
 import static frc.robot.Constants.IndexerConstants.FEED_STALL_CURRENT;
 import static frc.robot.Constants.IndexerConstants.FEED_VOLTAGE;
+import static frc.robot.Constants.IndexerConstants.HOOK_STALL_ANGULAR_VELOCITY;
+import static frc.robot.Constants.IndexerConstants.HOOK_STALL_CURRENT;
 import static frc.robot.Constants.IndexerConstants.SPIN_VOLTAGE;
 import static frc.robot.Constants.IndexerConstants.UNJAM_FEED_VOLTAGE;
 import static frc.robot.Constants.IndexerConstants.UNJAM_SPIN_VOLTAGE;
@@ -35,6 +37,13 @@ public class Indexer extends SubsystemBase {
     private final LoggedTunableNumber feedVoltage =
             new LoggedTunableNumber("Indexer/Feed Voltage", FEED_VOLTAGE.in(Volts));
 
+    @AutoLogOutput
+    private final Trigger hookStallTrigger = new Trigger(
+                    () -> inputs.spinCurrent.in(Amps) >= HOOK_STALL_CURRENT.in(Amps)
+                            && inputs.spinVelocity.abs(RPM) <= HOOK_STALL_ANGULAR_VELOCITY.in(RPM))
+            .debounce(0.2);
+
+    @AutoLogOutput
     private final Trigger feedStallTrigger = new Trigger(
                     () -> inputs.feedCurrent.in(Amps) >= FEED_STALL_CURRENT.in(Amps)
                             && inputs.feedVelocity.abs(RPM) <= FEED_STALL_ANGULAR_VELOCITY.in(RPM))
@@ -56,7 +65,10 @@ public class Indexer extends SubsystemBase {
         VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent, "Indexer");
         VirtualPD.registerMotor(() -> inputs.feedSupplyCurrent, "Indexer");
 
-        feedStallTrigger.and(() -> this.goal == IndexerGoal.ACTIVE).onTrue(unjam());
+        hookStallTrigger
+                .or(feedStallTrigger)
+                .and(() -> this.goal == IndexerGoal.ACTIVE)
+                .onTrue(unjam());
 
         SmartDashboard.putData("Overrides/Indexer", disable());
     }
@@ -144,15 +156,18 @@ public class Indexer extends SubsystemBase {
     }
 
     private Command unjam() {
-        return this.runOnce(() -> {
-                    io.setFeedOutput(UNJAM_FEED_VOLTAGE);
-                    io.setSpinOutput(UNJAM_SPIN_VOLTAGE);
-                })
-                .andThen(Commands.waitSeconds(0.3))
-                .andThen(Commands.runOnce(() -> {
-                    io.setFeedOutput(Volts.of(feedVoltage.get()));
-                    io.setSpinOutput(Volts.of(spinVoltage.get()));
-                }))
+        return Commands.sequence(
+                        this.runOnce(() -> {
+                            io.setFeedOutput(UNJAM_FEED_VOLTAGE);
+                            io.setSpinOutput(UNJAM_SPIN_VOLTAGE);
+                        }),
+                        Commands.waitSeconds(0.3),
+                        Commands.runOnce(() -> {
+                            io.setFeedOutput(Volts.of(feedVoltage.get()));
+                            io.setSpinOutput(Volts.of(0));
+                        }),
+                        Commands.waitSeconds(0.3),
+                        Commands.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
                 .finallyDo((interrupted) -> {
                     if (interrupted) {
                         io.stopFeed();

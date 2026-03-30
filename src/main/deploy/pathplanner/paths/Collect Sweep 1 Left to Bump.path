@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.989800000002521,
-        "y": 7.440683333333332
+        "x": 5.8,
+        "y": 7.441
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.598703047484054,
-        "y": 7.3615237420269315
+        "x": 6.408903047481532,
+        "y": 7.361840408693599
       },
       "isLocked": false,
       "linkedName": "Trench Exit Left"
@@ -52,8 +52,8 @@
         "y": 5.525899999999999
       },
       "prevControl": {
-        "x": 7.022955350815026,
-        "y": 5.298114812189936
+        "x": 7.032692763938317,
+        "y": 5.568185053380782
       },
       "nextControl": null,
       "isLocked": false,
@@ -62,22 +62,22 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": 145.20397372173184
+      "waypointRelativePos": 0.7833037300177703,
+      "rotationDegrees": 178.52008407530977
     },
     {
-      "waypointRelativePos": 1.8908898305084665,
-      "rotationDegrees": 106.98803499363679
+      "waypointRelativePos": 1.811722912966248,
+      "rotationDegrees": 96.5971005336598
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 8.0,
     "maxAngularVelocity": 360.0,
-    "maxAngularAcceleration": 540.0,
+    "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

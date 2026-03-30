@@ -57,12 +57,12 @@ public class IndexerIOTalonFX implements IndexerIO {
         PhoenixUtil.tryUntilOk(5, () -> feedMotor.getConfigurator().apply(feedConfig, 0.25));
 
         spinVelocity = spinMotor.getVelocity();
-        spinCurrent = spinMotor.getStatorCurrent();
+        spinCurrent = spinMotor.getTorqueCurrent();
         spinSupplyCurrent = spinMotor.getSupplyCurrent();
         spinAppliedVolts = spinMotor.getMotorVoltage();
 
         feedVelocity = feedMotor.getVelocity();
-        feedCurrent = feedMotor.getStatorCurrent();
+        feedCurrent = feedMotor.getTorqueCurrent();
         feedSupplyCurrent = feedMotor.getSupplyCurrent();
         feedAppliedVolts = feedMotor.getMotorVoltage();
 

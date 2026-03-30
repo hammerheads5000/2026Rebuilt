@@ -193,7 +193,7 @@ public class Drive extends SubsystemBase {
      * @param speeds Speeds in meters/sec
      */
     public void runVelocity(ChassisSpeeds speeds) {
-        runVelocity(speeds, DriveFeedforwards.zeros(0));
+        runVelocity(speeds, DriveFeedforwards.zeros(4));
     }
     /**
      * Runs the drive at the desired velocity.
@@ -212,7 +212,7 @@ public class Drive extends SubsystemBase {
 
         // Send setpoints to modules
         for (int i = 0; i < 4; i++) {
-            modules[i].runSetpoint(setpointStates[i]);
+            modules[i].runSetpoint(setpointStates[i], feedforwards.torqueCurrents()[i]);
         }
 
         // Log optimized setpoints (runSetpoint mutates each state)
