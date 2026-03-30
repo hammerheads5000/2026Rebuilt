@@ -1,0 +1,95 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.8,
+        "y": 0.65
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.678244365361804,
+        "y": 0.6942704626334513
+      },
+      "isLocked": false,
+      "linkedName": "Trench Exit Right"
+    },
+    {
+      "anchor": {
+        "x": 7.710521945432978,
+        "y": 2.3081494661921704
+      },
+      "prevControl": {
+        "x": 7.678244365361802,
+        "y": 1.8239857651245543
+      },
+      "nextControl": {
+        "x": 7.750370352489824,
+        "y": 2.9058755720448377
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.118766310794782,
+        "y": 3.050533807829181
+      },
+      "prevControl": {
+        "x": 7.527615658362989,
+        "y": 3.1796441281138788
+      },
+      "nextControl": {
+        "x": 6.3928043592578545,
+        "y": 2.821282665238571
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.8,
+        "y": 0.65
+      },
+      "prevControl": {
+        "x": 6.935804394046777,
+        "y": 0.8498936924167253
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Trench Exit Right"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 2.005296610169498,
+      "rotationDegrees": 180.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 2.0,
+    "rotation": 90.0
+  },
+  "reversed": false,
+  "folder": "Collection",
+  "idealStartingState": {
+    "velocity": 2.0,
+    "rotation": 90.0
+  },
+  "useDefaultConstraints": true
+}
