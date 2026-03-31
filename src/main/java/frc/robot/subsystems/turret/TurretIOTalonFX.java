@@ -264,7 +264,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     @Override
     public void resetTurnEncoder() {
-        turnMotor.setPosition(turnPosition.getValue().in(Rotations) % 1);
+        turnMotor.setPosition(encoder.getPosition().getValue().div(ENCODER_TO_TURRET_RATIO));
     }
 
     @Override

@@ -165,11 +165,12 @@ public class TurretCalculator {
             Translation3d target,
             int iterations,
             InterpolatingTreeMap<Double, ShotData> shotMap,
-            InterpolatingDoubleTreeMap tofMap) {
+            InterpolatingDoubleTreeMap tofMap,
+            Time tofFudgeFactor) {
         double distance = getDistanceToTarget(robot, target).in(Meters);
         ShotData shot = shotMap.get(distance);
         shot = new ShotData(shot.exitVelocity, shot.hoodAngle, target);
-        Time timeOfFlight = Seconds.of(tofMap.get(distance));
+        Time timeOfFlight = Seconds.of(tofMap.get(distance)).plus(tofFudgeFactor);
         Translation3d predictedTarget = target;
 
         // Iterate the process, getting better time of flight estimations and updating the predicted target accordingly

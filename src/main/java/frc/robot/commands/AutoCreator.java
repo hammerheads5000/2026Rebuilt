@@ -508,11 +508,18 @@ public class AutoCreator {
             }
 
             if (path.end == StartEndPoint.DEPOT) {
-                toAdd = toAdd.alongWith(intakes.deployRight());
+                toAdd = Commands.sequence(
+                        indexer.setGoal(IndexerGoal.IDLE).asProxy(),
+                        toAdd.alongWith(intakes.deployRight()),
+                        turret.setGoal(TurretGoal.SCORING).asProxy(),
+                        indexer.setGoal(IndexerGoal.ACTIVE).asProxy());
             }
 
             if (path.end == StartEndPoint.OUTPOST) {
-                toAdd = toAdd.alongWith(intakes.deployLeft());
+                toAdd = toAdd.alongWith(intakes.deployLeft())
+                        .andThen(
+                                turret.setGoal(TurretGoal.SCORING).asProxy(),
+                                indexer.setGoal(IndexerGoal.ACTIVE).asProxy());
             }
 
             commands.add(toAdd);

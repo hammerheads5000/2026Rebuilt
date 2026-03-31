@@ -85,6 +85,9 @@ public class Turret extends SubsystemBase {
     @AutoLogOutput
     private double flywheelFudgeFactor = 1;
 
+    @AutoLogOutput
+    private Time tofFudgeFactor = Seconds.zero();
+
     private Angle[] turnVelFilterPos = new Angle[] {Radians.zero(), Radians.zero()};
     private Time[] turnVelFilterTimes = new Time[] {Seconds.zero(), Seconds.zero()};
 
@@ -125,6 +128,9 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putData("Overrides/Turret Manual", manualOverride());
         SmartDashboard.putData("Turret/Fudge Up", increaseFudgeFactor());
         SmartDashboard.putData("Turret/Fudge Down", decreaseFudgeFactor());
+        SmartDashboard.putData("Turret/Reset Encoder", resetTurnEncoder());
+        SmartDashboard.putData("Turret/ToF Fudge Up", increaseToFFudgeFactor());
+        SmartDashboard.putData("Turret/ToF Fudge Down", decreaseToFFudgeFactor());
 
         Logger.recordOutput("Turret/Shot", new ShotData(0, 0)); // log struct at start to avoid loop overruns
     }
@@ -185,6 +191,18 @@ public class Turret extends SubsystemBase {
         return Commands.runOnce(() -> this.flywheelFudgeFactor *= (1 - FLYWHEEL_FUDGE_AMOUNT))
                 .ignoringDisable(true)
                 .withName("Fudge Down");
+    }
+
+    public Command increaseToFFudgeFactor() {
+        return Commands.runOnce(() -> this.tofFudgeFactor = tofFudgeFactor.plus(Seconds.of(0.01)))
+                .ignoringDisable(true)
+                .withName("ToF Fudge Up");
+    }
+
+    public Command decreaseToFFudgeFactor() {
+        return Commands.runOnce(() -> this.tofFudgeFactor = tofFudgeFactor.minus(Seconds.of(0.01)))
+                .ignoringDisable(true)
+                .withName("ToF Fudge Down");
     }
 
     public TurretGoal getGoal() {
@@ -357,7 +375,8 @@ public class Turret extends SubsystemBase {
                     currentTarget,
                     LOOKAHEAD_ITERATIONS,
                     goal == TurretGoal.PASSING ? PASSING_MAP : SHOT_MAP,
-                    goal == TurretGoal.PASSING ? PASS_TOF_MAP : TOF_MAP);
+                    goal == TurretGoal.PASSING ? PASS_TOF_MAP : TOF_MAP,
+                    tofFudgeFactor);
         } else {
             calculatedShot = TurretCalculator.iterativeMovingShotFromFunnelClearance(
                     robotPose, fieldSpeeds, currentTarget, LOOKAHEAD_ITERATIONS);
@@ -373,6 +392,10 @@ public class Turret extends SubsystemBase {
         io.setFlywheelSpeed(calculatedShot.getAngularExitVelocity().times(flywheelFudgeFactor));
 
         Logger.recordOutput("Turret/Shot", calculatedShot);
+    }
+
+    public Command resetTurnEncoder() {
+        return Commands.runOnce(io::resetTurnEncoder).ignoringDisable(true).withName("Reset Turret Encoder");
     }
 
     public Command zeroHoodSequence() {

@@ -157,6 +157,7 @@ public class Superstructure extends SubsystemBase {
     /** Handle state logic for transitioning out of COLLECTING */
     public Command stopCollecting() {
         return Commands.either(this.setGoal(Goal.SCORING), this.setGoal(Goal.PASSING), activeInZoneTrigger)
+                .onlyIf(() -> this.goal == Goal.COLLECTING)
                 .withName("Stop collecting");
     }
 
