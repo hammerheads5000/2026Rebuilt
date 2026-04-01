@@ -179,7 +179,7 @@ public class TurretCalculator {
             distance = getDistanceToTarget(robot, predictedTarget).in(Meters);
             shot = shotMap.get(distance);
             shot = new ShotData(shot.exitVelocity, shot.hoodAngle, predictedTarget);
-            timeOfFlight = Seconds.of(tofMap.get(distance));
+            timeOfFlight = Seconds.of(tofMap.get(distance)).plus(tofFudgeFactor);
         }
 
         return shot;

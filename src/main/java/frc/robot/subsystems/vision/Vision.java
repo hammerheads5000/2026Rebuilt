@@ -28,10 +28,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
     private final VisionConsumer consumer;
+    private final Consumer<Pose2d> resetConsumer;
     private final VisionIO[] io;
     private final VisionIOInputsAutoLogged[] inputs;
     private final Alert[] disconnectedAlerts;
@@ -40,8 +43,12 @@ public class Vision extends SubsystemBase {
     private boolean disabled = false;
     private boolean climbing = false;
 
-    public Vision(VisionConsumer consumer, VisionIO... io) {
+    @AutoLogOutput
+    private boolean hasHadVision = false;
+
+    public Vision(VisionConsumer consumer, Consumer<Pose2d> resetConsumer, VisionIO... io) {
         this.consumer = consumer;
+        this.resetConsumer = resetConsumer;
         this.io = io;
 
         // Initialize inputs
@@ -143,10 +150,15 @@ public class Vision extends SubsystemBase {
 
                 // Send vision observation
                 if (!disabled) {
-                    consumer.accept(
-                            observation.pose().toPose2d(),
-                            observation.timestamp(),
-                            VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+                    if (hasHadVision) {
+                        consumer.accept(
+                                observation.pose().toPose2d(),
+                                observation.timestamp(),
+                                VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
+                    } else {
+                        resetConsumer.accept(observation.pose().toPose2d());
+                        hasHadVision = true;
+                    }
                 }
             }
 

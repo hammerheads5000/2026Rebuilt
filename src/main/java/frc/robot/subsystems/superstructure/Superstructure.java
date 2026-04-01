@@ -142,7 +142,8 @@ public class Superstructure extends SubsystemBase {
 
     public Command setGoal(Goal newGoal) {
         return Commands.either(
-                        this.runOnce(() -> this.nonDuckingGoal = newGoal),
+                        this.runOnce(() -> this.nonDuckingGoal = newGoal)
+                                .unless(() -> nonDuckingGoal == Goal.COLLECTING && newGoal == Goal.PASSING),
                         this.runOnce(() -> this.goal = newGoal)
                                 .andThen(goalCommands.get(newGoal).get()),
                         underTrenchTrigger.and(() -> newGoal != Goal.DUCKING))

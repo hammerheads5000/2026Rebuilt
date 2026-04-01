@@ -173,6 +173,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIO() {});
                 vision = new Vision(
                         drive::addVisionMeasurement,
+                        drive::setPose,
                         new VisionIOPhotonVision(VisionConstants.CAMERA_NAMES[0], VisionConstants.CAMERA_TRANSFORMS[0]),
                         new VisionIOPhotonVision(VisionConstants.CAMERA_NAMES[1], VisionConstants.CAMERA_TRANSFORMS[1]),
                         new VisionIOPhotonVision(VisionConstants.CAMERA_NAMES[2], VisionConstants.CAMERA_TRANSFORMS[2]),
@@ -217,6 +218,7 @@ public class RobotContainer {
                 // drive::getPose));
                 vision = new Vision(
                         drive::addVisionMeasurement,
+                        drive::setPose,
                         new VisionIO() {},
                         new VisionIO() {},
                         new VisionIO() {},
@@ -236,6 +238,7 @@ public class RobotContainer {
                 climber = new Climber(new ClimberIO() {});
                 vision = new Vision(
                         drive::addVisionMeasurement,
+                        drive::setPose,
                         new VisionIO() {},
                         new VisionIO() {},
                         new VisionIO() {},
