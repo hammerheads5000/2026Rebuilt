@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Value;
 import static frc.robot.Constants.TurretConstants.*;
 
 import com.pathplanner.lib.util.FlippingUtil;
@@ -333,6 +334,9 @@ public class Turret extends SubsystemBase {
                 this.getCurrentCommand() == null
                         ? "None"
                         : this.getCurrentCommand().getName());
+        Logger.recordOutput(
+                "Turret/Ratio",
+                inputs.turnEncoderPosition.div(inputs.turnPosition).in(Value));
 
         Pose2d pose = poseSupplier.get();
 

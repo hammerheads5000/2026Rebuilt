@@ -24,6 +24,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -46,6 +47,7 @@ public class TurretIOTalonFX implements TurretIO {
     private final TalonFXConfiguration flywheelFollowerConfig;
 
     private final StatusSignal<Angle> turnPosition;
+    private final StatusSignal<Angle> turnEncoderPosition;
     private final StatusSignal<Double> turnSetpoint;
     private final StatusSignal<AngularVelocity> turnVelocity;
     private final StatusSignal<Voltage> turnAppliedVolts;
@@ -129,6 +131,7 @@ public class TurretIOTalonFX implements TurretIO {
         PhoenixUtil.tryUntilOk(5, () -> encoder.getConfigurator().apply(ENCODER_CONFIGS));
 
         turnPosition = turnMotor.getPosition();
+        turnEncoderPosition = encoder.getPosition();
         turnSetpoint = turnMotor.getClosedLoopReference();
         turnVelocity = turnMotor.getVelocity();
         turnAppliedVolts = turnMotor.getMotorVoltage();
@@ -175,20 +178,32 @@ public class TurretIOTalonFX implements TurretIO {
                 flywheelSupplyCurrent,
                 flywheelFollowerCurrent,
                 flywheelFollowerSupplyCurrent);
-        PhoenixUtil.registerStatusSignals(Hertz.of(250), turnPosition, turnVelocity, turnAppliedVolts);
+        PhoenixUtil.registerStatusSignals(
+                Hertz.of(250), turnPosition, turnEncoderPosition, turnVelocity, turnAppliedVolts);
         turnMotor.optimizeBusUtilization();
         hoodMotor.optimizeBusUtilization();
         flywheelMotor.optimizeBusUtilization();
         flywheelFollowerMotor.optimizeBusUtilization();
 
         flywheelFollowerMotor.setControl(followRequest);
+
+        turnMotor.setPosition(Rotations.of(
+                MathUtil.inputModulus(turnMotor.getRotorPosition().getValue().in(Rotations), -0.5, 0.5)
+                        / TURN_TO_TURRET_RATIO));
     }
 
     @Override
     public void updateInputs(TurretIOInputs inputs) {
         inputs.turnMotorConnected = BaseStatusSignal.isAllGood(
-                turnPosition, turnSetpoint, turnVelocity, turnAppliedVolts, turnCurrent, turnSupplyCurrent);
+                turnPosition,
+                turnEncoderPosition,
+                turnSetpoint,
+                turnVelocity,
+                turnAppliedVolts,
+                turnCurrent,
+                turnSupplyCurrent);
         inputs.turnPosition = turnPosition.getValue();
+        inputs.turnEncoderPosition = turnEncoderPosition.getValue().div(ENCODER_TO_TURRET_RATIO);
         inputs.turnSetpoint = Rotations.of(turnSetpoint.getValueAsDouble());
         inputs.turnVelocity = turnVelocity.getValue();
         inputs.turnAppliedVolts = turnAppliedVolts.getValue();

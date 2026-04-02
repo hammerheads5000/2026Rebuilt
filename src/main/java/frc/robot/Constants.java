@@ -408,10 +408,11 @@ public final class Constants {
 
         public static final FeedbackConfigs TURN_FEEDBACK_CONFIGS = new FeedbackConfigs()
                 .withFeedbackRemoteSensorID(ENCODER_ID)
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
-                .withSensorToMechanismRatio(ENCODER_TO_TURRET_RATIO)
-                .withRotorToSensorRatio(TURN_TO_TURRET_RATIO / ENCODER_TO_TURRET_RATIO)
-                .withFeedbackRotorOffset(0.0)
+                .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+                .withSensorToMechanismRatio(TURN_TO_TURRET_RATIO)
+                // .withRotorToSensorRatio(TURN_TO_TURRET_RATIO / ENCODER_TO_TURRET_RATIO)
+                .withRotorToSensorRatio(1)
+                .withFeedbackRotorOffset(-0.73291)
                 .withVelocityFilterTimeConstant(0.0);
 
         public static final MotorOutputConfigs HOOD_OUTPUT_CONFIGS = new MotorOutputConfigs()
@@ -427,7 +428,7 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(-0.26416015625)
+                .withMagnetOffset(0.063232421875)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
                 .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
 
