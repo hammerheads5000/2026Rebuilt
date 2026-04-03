@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.turret;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Hertz;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -187,9 +188,17 @@ public class TurretIOTalonFX implements TurretIO {
 
         flywheelFollowerMotor.setControl(followRequest);
 
-        turnMotor.setPosition(Rotations.of(
+        Angle posFromRotor = Rotations.of(
                 MathUtil.inputModulus(turnMotor.getRotorPosition().getValue().in(Rotations), -0.5, 0.5)
-                        / TURN_TO_TURRET_RATIO));
+                        / TURN_TO_TURRET_RATIO);
+        Angle posFromEncoder = encoder.getPosition().getValue().div(ENCODER_TO_TURRET_RATIO);
+        if (posFromEncoder.minus(posFromRotor).abs(Degrees) > 15) {
+            // Set to encoder pos when in conflict
+            turnMotor.setPosition(posFromEncoder);
+        } else {
+            // Otherwise trust rotor pos
+            turnMotor.setPosition(posFromRotor);
+        }
     }
 
     @Override

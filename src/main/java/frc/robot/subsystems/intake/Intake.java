@@ -289,6 +289,8 @@ public class Intake extends SubsystemBase {
     public Command disable() {
         return this.runOnce(() -> {
                     goal = IntakeGoal.DISABLED;
+                    io.stopRack();
+                    io.stopSpin();
                     disabledAlert.set(true);
                 })
                 .andThen(Commands.idle())

@@ -121,6 +121,8 @@ public class Indexer extends SubsystemBase {
     public Command disable() {
         return this.runOnce(() -> {
                     goal = IndexerGoal.DISABLED;
+                    io.stopFeed();
+                    io.stopSpin();
                     disabledAlert.set(true);
                 })
                 .andThen(Commands.idle())

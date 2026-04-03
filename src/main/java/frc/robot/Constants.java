@@ -412,7 +412,7 @@ public final class Constants {
                 .withSensorToMechanismRatio(TURN_TO_TURRET_RATIO)
                 // .withRotorToSensorRatio(TURN_TO_TURRET_RATIO / ENCODER_TO_TURRET_RATIO)
                 .withRotorToSensorRatio(1)
-                .withFeedbackRotorOffset(-0.73291)
+                .withFeedbackRotorOffset(-0.213379)
                 .withVelocityFilterTimeConstant(0.0);
 
         public static final MotorOutputConfigs HOOD_OUTPUT_CONFIGS = new MotorOutputConfigs()
@@ -428,9 +428,9 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(0.063232421875)
+                .withMagnetOffset(0.39501953125)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
-                .withSensorDirection(SensorDirectionValue.Clockwise_Positive);
+                .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
 
         public static final FeedbackConfigs FLYWHEEL_FEEDBACK_CONFIGS =
                 new FeedbackConfigs().withVelocityFilterTimeConstant(Seconds.of(0.01));
@@ -804,7 +804,7 @@ public final class Constants {
         public static final Distance TRENCH_BUMP_X =
                 Inches.of(181.56); // x position of the center of the trench and bump
         public static final Distance TRENCH_WIDTH = Inches.of(49.86); // y width of the trench
-        public static final Distance TRENCH_BUMP_LENGTH = Inches.of(47); // x length of the trench and bump
+        public static final Distance TRENCH_BUMP_LENGTH = Inches.of(40); // x length of the trench and bump
         public static final Distance TRENCH_BAR_WIDTH = Inches.of(4); // x width of the trench bar
         public static final Distance TRENCH_BLOCK_WIDTH = Inches.of(12); // y width of block separating bump and trench
         public static final Distance BUMP_WIDTH = Inches.of(73); // y width of bump
@@ -876,7 +876,6 @@ public final class Constants {
         public static final Time CLIMB_TIME_REMAINING = Seconds.of(3);
 
         public static final Map<String, String> PREBUILT_AUTOS = Map.of(
-                "Stay in Place", "L_",
                 "Left Double Sweep Long",
                         "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Mid 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return Long 2 Left!;Trench Left to Dump Left=4.0",
                 "Right Double Sweep Long",
@@ -885,6 +884,10 @@ public final class Constants {
                         "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Short 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return Mid 2 Left!;Trench Left to Dump Left=4.0",
                 "Right Double Sweep Short",
                         "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Short 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return Mid 2 Right!;Trench Right to Dump Right=4.0",
+                "Left Double Sweep Safe",
+                        "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Safe 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return Safe 2 Left!;Trench Left to Dump Left=4.0",
+                "Right Double Sweep Safe",
+                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Safe 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return Safe 2 Right!;Trench Right to Dump Right=4.0",
                 "Left Rev Double Sweep Long",
                         "R_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Mid Rev 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return Long Rev 2 Left!;Trench Left to Dump Left=4.0",
                 "Right Rev Double Sweep Long",
