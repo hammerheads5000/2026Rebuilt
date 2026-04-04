@@ -25,7 +25,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -188,16 +187,16 @@ public class TurretIOTalonFX implements TurretIO {
 
         flywheelFollowerMotor.setControl(followRequest);
 
-        Angle posFromRotor = Rotations.of(
-                MathUtil.inputModulus(turnMotor.getRotorPosition().getValue().in(Rotations), -0.5, 0.5)
-                        / TURN_TO_TURRET_RATIO);
+        // Angle posFromRotor = Rotations.of(
+        //         MathUtil.inputModulus(turnMotor.getRotorPosition().getValue().in(Rotations), -0.5, 0.5)
+        //                 / TURN_TO_TURRET_RATIO);
         Angle posFromEncoder = encoder.getPosition().getValue().div(ENCODER_TO_TURRET_RATIO);
-        if (posFromEncoder.minus(posFromRotor).abs(Degrees) > 15) {
-            // Set to encoder pos when in conflict
-            turnMotor.setPosition(posFromEncoder);
+        if (posFromEncoder.abs(Degrees) <= 15) {
+            // Set to 0 when close
+            turnMotor.setPosition(Degrees.zero());
         } else {
-            // Otherwise trust rotor pos
-            turnMotor.setPosition(posFromRotor);
+            // Otherwise trust encoder pos
+            turnMotor.setPosition(posFromEncoder);
         }
     }
 

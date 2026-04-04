@@ -117,7 +117,7 @@ public class Intake extends SubsystemBase {
         spinDisconnectedAlert = new Alert(name + " Intake Spin Motor Disconnected!", AlertType.kError);
         disabledAlert = new Alert(name + " Disabled", AlertType.kWarning);
 
-        spinStallTrigger = new Trigger(this::spinStalled).debounce(0.1);
+        spinStallTrigger = new Trigger(this::spinStalled).debounce(0.5);
         rackStallTrigger = new Trigger(this::rackStalled).debounce(0.1);
         deployedTrigger = new Trigger(this::deployed)
                 .and(() -> this.goal == IntakeGoal.DEPLOYING || this.goal == IntakeGoal.DEPLOYED)
@@ -191,10 +191,11 @@ public class Intake extends SubsystemBase {
                                         rackStallTrigger.or(spinStallTrigger).negate()),
                                 Commands.runOnce(() -> io.setRackPosition(STOW_POS))),
                         IntakeGoal.DEPLOYED, // reverse rollers
-                        Commands.sequence(
-                                Commands.runOnce(() -> io.setSpinOutput(UNJAM_SPIN_VOLTAGE.unaryMinus())),
-                                Commands.waitUntil(spinStallTrigger.negate()),
-                                Commands.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get())))),
+                        Commands.none(),
+                        // Commands.sequence(
+                        //         Commands.runOnce(() -> io.setSpinOutput(UNJAM_SPIN_VOLTAGE.unaryMinus())),
+                        //         Commands.waitSeconds(0.1),
+                        //         Commands.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get())))),
                         IntakeGoal.STOWED, // unreverse rollers
                         Commands.sequence(
                                 Commands.runOnce(() -> io.setSpinOutput(UNJAM_SPIN_VOLTAGE)),

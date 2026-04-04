@@ -69,7 +69,7 @@
   "folder": "Inside Zone",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 135.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

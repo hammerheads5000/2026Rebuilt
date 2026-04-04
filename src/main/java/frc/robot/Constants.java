@@ -428,7 +428,7 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Coast);
 
         public static final MagnetSensorConfigs ENCODER_CONFIGS = new MagnetSensorConfigs()
-                .withMagnetOffset(0.39501953125)
+                .withMagnetOffset(0.393310546875)
                 .withAbsoluteSensorDiscontinuityPoint(0.5)
                 .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
 
@@ -468,11 +468,11 @@ public final class Constants {
         public static final Angle HOOD_PASSING_OVERRIDE = Degrees.of(47);
 
         public static final Translation3d PASSING_SPOT_LEFT =
-                new Translation3d(Inches.of(75), FieldConstants.FIELD_WIDTH.minus(Inches.of(56)), Inches.zero());
+                new Translation3d(Inches.of(75), FieldConstants.FIELD_WIDTH.minus(Inches.of(70)), Inches.zero());
         public static final Translation3d PASSING_SPOT_CENTER =
                 new Translation3d(Inches.of(90), FieldConstants.FIELD_WIDTH.div(2), Inches.zero());
         public static final Translation3d PASSING_SPOT_RIGHT =
-                new Translation3d(Inches.of(75), Inches.of(56), Inches.zero());
+                new Translation3d(Inches.of(75), Inches.of(70), Inches.zero());
 
         public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP =
                 new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData::interpolate);
@@ -485,55 +485,55 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            SHOT_MAP.put(6.3, new ShotData(RPM.of(3650), Degrees.of(43)));
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3650 * 0.98), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.1);
 
-            SHOT_MAP.put(5.63, new ShotData(RPM.of(3550), Degrees.of(42)));
+            SHOT_MAP.put(5.63, new ShotData(RPM.of(3550 * 0.98), Degrees.of(42)));
             TOF_MAP.put(5.63, 1.0917);
 
-            SHOT_MAP.put(5.25, new ShotData(RPM.of(3500), Degrees.of(39)));
+            SHOT_MAP.put(5.25, new ShotData(RPM.of(3500 * 0.98), Degrees.of(39)));
             TOF_MAP.put(5.25, 1.23);
 
-            SHOT_MAP.put(4.75, new ShotData(RPM.of(3440), Degrees.of(37)));
+            SHOT_MAP.put(4.75, new ShotData(RPM.of(3440 * 0.98), Degrees.of(37)));
             TOF_MAP.put(4.75, 1.158);
 
-            SHOT_MAP.put(4.25, new ShotData(RPM.of(3300), Degrees.of(36)));
+            SHOT_MAP.put(4.25, new ShotData(RPM.of(3300 * 0.98), Degrees.of(36)));
             TOF_MAP.put(4.25, 1.09);
 
-            SHOT_MAP.put(3.75, new ShotData(RPM.of(3150), Degrees.of(35)));
+            SHOT_MAP.put(3.75, new ShotData(RPM.of(3150 * 0.98), Degrees.of(35)));
             TOF_MAP.put(3.75, 1.02);
 
-            SHOT_MAP.put(3.5, new ShotData(RPM.of(3060), Degrees.of(34)));
+            SHOT_MAP.put(3.5, new ShotData(RPM.of(3060 * 0.98), Degrees.of(34)));
             TOF_MAP.put(3.5, 1.06);
 
-            SHOT_MAP.put(3.25, new ShotData(RPM.of(3000), Degrees.of(33)));
+            SHOT_MAP.put(3.25, new ShotData(RPM.of(3000 * 0.98), Degrees.of(33)));
             TOF_MAP.put(3.25, 0.99);
 
-            SHOT_MAP.put(3.0, new ShotData(RPM.of(2970), Degrees.of(32)));
+            SHOT_MAP.put(3.0, new ShotData(RPM.of(2970 * 0.98), Degrees.of(32)));
             TOF_MAP.put(3.0, 1.01);
 
-            SHOT_MAP.put(2.75, new ShotData(RPM.of(2950), Degrees.of(30)));
+            SHOT_MAP.put(2.75, new ShotData(RPM.of(2950 * 0.98), Degrees.of(30)));
             TOF_MAP.put(2.75, 1.01);
 
-            SHOT_MAP.put(2.5, new ShotData(RPM.of(2900), Degrees.of(27)));
+            SHOT_MAP.put(2.5, new ShotData(RPM.of(2900 * 0.98), Degrees.of(27)));
             TOF_MAP.put(2.5, 1.01);
 
-            SHOT_MAP.put(2.25, new ShotData(RPM.of(2850), Degrees.of(25)));
+            SHOT_MAP.put(2.25, new ShotData(RPM.of(2850 * 0.98), Degrees.of(25)));
             TOF_MAP.put(2.25, 1.08);
 
-            SHOT_MAP.put(2.0, new ShotData(RPM.of(2800), Degrees.of(24)));
+            SHOT_MAP.put(2.0, new ShotData(RPM.of(2800 * 0.98), Degrees.of(24)));
             TOF_MAP.put(2.0, 0.96);
 
-            SHOT_MAP.put(1.75, new ShotData(RPM.of(2750), Degrees.of(23)));
+            SHOT_MAP.put(1.75, new ShotData(RPM.of(2750 * 0.98), Degrees.of(23)));
             TOF_MAP.put(1.75, 0.96);
 
-            SHOT_MAP.put(1.5, new ShotData(RPM.of(2700), Degrees.of(22)));
+            SHOT_MAP.put(1.5, new ShotData(RPM.of(2700 * 0.98), Degrees.of(22)));
             TOF_MAP.put(1.5, 0.96);
 
-            SHOT_MAP.put(1.07, new ShotData(RPM.of(2700), Degrees.of(16)));
+            SHOT_MAP.put(1.07, new ShotData(RPM.of(2700 * 0.98), Degrees.of(16)));
             TOF_MAP.put(1.07, 0.98);
 
-            SHOT_MAP.put(0.01, new ShotData(RPM.of(2700), Degrees.of(8)));
+            SHOT_MAP.put(0.01, new ShotData(RPM.of(2700 * 0.98), Degrees.of(8)));
             TOF_MAP.put(0.01, 0.99);
 
             PASSING_MAP.put(12.6, new ShotData(RPM.of(5700), Degrees.of(47)));
@@ -844,8 +844,8 @@ public final class Constants {
                         1),
                 SwerveConstants.GET_MODULE_POSITIONS.get());
 
-        public static final PIDConstants PP_TRANSLATION_CONSTANTS = new PIDConstants(15, 0.05);
-        public static final PIDConstants PP_ROTATION_CONSTANTS = new PIDConstants(10, 0.05);
+        public static final PIDConstants PP_TRANSLATION_CONSTANTS = new PIDConstants(20, 0.05);
+        public static final PIDConstants PP_ROTATION_CONSTANTS = new PIDConstants(12, 0.05);
 
         public static final PathConstraints CONSTRAINTS = new PathConstraints(
                 MetersPerSecond.of(3),
@@ -883,11 +883,11 @@ public final class Constants {
                 "Left Double Sweep Short",
                         "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Short 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return Mid 2 Left!;Trench Left to Dump Left=4.0",
                 "Right Double Sweep Short",
-                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Short 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return Mid 2 Right!;Trench Right to Dump Right=4.0",
+                        "R_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Short 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return Mid 2 Right!;Trench Right to Dump Right=4.0",
                 "Left Double Sweep Safe",
                         "L_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Safe 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return Safe 2 Left!;Trench Left to Dump Left=4.0",
                 "Right Double Sweep Safe",
-                        "L_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Safe 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return Safe 2 Right!;Trench Right to Dump Right=4.0",
+                        "R_Trench Mid Start Right;Trench Mid Start Right to Trench Right;Collect Sweep Safe 1 Right!;Trench Right to Dump Right=4.0;Dump Right to Trench Right;Collect Sweep and Return Safe 2 Right!;Trench Right to Dump Right=4.0",
                 "Left Rev Double Sweep Long",
                         "R_Trench Mid Start Left;Trench Mid Start Left to Trench Left;Collect Sweep Mid Rev 1 Left!;Trench Left to Dump Left=4.0;Dump Left to Trench Left;Collect Sweep and Return Long Rev 2 Left!;Trench Left to Dump Left=4.0",
                 "Right Rev Double Sweep Long",

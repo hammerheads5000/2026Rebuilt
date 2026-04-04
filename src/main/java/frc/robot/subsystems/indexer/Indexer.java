@@ -144,7 +144,7 @@ public class Indexer extends SubsystemBase {
                         this.runOnce(() -> io.setFeedOutput(UNJAM_FEED_VOLTAGE)),
                         Commands.waitSeconds(0.1),
                         Commands.runOnce(() -> io.setFeedOutput(Volts.of(feedVoltage.get()))),
-                        Commands.waitSeconds(0.3),
+                        Commands.waitSeconds(0.2),
                         Commands.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
                 .finallyDo((interrupted) -> {
                     if (interrupted) {
@@ -163,12 +163,12 @@ public class Indexer extends SubsystemBase {
                             io.setFeedOutput(UNJAM_FEED_VOLTAGE);
                             io.setSpinOutput(UNJAM_SPIN_VOLTAGE);
                         }),
-                        Commands.waitSeconds(0.3),
+                        Commands.waitSeconds(0.2),
                         Commands.runOnce(() -> {
                             io.setFeedOutput(Volts.of(feedVoltage.get()));
                             io.setSpinOutput(Volts.of(0));
                         }),
-                        Commands.waitSeconds(0.3),
+                        Commands.waitSeconds(0.1),
                         Commands.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
                 .finallyDo((interrupted) -> {
                     if (interrupted) {

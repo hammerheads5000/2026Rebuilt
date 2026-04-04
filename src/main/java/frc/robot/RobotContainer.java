@@ -301,7 +301,8 @@ public class RobotContainer {
                             AutoConstants.PREBUILT_AUTOS.get(option).charAt(0) == 'L'));
         }
 
-        teleopDrive = new TeleopDrive(drive, controller, intakes.left.deployedTrigger, intakes.right.deployedTrigger);
+        teleopDrive = new TeleopDrive(
+                drive, controller, intakes.left.deployedTrigger, intakes.right.deployedTrigger, vision::isEnabled);
         Logger.recordOutput("ZeroedRobotComponents", new Pose3d[] {new Pose3d(), new Pose3d(), new Pose3d()});
 
         Zones.logAllZones();

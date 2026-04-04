@@ -65,6 +65,9 @@ public class TeleopDrive extends Command {
     @AutoLogOutput
     private boolean wallAvoidance = false;
 
+    @AutoLogOutput
+    private final BooleanSupplier autoAlign;
+
     private boolean slowingDown = false;
 
     private final TunablePIDController translationController =
@@ -80,7 +83,8 @@ public class TeleopDrive extends Command {
             Drive drive,
             CommandXboxController controller,
             BooleanSupplier leftIntakeDeployed,
-            BooleanSupplier rightIntakeDeployed) {
+            BooleanSupplier rightIntakeDeployed,
+            BooleanSupplier autoAlign) {
         this.drive = drive;
         this.xSupplier = () -> -controller.getLeftY() * flipFactor;
         this.ySupplier = () -> -controller.getLeftX() * flipFactor;
@@ -88,6 +92,7 @@ public class TeleopDrive extends Command {
         this.driveLimiter = new SlewRateLimiter2d(SwerveConstants.MAX_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
         this.leftIntakeDeployed = leftIntakeDeployed;
         this.rightIntakeDeployed = rightIntakeDeployed;
+        this.autoAlign = autoAlign;
 
         inTrenchZoneTrigger = Zones.TRENCH_ZONES
                 .willContain(drive::getPose, drive::getFieldSpeeds, SwerveConstants.TRENCH_ALIGN_TIME)
@@ -99,8 +104,8 @@ public class TeleopDrive extends Command {
 
         inTowerZoneTrigger = Zones.TOWER_ZONES.contains(drive::getPose).debounce(0.1);
 
-        inTrenchZoneTrigger.onTrue(updateDriveMode(DriveMode.TRENCH_LOCK));
-        inBumpZoneTrigger.onTrue(updateDriveMode(DriveMode.BUMP_LOCK));
+        inTrenchZoneTrigger.and(autoAlign).onTrue(updateDriveMode(DriveMode.TRENCH_LOCK));
+        inBumpZoneTrigger.and(autoAlign).onTrue(updateDriveMode(DriveMode.BUMP_LOCK));
         inTrenchZoneTrigger.or(inBumpZoneTrigger).onFalse(updateDriveMode(DriveMode.NORMAL));
         // inTowerZoneTrigger.and(() -> wallAvoidance).onTrue(updateDriveMode(DriveMode.TOWER_LOCK));
 

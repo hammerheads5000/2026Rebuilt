@@ -199,6 +199,10 @@ public class Vision extends SubsystemBase {
                 .withName("Disable Vision");
     }
 
+    public boolean isEnabled() {
+        return !disabled;
+    }
+
     public void setClimbing(boolean climbing) {
         this.climbing = climbing;
     }
