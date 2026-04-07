@@ -190,14 +190,14 @@ public class TurretIOTalonFX implements TurretIO {
         // Angle posFromRotor = Rotations.of(
         //         MathUtil.inputModulus(turnMotor.getRotorPosition().getValue().in(Rotations), -0.5, 0.5)
         //                 / TURN_TO_TURRET_RATIO);
-        Angle posFromEncoder = encoder.getPosition().getValue().div(ENCODER_TO_TURRET_RATIO);
-        if (posFromEncoder.abs(Degrees) <= 15) {
-            // Set to 0 when close
-            turnMotor.setPosition(Degrees.zero());
-        } else {
-            // Otherwise trust encoder pos
-            turnMotor.setPosition(posFromEncoder);
-        }
+        // Angle posFromEncoder = encoder.getPosition().getValue().div(ENCODER_TO_TURRET_RATIO);
+        // if (posFromEncoder.abs(Degrees) <= 15) {
+        //     // Set to 0 when close
+        turnMotor.setPosition(Degrees.zero());
+        // } else {
+        //     // Otherwise trust encoder pos
+        //     turnMotor.setPosition(posFromEncoder);
+        // }
     }
 
     @Override
