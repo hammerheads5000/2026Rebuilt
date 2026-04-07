@@ -110,7 +110,7 @@ public class RobotContainer {
     private final Trigger zeroHoodTrigger = controller.povUp();
     private final Trigger switchIntakesTrigger = controller.rightBumper();
     private final Trigger intakePressTrigger = controller.leftBumper();
-    private final Trigger collectTrigger = controller.leftTrigger();
+    private final Trigger passCollectTrigger = controller.leftTrigger();
     private final Trigger turretModeTrigger = controller.start();
     private final Trigger indexTrigger = controller.back();
     private final Trigger speedUpTrigger = controller.rightTrigger();
@@ -372,12 +372,15 @@ public class RobotContainer {
         intakes.switchIntakes().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
         intakes.deployLeft().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
         intakes.deployRight().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
-        collectTrigger
+        passCollectTrigger
                 .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)
-                .onTrue(superstructure.setGoal(Goal.COLLECTING));
-        collectTrigger
+                .onTrue(Commands.either(
+                        superstructure.setGoal(Goal.COLLECTING),
+                        superstructure.setGoal(Goal.PASSING),
+                        superstructure.inAllianceZoneTrigger));
+        passCollectTrigger
                 .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)
-                .onFalse(superstructure.stopCollecting());
+                .onFalse(superstructure.stopPassCollecting());
         // collectTrigger.onFalse(superstructure.stopCollecting().onlyIf(() -> superstructure.getGoal() ==
         // Goal.EXPANDED));
 
