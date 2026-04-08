@@ -651,8 +651,8 @@ public final class Constants {
         public static final CurrentLimitsConfigs FEED_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(100);
 
-        public static final Voltage SPIN_VOLTAGE = Volts.of(4);
-        public static final Voltage FEED_VOLTAGE = Volts.of(6);
+        public static final Voltage SPIN_VOLTAGE = Volts.of(9);
+        public static final Voltage FEED_VOLTAGE = Volts.of(9);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-5);
 
@@ -809,7 +809,9 @@ public final class Constants {
         public static final Distance TRENCH_BLOCK_WIDTH = Inches.of(12); // y width of block separating bump and trench
         public static final Distance BUMP_WIDTH = Inches.of(73); // y width of bump
 
-        public static final Distance TRENCH_CENTER = TRENCH_WIDTH.div(2);
+        public static final Distance TRENCH_CENTER =
+                Dimensions.FULL_LENGTH.div(2).plus(Inches.of(3));
+        // public static final Distance TRENCH_CENTER = TRENCH_WIDTH.div(2);
 
         public static final Distance TOWER_X = Inches.of(49.25);
         public static final Distance TOWER_CENTER_Y = FIELD_WIDTH.div(2).minus(Inches.of(11.46));
