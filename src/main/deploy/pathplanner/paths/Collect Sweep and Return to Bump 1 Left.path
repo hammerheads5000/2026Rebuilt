@@ -79,9 +79,9 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 8.0,
-    "maxAngularVelocity": 360.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAcceleration": 10.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 810.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
@@ -90,7 +90,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Collection",
+  "folder": "Old Collection 2.0",
   "idealStartingState": {
     "velocity": 2.0,
     "rotation": -90.0
