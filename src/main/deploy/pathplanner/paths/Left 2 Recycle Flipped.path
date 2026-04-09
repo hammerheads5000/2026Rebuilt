@@ -12,7 +12,7 @@
         "y": 7.445555555555555
       },
       "isLocked": false,
-      "linkedName": "Trench Exit Left"
+      "linkedName": "Trench Exit Left Flipped"
     },
     {
       "anchor": {
@@ -73,17 +73,21 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Trench Exit Left"
+      "linkedName": "Trench Exit Left Flipped"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 2.104564315352703,
-      "rotationDegrees": 5.2318674490759305
+      "waypointRelativePos": 1.0799289520426294,
+      "rotationDegrees": -9.97363920855544
+    },
+    {
+      "waypointRelativePos": 1.854351687388988,
+      "rotationDegrees": 0.0
     },
     {
       "waypointRelativePos": 3.0,
-      "rotationDegrees": 154.97240882500535
+      "rotationDegrees": 154.97240882500537
     }
   ],
   "constraintZones": [
@@ -112,14 +116,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -90.0
+    "velocity": 3.0,
+    "rotation": 90.0
   },
   "reversed": false,
   "folder": "Collection",
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": -90.0
+    "velocity": 3.0,
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }
