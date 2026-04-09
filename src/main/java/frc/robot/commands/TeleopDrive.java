@@ -56,8 +56,8 @@ public class TeleopDrive extends Command {
     @AutoLogOutput
     private final Trigger inTrenchZoneTrigger;
 
-    @AutoLogOutput
-    private final Trigger inBumpZoneTrigger;
+    // @AutoLogOutput
+    // private final Trigger inBumpZoneTrigger;
 
     @AutoLogOutput
     private final Trigger inTowerZoneTrigger;
@@ -98,15 +98,15 @@ public class TeleopDrive extends Command {
                 .willContain(drive::getPose, drive::getFieldSpeeds, SwerveConstants.TRENCH_ALIGN_TIME)
                 .debounce(0.1);
 
-        inBumpZoneTrigger = Zones.BUMP_ZONES
-                .willContain(drive::getPose, drive::getFieldSpeeds, SwerveConstants.BUMP_ALIGN_TIME)
-                .debounce(0.1);
+        // inBumpZoneTrigger = Zones.BUMP_ZONES
+        //         .willContain(drive::getPose, drive::getFieldSpeeds, SwerveConstants.BUMP_ALIGN_TIME)
+        //         .debounce(0.1);
 
         inTowerZoneTrigger = Zones.TOWER_ZONES.contains(drive::getPose).debounce(0.1);
 
         inTrenchZoneTrigger.and(autoAlign).onTrue(updateDriveMode(DriveMode.TRENCH_LOCK));
-        inBumpZoneTrigger.and(autoAlign).onTrue(updateDriveMode(DriveMode.BUMP_LOCK));
-        inTrenchZoneTrigger.or(inBumpZoneTrigger).onFalse(updateDriveMode(DriveMode.NORMAL));
+        // inBumpZoneTrigger.and(autoAlign).onTrue(updateDriveMode(DriveMode.BUMP_LOCK));
+        // inTrenchZoneTrigger.or(inBumpZoneTrigger).onFalse(updateDriveMode(DriveMode.NORMAL));
         // inTowerZoneTrigger.and(() -> wallAvoidance).onTrue(updateDriveMode(DriveMode.TOWER_LOCK));
 
         addRequirements(drive);

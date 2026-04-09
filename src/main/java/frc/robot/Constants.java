@@ -652,11 +652,11 @@ public final class Constants {
         public static final CurrentLimitsConfigs FEED_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(100);
 
-        public static final Voltage SPIN_VOLTAGE = Volts.of(4);
-        public static final Voltage FEED_VOLTAGE = Volts.of(6);
+        public static final Voltage SPIN_VOLTAGE = Volts.of(7);
+        public static final Voltage FEED_VOLTAGE = Volts.of(7);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
-        public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-5);
-        public static final Time SPIN_RAMP = Seconds.of(2);
+        public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-8);
+        public static final Time SPIN_RAMP = Seconds.of(1.5);
 
         public static final AngularVelocity HOOK_STALL_ANGULAR_VELOCITY = RPM.of(1000);
         public static final Current HOOK_STALL_CURRENT = Amps.of(30);

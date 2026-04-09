@@ -40,8 +40,7 @@ public class Indexer extends SubsystemBase {
     private final LoggedTunableNumber feedVoltageTunable =
             new LoggedTunableNumber("Indexer/Feed Voltage", FEED_VOLTAGE.in(Volts));
 
-    private final SlewRateLimiter spinVoltageLimiter =
-            new SlewRateLimiter(spinVoltageTunable.get() / SPIN_RAMP.in(Seconds));
+    private SlewRateLimiter spinVoltageLimiter = new SlewRateLimiter(spinVoltageTunable.get() / SPIN_RAMP.in(Seconds));
 
     @AutoLogOutput
     private final Trigger hookStallTrigger = new Trigger(
@@ -73,7 +72,7 @@ public class Indexer extends SubsystemBase {
 
         hookStallTrigger
                 .or(feedStallTrigger)
-                .and(() -> this.goal == IndexerGoal.ACTIVE)
+                .and(() -> this.goal == IndexerGoal.ACTIVE || this.goal == IndexerGoal.ACTIVATING)
                 .onTrue(setGoal(IndexerGoal.UNJAMMING));
 
         SmartDashboard.putData("Overrides/Indexer", disable());
@@ -93,6 +92,7 @@ public class Indexer extends SubsystemBase {
                 && (goal == IndexerGoal.ACTIVE || goal == IndexerGoal.ACTIVATING)) {
             io.setSpinOutput(Volts.of(spinVoltageTunable.get()));
             io.setFeedOutput(Volts.of(feedVoltageTunable.get()));
+            spinVoltageLimiter = new SlewRateLimiter(spinVoltageTunable.get() / SPIN_RAMP.in(Seconds));
         }
 
         visualizer.update(inputs.spinVelocity);
@@ -104,7 +104,7 @@ public class Indexer extends SubsystemBase {
     public Command setGoal(IndexerGoal newGoal) {
         return Commands.defer(
                         () -> {
-                            if (this.goal != newGoal) {
+                            if (this.goal == newGoal) {
                                 return Commands.none();
                             }
                             Command toSchedule = Commands.none();
@@ -158,12 +158,13 @@ public class Indexer extends SubsystemBase {
                         this.runOnce(() -> io.setFeedOutput(UNJAM_FEED_VOLTAGE)),
                         Commands.waitSeconds(0.1),
                         this.runOnce(() -> io.setFeedOutput(Volts.of(feedVoltageTunable.get()))),
-                        Commands.waitSeconds(0.2),
                         this.startRun(
                                         () -> spinVoltageLimiter.reset(0),
                                         () -> io.setSpinOutput(
                                                 Volts.of(spinVoltageLimiter.calculate(spinVoltageTunable.get()))))
-                                .withTimeout(SPIN_RAMP))
+                                .withTimeout(SPIN_RAMP),
+                        this.runOnce(() ->
+                                io.setSpinOutput(Volts.of(spinVoltageLimiter.calculate(spinVoltageTunable.get())))))
                 .finallyDo((interrupted) -> {
                     if (interrupted) {
                         io.stopFeed();

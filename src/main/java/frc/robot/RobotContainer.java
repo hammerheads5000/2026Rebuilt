@@ -370,9 +370,9 @@ public class RobotContainer {
         zeroHoodTrigger.onFalse(turret.setGoal(TurretGoal.IDLE));
 
         switchIntakesTrigger.onTrue(intakes.switchIntakes());
-        intakes.switchIntakes().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
-        intakes.deployLeft().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
-        intakes.deployRight().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
+        // intakes.switchIntakes().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
+        // intakes.deployLeft().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
+        // intakes.deployRight().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
         passCollectTrigger
                 .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)
                 .onTrue(Commands.either(

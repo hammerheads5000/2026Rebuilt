@@ -134,14 +134,14 @@ public class TurretIOTalonFX implements TurretIO {
         turnSetpoint = turnMotor.getClosedLoopReference();
         turnVelocity = turnMotor.getVelocity();
         turnAppliedVolts = turnMotor.getMotorVoltage();
-        turnCurrent = turnMotor.getStatorCurrent();
+        turnCurrent = turnMotor.getTorqueCurrent();
         turnSupplyCurrent = turnMotor.getSupplyCurrent();
 
         hoodPosition = hoodMotor.getPosition();
         hoodSetpoint = hoodMotor.getClosedLoopReference();
         hoodVelocity = hoodMotor.getVelocity();
         hoodAppliedVolts = hoodMotor.getMotorVoltage();
-        hoodCurrent = hoodMotor.getStatorCurrent();
+        hoodCurrent = hoodMotor.getTorqueCurrent();
         hoodSupplyCurrent = hoodMotor.getSupplyCurrent();
 
         flywheelSpeed = flywheelMotor.getVelocity();
