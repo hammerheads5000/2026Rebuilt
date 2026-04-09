@@ -117,7 +117,7 @@ public class Superstructure extends SubsystemBase {
         underTrenchTrigger.and(DriverStation::isTeleop).onFalse(this.unduck());
         activeInZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
         inactiveInZoneTrigger.onTrue(this.setGoal(Goal.IDLE));
-        leaveZoneTrigger.onTrue(this.setGoal(Goal.PASSING).onlyIf(() -> this.goal != Goal.COLLECTING));
+        leaveZoneTrigger.onTrue(this.setGoal(Goal.COLLECTING).onlyIf(() -> this.goal != Goal.PASSING));
         behindTowerTrigger.and(DriverStation::isTeleop).onTrue(indexer.setGoal(IndexerGoal.IDLE));
         behindTowerTrigger
                 .and(DriverStation::isTeleop)
@@ -142,24 +142,24 @@ public class Superstructure extends SubsystemBase {
 
     public Command setGoal(Goal newGoal) {
         return Commands.either(
-                        this.runOnce(() -> this.nonDuckingGoal = newGoal)
-                                .unless(() -> nonDuckingGoal == Goal.COLLECTING && newGoal == Goal.PASSING),
+                        this.runOnce(() -> this.nonDuckingGoal = newGoal),
+                        // .unless(() -> nonDuckingGoal == Goal.COLLECTING && newGoal == Goal.PASSING),
                         this.runOnce(() -> this.goal = newGoal)
                                 .andThen(goalCommands.get(newGoal).get()),
                         underTrenchTrigger.and(() -> newGoal != Goal.DUCKING))
                 .withName("Set goal");
     }
 
-    public Command toggleCollecting() {
-        return Commands.either(stopCollecting(), this.setGoal(Goal.COLLECTING), () -> this.goal == Goal.COLLECTING)
-                .withName("Toggle collecting");
+    public Command togglePassing() {
+        return Commands.either(stopPassCollecting(), this.setGoal(Goal.PASSING), () -> this.goal == Goal.PASSING)
+                .withName("Toggle passing");
     }
 
-    /** Handle state logic for transitioning out of COLLECTING */
-    public Command stopCollecting() {
-        return Commands.either(this.setGoal(Goal.SCORING), this.setGoal(Goal.PASSING), activeInZoneTrigger)
-                .onlyIf(() -> this.goal == Goal.COLLECTING)
-                .withName("Stop collecting");
+    /** Handle state logic for transitioning out of PASSING/COLLECTING */
+    public Command stopPassCollecting() {
+        return Commands.either(this.setGoal(Goal.SCORING), this.setGoal(Goal.COLLECTING), activeInZoneTrigger)
+                .onlyIf(() -> this.goal == Goal.PASSING || this.goal == Goal.COLLECTING)
+                .withName("Stop passing");
     }
 
     public Command duck() {
