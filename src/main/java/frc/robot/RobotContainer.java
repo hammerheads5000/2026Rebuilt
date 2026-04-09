@@ -318,12 +318,12 @@ public class RobotContainer {
         SmartDashboard.putData(
                 "Overrides/Manual Pass",
                 turret.manualPass()
-                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
+                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVATING))
                         .finallyDo(() -> indexer.stop()));
         SmartDashboard.putData(
                 "Overrides/Manual Score",
                 turret.manualScore()
-                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE))
+                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVATING))
                         .finallyDo(() -> indexer.stop()));
 
         SmartDashboard.putData("Overrides/Slow Drive", teleopDrive.slowDownCommand());
@@ -405,7 +405,7 @@ public class RobotContainer {
 
         indexTrigger.onTrue(Commands.either(
                 indexer.setGoal(IndexerGoal.IDLE),
-                indexer.setGoal(IndexerGoal.ACTIVE),
+                indexer.setGoal(IndexerGoal.ACTIVATING),
                 () -> indexer.getGoal() == IndexerGoal.ACTIVE));
 
         // climbTrigger.toggleOnTrue(
@@ -416,13 +416,13 @@ public class RobotContainer {
         manualScoreTrigger
                 .and(() -> turret.getGoal() == TurretGoal.MANUAL_OVERRIDE)
                 .whileTrue(turret.manualScore()
-                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE).asProxy())
+                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVATING).asProxy())
                         .finallyDo(() -> indexer.stop())
                         .withName("Manual Score"));
         manualPassTrigger
                 .and(() -> turret.getGoal() == TurretGoal.MANUAL_OVERRIDE)
                 .whileTrue(turret.manualPass()
-                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVE).asProxy())
+                        .beforeStarting(indexer.setGoal(IndexerGoal.ACTIVATING).asProxy())
                         .finallyDo(() -> indexer.stop())
                         .withName("Manual Pass"));
 

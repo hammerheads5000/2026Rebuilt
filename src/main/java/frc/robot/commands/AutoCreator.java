@@ -461,7 +461,7 @@ public class AutoCreator {
                             turret.setGoal(TurretGoal.IDLE).asProxy());
                 } else {
                     toAdd = toAdd.deadlineFor(
-                            indexer.setGoal(IndexerGoal.ACTIVE).asProxy(),
+                            indexer.setGoal(IndexerGoal.ACTIVATING).asProxy(),
                             turret.setGoal(TurretGoal.PASSING).asProxy());
                 }
             } else if (!StartEndPoint.OUTSIDE_ZONE.contains(path.start)
@@ -482,7 +482,7 @@ public class AutoCreator {
                                         ? Commands.waitSeconds(1)
                                         : Commands.none(),
                                 turret.setGoal(TurretGoal.SCORING).asProxy(),
-                                indexer.setGoal(IndexerGoal.ACTIVE).asProxy())));
+                                indexer.setGoal(IndexerGoal.ACTIVATING).asProxy())));
             }
 
             if (path.dumpTime > 0) {
@@ -512,14 +512,14 @@ public class AutoCreator {
                         indexer.setGoal(IndexerGoal.IDLE).asProxy(),
                         toAdd.alongWith(intakes.deployRight()),
                         turret.setGoal(TurretGoal.SCORING).asProxy(),
-                        indexer.setGoal(IndexerGoal.ACTIVE).asProxy());
+                        indexer.setGoal(IndexerGoal.ACTIVATING).asProxy());
             }
 
             if (path.end == StartEndPoint.OUTPOST) {
                 toAdd = toAdd.alongWith(intakes.deployLeft())
                         .andThen(
                                 turret.setGoal(TurretGoal.SCORING).asProxy(),
-                                indexer.setGoal(IndexerGoal.ACTIVE).asProxy());
+                                indexer.setGoal(IndexerGoal.ACTIVATING).asProxy());
             }
 
             commands.add(toAdd);
@@ -532,7 +532,8 @@ public class AutoCreator {
                     Commands.parallel(
                             turret.setGoal(TurretGoal.SCORING).asProxy(),
                             Commands.waitTime(AutoConstants.START_SPIN_UP_TIME)
-                                    .andThen(indexer.setGoal(IndexerGoal.ACTIVE).asProxy()),
+                                    .andThen(indexer.setGoal(IndexerGoal.ACTIVATING)
+                                            .asProxy()),
                             Commands.waitTime(AutoConstants.START_SPIN_UP_TIME.plus(AutoConstants.START_DUMP_TIME))));
         } else {
             commands.add(

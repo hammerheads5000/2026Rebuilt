@@ -96,7 +96,7 @@ public class SystemChecks {
     /** Activate indexer for 3 seconds */
     public Command indexer() {
         return Commands.sequence(
-                indexer.setGoal(IndexerGoal.ACTIVE), Commands.waitSeconds(3), indexer.setGoal(IndexerGoal.IDLE));
+                indexer.setGoal(IndexerGoal.ACTIVATING), Commands.waitSeconds(3), indexer.setGoal(IndexerGoal.IDLE));
     }
 
     /** Zero climber, then extend, then stow */

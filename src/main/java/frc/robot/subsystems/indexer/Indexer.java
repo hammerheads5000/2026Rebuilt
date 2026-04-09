@@ -2,16 +2,19 @@ package frc.robot.subsystems.indexer;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IndexerConstants.FEED_STALL_ANGULAR_VELOCITY;
 import static frc.robot.Constants.IndexerConstants.FEED_STALL_CURRENT;
 import static frc.robot.Constants.IndexerConstants.FEED_VOLTAGE;
 import static frc.robot.Constants.IndexerConstants.HOOK_STALL_ANGULAR_VELOCITY;
 import static frc.robot.Constants.IndexerConstants.HOOK_STALL_CURRENT;
+import static frc.robot.Constants.IndexerConstants.SPIN_RAMP;
 import static frc.robot.Constants.IndexerConstants.SPIN_VOLTAGE;
 import static frc.robot.Constants.IndexerConstants.UNJAM_FEED_VOLTAGE;
 import static frc.robot.Constants.IndexerConstants.UNJAM_SPIN_VOLTAGE;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,10 +35,13 @@ public class Indexer extends SubsystemBase {
     private final IndexerIO io;
     private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 
-    private final LoggedTunableNumber spinVoltage =
+    private final LoggedTunableNumber spinVoltageTunable =
             new LoggedTunableNumber("Indexer/Spin Voltage", SPIN_VOLTAGE.in(Volts));
-    private final LoggedTunableNumber feedVoltage =
+    private final LoggedTunableNumber feedVoltageTunable =
             new LoggedTunableNumber("Indexer/Feed Voltage", FEED_VOLTAGE.in(Volts));
+
+    private final SlewRateLimiter spinVoltageLimiter =
+            new SlewRateLimiter(spinVoltageTunable.get() / SPIN_RAMP.in(Seconds));
 
     @AutoLogOutput
     private final Trigger hookStallTrigger = new Trigger(
@@ -68,7 +74,7 @@ public class Indexer extends SubsystemBase {
         hookStallTrigger
                 .or(feedStallTrigger)
                 .and(() -> this.goal == IndexerGoal.ACTIVE)
-                .onTrue(unjam());
+                .onTrue(setGoal(IndexerGoal.UNJAMMING));
 
         SmartDashboard.putData("Overrides/Indexer", disable());
     }
@@ -83,9 +89,10 @@ public class Indexer extends SubsystemBase {
                         ? "None"
                         : this.getCurrentCommand().getName());
 
-        if ((spinVoltage.hasChanged(hashCode()) || feedVoltage.hasChanged(hashCode())) && goal == IndexerGoal.ACTIVE) {
-            io.setSpinOutput(Volts.of(spinVoltage.get()));
-            io.setFeedOutput(Volts.of(feedVoltage.get()));
+        if ((spinVoltageTunable.hasChanged(hashCode()) || feedVoltageTunable.hasChanged(hashCode()))
+                && (goal == IndexerGoal.ACTIVE || goal == IndexerGoal.ACTIVATING)) {
+            io.setSpinOutput(Volts.of(spinVoltageTunable.get()));
+            io.setFeedOutput(Volts.of(feedVoltageTunable.get()));
         }
 
         visualizer.update(inputs.spinVelocity);
@@ -94,24 +101,31 @@ public class Indexer extends SubsystemBase {
         hookDisconnectedAlert.set(!inputs.spinMotorConnected && Constants.CURRENT_MODE != Constants.Mode.SIM);
     }
 
-    public Command setGoal(IndexerGoal goal) {
+    public Command setGoal(IndexerGoal newGoal) {
         return Commands.defer(
                         () -> {
+                            if (this.goal != newGoal) {
+                                return Commands.none();
+                            }
                             Command toSchedule = Commands.none();
 
-                            if (goal == IndexerGoal.ACTIVE && this.goal != IndexerGoal.ACTIVE) {
-                                // if (this.goal != IndexerGoal.ACTIVE) {
-                                toSchedule = activate();
-                                // } else {
-                                //     toSchedule = this.runOnce(() -> {
-                                //         io.setSpinOutput(Volts.of(spinVoltage.get()));
-                                //         io.setFeedOutput(Volts.of(feedVoltage.get()));
-                                //     });
-                                // }
-                            } else if (goal == IndexerGoal.IDLE) {
-                                toSchedule = this.runOnce(this::stop);
+                            switch (newGoal) {
+                                case ACTIVATING:
+                                    toSchedule = activate();
+                                    break;
+                                case ACTIVE:
+                                    break;
+                                case DISABLED:
+                                    toSchedule = this.runOnce(this::stop);
+                                    break;
+                                case IDLE:
+                                    toSchedule = this.runOnce(this::stop);
+                                    break;
+                                case UNJAMMING:
+                                    toSchedule = unjam();
+                                    break;
                             }
-                            this.goal = goal;
+                            this.goal = newGoal;
                             return new ScheduleCommand(toSchedule);
                         },
                         Set.of(this))
@@ -143,14 +157,19 @@ public class Indexer extends SubsystemBase {
         return Commands.sequence(
                         this.runOnce(() -> io.setFeedOutput(UNJAM_FEED_VOLTAGE)),
                         Commands.waitSeconds(0.1),
-                        Commands.runOnce(() -> io.setFeedOutput(Volts.of(feedVoltage.get()))),
+                        this.runOnce(() -> io.setFeedOutput(Volts.of(feedVoltageTunable.get()))),
                         Commands.waitSeconds(0.2),
-                        Commands.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
+                        this.startRun(
+                                        () -> spinVoltageLimiter.reset(0),
+                                        () -> io.setSpinOutput(
+                                                Volts.of(spinVoltageLimiter.calculate(spinVoltageTunable.get()))))
+                                .withTimeout(SPIN_RAMP))
                 .finallyDo((interrupted) -> {
                     if (interrupted) {
                         io.stopFeed();
                         io.stopSpin();
                     }
+                    goal = IndexerGoal.ACTIVE;
                 })
                 // .andThen(Commands.waitUntil(() -> inputs.feedVelocity.abs(RPM) >= FEED_THRESHOLD.in(RPM)))
                 // .andThen(this.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
@@ -165,15 +184,17 @@ public class Indexer extends SubsystemBase {
                         }),
                         Commands.waitSeconds(0.2),
                         Commands.runOnce(() -> {
-                            io.setFeedOutput(Volts.of(feedVoltage.get()));
+                            io.setFeedOutput(Volts.of(feedVoltageTunable.get()));
                             io.setSpinOutput(Volts.of(0));
                         }),
                         Commands.waitSeconds(0.1),
-                        Commands.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltage.get()))))
+                        Commands.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltageTunable.get()))))
                 .finallyDo((interrupted) -> {
                     if (interrupted) {
                         io.stopFeed();
                         io.stopSpin();
+                    } else {
+                        goal = IndexerGoal.ACTIVE;
                     }
                 })
                 .withName("Indexer Unjam");
@@ -186,7 +207,9 @@ public class Indexer extends SubsystemBase {
     }
 
     public enum IndexerGoal {
+        ACTIVATING,
         ACTIVE,
+        UNJAMMING,
         IDLE,
         DISABLED // manual override
     }
