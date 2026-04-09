@@ -379,10 +379,11 @@ public final class Constants {
         public static final int FLYWHEEL_FOLLOWER_ID = 25;
         public static final int ENCODER_ID = 23;
 
-        public static final double ENCODER_TO_TURRET_RATIO = 180.0 / 27 * 1.0 / 23; // 180:27 big gear, 1:23 cycloidal
-        public static final double TURN_TO_TURRET_RATIO = 28.0 / 14 * 180.0 / 10; // 28:14 gear, 180:10 big gear
+        public static final double ENCODER_TO_TURRET_RATIO =
+                180.0 / 27.0 * 1.0 / 23.0; // 180:27 big gear, 1:23 cycloidal
+        public static final double TURN_TO_TURRET_RATIO = 30.0 / 12.0 * 180.0 / 10.0; // 28:14 gear, 180:10 big gear
         public static final double HOOD_MOTOR_RATIO =
-                50.0 / 14 * 22.0 / 20 * 156.0 / 10; // 50:14 gear, 22:20 belt, 156:10 rack
+                50.0 / 14.0 * 22.0 / 20.0 * 156.0 / 10.0; // 50:14 gear, 22:20 belt, 156:10 rack
 
         public static final Slot0Configs TURN_GAINS =
                 new Slot0Configs().withKP(100).withKD(0.0).withKS(0.6).withKV(2.7);
@@ -655,6 +656,7 @@ public final class Constants {
         public static final Voltage FEED_VOLTAGE = Volts.of(6);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-5);
+        public static final Time SPIN_RAMP = Seconds.of(2);
 
         public static final AngularVelocity HOOK_STALL_ANGULAR_VELOCITY = RPM.of(1000);
         public static final Current HOOK_STALL_CURRENT = Amps.of(30);

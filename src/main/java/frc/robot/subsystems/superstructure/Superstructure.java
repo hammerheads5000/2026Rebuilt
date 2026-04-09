@@ -93,12 +93,12 @@ public class Superstructure extends SubsystemBase {
         goalCommands = Map.of(
                 Goal.SCORING,
                 () -> Commands.sequence(
-                                this.turret.setGoal(TurretGoal.SCORING), this.indexer.setGoal(IndexerGoal.ACTIVE))
+                                this.turret.setGoal(TurretGoal.SCORING), this.indexer.setGoal(IndexerGoal.ACTIVATING))
                         .withName("Start scoring"),
                 Goal.PASSING,
                 () -> Commands.sequence(
                                 this.turret.setGoal(TurretGoal.PASSING).onlyIf(inAllianceZoneTrigger.negate()),
-                                this.indexer.setGoal(IndexerGoal.ACTIVE).onlyIf(inAllianceZoneTrigger.negate()))
+                                this.indexer.setGoal(IndexerGoal.ACTIVATING).onlyIf(inAllianceZoneTrigger.negate()))
                         .withName("Start passing"),
                 Goal.COLLECTING,
                 () -> Commands.sequence(this.turret.setGoal(TurretGoal.IDLE), this.indexer.setGoal(IndexerGoal.IDLE))
@@ -121,8 +121,8 @@ public class Superstructure extends SubsystemBase {
         behindTowerTrigger.and(DriverStation::isTeleop).onTrue(indexer.setGoal(IndexerGoal.IDLE));
         behindTowerTrigger
                 .and(DriverStation::isTeleop)
-                .onFalse(
-                        indexer.setGoal(IndexerGoal.ACTIVE).onlyIf(() -> goal == Goal.SCORING || goal == Goal.PASSING));
+                .onFalse(indexer.setGoal(IndexerGoal.ACTIVATING)
+                        .onlyIf(() -> goal == Goal.SCORING || goal == Goal.PASSING));
 
         // turret.underTrenchTrigger.onTrue(indexer.runOnce(() -> indexer.stop(false)));
         // turret.underTrenchTrigger.onFalse(Commands.defer(() -> indexer.setGoal(indexer.getGoal()), Set.of()));
