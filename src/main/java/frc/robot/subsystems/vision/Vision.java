@@ -131,7 +131,7 @@ public class Vision extends SubsystemBase {
                 }
 
                 // Calculate standard deviations
-                double stdDevFactor = Math.pow(observation.averageTagDistance(), 2.0) / observation.tagCount();
+                double stdDevFactor = Math.pow(observation.averageTagDistance(), 3.0) / observation.tagCount();
 
                 // Add tag poses
                 for (int tagId : inputs[cameraIndex].tagIds) {

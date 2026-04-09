@@ -34,7 +34,7 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlignToClimb;
 import frc.robot.commands.AutoClimb;
-import frc.robot.commands.AutoCreator;
+// import frc.robot.commands.AutoCreator;
 import frc.robot.commands.SystemChecks;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.climber.Climber;
@@ -111,11 +111,12 @@ public class RobotContainer {
     private final Trigger switchIntakesTrigger = controller.rightBumper();
     private final Trigger intakePressTrigger = controller.leftBumper();
     private final Trigger passCollectTrigger = controller.leftTrigger();
-    private final Trigger turretModeTrigger = controller.start();
-    private final Trigger indexTrigger = controller.back();
+    //     private final Trigger turretModeTrigger = controller.start();
+    //     private final Trigger indexTrigger = controller.back();
     private final Trigger speedUpTrigger = controller.rightTrigger();
     private final Trigger intakeReverseTrigger = controller.b();
     private final Trigger slowDownTrigger;
+    private final Trigger moveTurretToZero = controller.back();
     //     private final Trigger climbTrigger = controller.y();
     //     private final Trigger extendTrigger = controller.start();
     //     private final Trigger stowTrigger = controller.back();
@@ -143,7 +144,7 @@ public class RobotContainer {
     private final LoggedDashboardChooser<Command> autoChooser;
     private final LoggedNetworkBoolean usePrebuiltAuto;
 
-    public final AutoCreator autoCreator;
+    //     public final AutoCreator autoCreator;
 
     public final SystemChecks systemChecks;
 
@@ -263,7 +264,7 @@ public class RobotContainer {
         // autoChooser.addOption("Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // configure autos
-        autoCreator = new AutoCreator();
+        // autoCreator = new AutoCreator();
         AutoBuilder.configure(
                 drive::getPose,
                 drive::setPose,
@@ -284,22 +285,22 @@ public class RobotContainer {
 
         autoChooser.addDefaultOption("None", Commands.none());
 
-        for (String option : AutoConstants.PREBUILT_AUTOS.keySet()) {
-            autoChooser.addOption(
-                    option,
-                    AutoCreator.buildAuto(
-                            drive,
-                            vision,
-                            intakes,
-                            indexer,
-                            turret,
-                            climber,
-                            superstructure,
-                            AutoCreator.autoPathsFromString(
-                                    AutoConstants.PREBUILT_AUTOS.get(option).substring(2)),
-                            false,
-                            AutoConstants.PREBUILT_AUTOS.get(option).charAt(0) == 'L'));
-        }
+        // for (String option : AutoConstants.PREBUILT_AUTOS.keySet()) {
+        //     autoChooser.addOption(
+        //             option,
+        //             AutoCreator.buildAuto(
+        //                     drive,
+        //                     vision,
+        //                     intakes,
+        //                     indexer,
+        //                     turret,
+        //                     climber,
+        //                     superstructure,
+        //                     AutoCreator.autoPathsFromString(
+        //                             AutoConstants.PREBUILT_AUTOS.get(option).substring(2)),
+        //                     false,
+        //                     AutoConstants.PREBUILT_AUTOS.get(option).charAt(0) == 'L'));
+        // }
 
         teleopDrive = new TeleopDrive(
                 drive, controller, intakes.left.deployedTrigger, intakes.right.deployedTrigger, vision::isEnabled);
@@ -401,15 +402,17 @@ public class RobotContainer {
         //         turret.setGoal(TurretGoal.IDLE),
         //         () -> turret.getGoal() == TurretGoal.IDLE));
 
-        turretModeTrigger.onTrue(Commands.either(
-                turret.setGoal(TurretGoal.IDLE),
-                turret.setGoal(TurretGoal.TUNING),
-                () -> turret.getGoal() == TurretGoal.TUNING));
+        // turretModeTrigger.onTrue(Commands.either(
+        //         turret.setGoal(TurretGoal.IDLE),
+        //         turret.setGoal(TurretGoal.TUNING),
+        //         () -> turret.getGoal() == TurretGoal.TUNING));
 
-        indexTrigger.onTrue(Commands.either(
-                indexer.setGoal(IndexerGoal.IDLE),
-                indexer.setGoal(IndexerGoal.ACTIVE),
-                () -> indexer.getGoal() == IndexerGoal.ACTIVE));
+        // indexTrigger.onTrue(Commands.either(
+        //         indexer.setGoal(IndexerGoal.IDLE),
+        //         indexer.setGoal(IndexerGoal.ACTIVE),
+        //         () -> indexer.getGoal() == IndexerGoal.ACTIVE));
+
+        moveTurretToZero.onTrue(turret.moveToZero());
 
         // climbTrigger.toggleOnTrue(
         //         intakes.setGoal(IntakesGoal.STOW).andThen(AutoClimb.getAutoClimbCommand(drive, vision, climber)));
@@ -493,9 +496,9 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        if (!usePrebuiltAuto.get()) {
-            return autoCreator.buildAuto(drive, vision, intakes, indexer, turret, climber, superstructure);
-        }
+        // if (!usePrebuiltAuto.get()) {
+        //     return autoCreator.buildAuto(drive, vision, intakes, indexer, turret, climber, superstructure);
+        // }
 
         return autoChooser.get();
     }

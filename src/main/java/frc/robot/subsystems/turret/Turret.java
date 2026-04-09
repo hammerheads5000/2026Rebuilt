@@ -415,6 +415,14 @@ public class Turret extends SubsystemBase {
                 }));
     }
 
+    public Command moveToZero() {
+        return this.runOnce(() -> {
+            io.setHoodAngle(MIN_HOOD_ANGLE);
+            io.stopFlywheel();
+            io.setTurnSetpoint(Radians.zero(), RadiansPerSecond.zero());
+        });
+    }
+
     private void updateTunables() {
         if (turnKP.hasChanged(hashCode())
                 || turnKD.hasChanged(hashCode())

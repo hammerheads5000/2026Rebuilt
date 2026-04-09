@@ -22,7 +22,6 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.units.measure.Angle;
@@ -39,7 +38,7 @@ public class TurretIOTalonFX implements TurretIO {
     private final TalonFX flywheelMotor;
     private final TalonFX flywheelFollowerMotor;
 
-    private final CANcoder encoder;
+    // private final CANcoder encoder;
 
     private final TalonFXConfiguration turnConfig;
     private final TalonFXConfiguration hoodConfig;
@@ -47,7 +46,7 @@ public class TurretIOTalonFX implements TurretIO {
     private final TalonFXConfiguration flywheelFollowerConfig;
 
     private final StatusSignal<Angle> turnPosition;
-    private final StatusSignal<Angle> turnEncoderPosition;
+    // private final StatusSignal<Angle> turnEncoderPosition;
     private final StatusSignal<Double> turnSetpoint;
     private final StatusSignal<AngularVelocity> turnVelocity;
     private final StatusSignal<Voltage> turnAppliedVolts;
@@ -90,7 +89,7 @@ public class TurretIOTalonFX implements TurretIO {
         hoodMotor = new TalonFX(HOOD_ID, CAN_FD_BUS);
         flywheelMotor = new TalonFX(FLYWHEEL_ID, CAN_FD_BUS);
         flywheelFollowerMotor = new TalonFX(FLYWHEEL_FOLLOWER_ID, CAN_FD_BUS);
-        encoder = new CANcoder(ENCODER_ID, CAN_FD_BUS);
+        // encoder = new CANcoder(ENCODER_ID, CAN_FD_BUS);
 
         turnConfig = new TalonFXConfiguration()
                 .withFeedback(TURN_FEEDBACK_CONFIGS)
@@ -128,10 +127,10 @@ public class TurretIOTalonFX implements TurretIO {
         PhoenixUtil.tryUntilOk(5, () -> hoodMotor.getConfigurator().apply(hoodConfig, 0.25));
         PhoenixUtil.tryUntilOk(5, () -> flywheelMotor.getConfigurator().apply(flywheelConfig, 0.25));
         PhoenixUtil.tryUntilOk(5, () -> flywheelFollowerMotor.getConfigurator().apply(flywheelFollowerConfig, 0.25));
-        PhoenixUtil.tryUntilOk(5, () -> encoder.getConfigurator().apply(ENCODER_CONFIGS));
+        // PhoenixUtil.tryUntilOk(5, () -> encoder.getConfigurator().apply(ENCODER_CONFIGS));
 
         turnPosition = turnMotor.getPosition();
-        turnEncoderPosition = encoder.getPosition();
+        // turnEncoderPosition = encoder.getPosition();
         turnSetpoint = turnMotor.getClosedLoopReference();
         turnVelocity = turnMotor.getVelocity();
         turnAppliedVolts = turnMotor.getMotorVoltage();
@@ -178,8 +177,7 @@ public class TurretIOTalonFX implements TurretIO {
                 flywheelSupplyCurrent,
                 flywheelFollowerCurrent,
                 flywheelFollowerSupplyCurrent);
-        PhoenixUtil.registerStatusSignals(
-                Hertz.of(250), turnPosition, turnEncoderPosition, turnVelocity, turnAppliedVolts);
+        PhoenixUtil.registerStatusSignals(Hertz.of(250), turnPosition, turnVelocity, turnAppliedVolts);
         turnMotor.optimizeBusUtilization();
         hoodMotor.optimizeBusUtilization();
         flywheelMotor.optimizeBusUtilization();
@@ -204,14 +202,14 @@ public class TurretIOTalonFX implements TurretIO {
     public void updateInputs(TurretIOInputs inputs) {
         inputs.turnMotorConnected = BaseStatusSignal.isAllGood(
                 turnPosition,
-                turnEncoderPosition,
+                // turnEncoderPosition,
                 turnSetpoint,
                 turnVelocity,
                 turnAppliedVolts,
                 turnCurrent,
                 turnSupplyCurrent);
         inputs.turnPosition = turnPosition.getValue();
-        inputs.turnEncoderPosition = turnEncoderPosition.getValue().div(ENCODER_TO_TURRET_RATIO);
+        // inputs.turnEncoderPosition = turnEncoderPosition.getValue().div(ENCODER_TO_TURRET_RATIO);
         inputs.turnSetpoint = Rotations.of(turnSetpoint.getValueAsDouble());
         inputs.turnVelocity = turnVelocity.getValue();
         inputs.turnAppliedVolts = turnAppliedVolts.getValue();
@@ -287,7 +285,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     @Override
     public void resetTurnEncoder() {
-        turnMotor.setPosition(encoder.getPosition().getValue().div(ENCODER_TO_TURRET_RATIO));
+        turnMotor.setPosition(0);
     }
 
     @Override

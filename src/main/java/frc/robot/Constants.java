@@ -150,10 +150,10 @@ public final class Constants {
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
 
         public static final Slot0Configs DRIVE_GAINS = new Slot0Configs()
-                .withKP(80)
+                .withKP(70)
                 .withKI(0.0)
                 .withKD(0.0)
-                .withKS(5) // 0.11367, 0.1301, 0.15349, 0.16187 -> 0.140
+                .withKS(4.3) // 0.11367, 0.1301, 0.15349, 0.16187 -> 0.140
                 .withKV(0.0) // 0.13879, 0.13555, 0.13894, 0.13109 -> 0.136
                 .withKA(0.0); // 0.016363, 0.016268, 0.0085342, 0.011084 -> 0.013
 
@@ -191,7 +191,7 @@ public final class Constants {
         // Every 1 rotation of the azimuth results in COUPLE_RATIO drive motor turns;
         private static final double COUPLE_RATIO = 3.375;
 
-        private static final double DRIVE_GEAR_RATIO = 6.03; // R2 gear ratio
+        private static final double DRIVE_GEAR_RATIO = 7.03; // R1 gear ratio
         private static final double STEER_GEAR_RATIO = 26.09090909090909;
         private static final Distance WHEEL_RADIUS = Inches.of(1.985);
 
@@ -485,16 +485,16 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            SHOT_MAP.put(6.3, new ShotData(RPM.of(3650 * 0.98), Degrees.of(43)));
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3660), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.1);
 
-            SHOT_MAP.put(5.63, new ShotData(RPM.of(3550 * 0.98), Degrees.of(42)));
+            SHOT_MAP.put(5.63, new ShotData(RPM.of(3550), Degrees.of(42)));
             TOF_MAP.put(5.63, 1.0917);
 
-            SHOT_MAP.put(5.25, new ShotData(RPM.of(3500 * 0.98), Degrees.of(39)));
+            SHOT_MAP.put(5.25, new ShotData(RPM.of(3500), Degrees.of(39)));
             TOF_MAP.put(5.25, 1.23);
 
-            SHOT_MAP.put(4.75, new ShotData(RPM.of(3440 * 0.98), Degrees.of(37)));
+            SHOT_MAP.put(4.75, new ShotData(RPM.of(3440 * 0.99), Degrees.of(37)));
             TOF_MAP.put(4.75, 1.158);
 
             SHOT_MAP.put(4.25, new ShotData(RPM.of(3300 * 0.98), Degrees.of(36)));
@@ -606,7 +606,7 @@ public final class Constants {
         public static final Voltage SPIN_VOLTAGE = Volts.of(12);
         public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-5);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(10);
-        public static final Distance STOW_TOLERANCE = Inches.of(0.5);
+        public static final Distance STOW_TOLERANCE = Inches.of(1.5);
         public static final Distance DEPLOY_TOLERANCE = Inches.of(1);
         public static final Distance DECOUPLE_DISTANCE = Inches.of(3);
 
@@ -651,8 +651,8 @@ public final class Constants {
         public static final CurrentLimitsConfigs FEED_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(100);
 
-        public static final Voltage SPIN_VOLTAGE = Volts.of(9);
-        public static final Voltage FEED_VOLTAGE = Volts.of(9);
+        public static final Voltage SPIN_VOLTAGE = Volts.of(4);
+        public static final Voltage FEED_VOLTAGE = Volts.of(6);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-5);
 
@@ -810,7 +810,7 @@ public final class Constants {
         public static final Distance BUMP_WIDTH = Inches.of(73); // y width of bump
 
         public static final Distance TRENCH_CENTER =
-                Dimensions.FULL_LENGTH.div(2).plus(Inches.of(3));
+                Dimensions.FULL_LENGTH.div(2).plus(Inches.of(7));
         // public static final Distance TRENCH_CENTER = TRENCH_WIDTH.div(2);
 
         public static final Distance TOWER_X = Inches.of(49.25);
