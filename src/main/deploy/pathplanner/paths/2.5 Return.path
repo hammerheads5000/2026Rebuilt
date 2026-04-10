@@ -3,37 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.2,
+        "x": 5.8,
         "y": 7.441
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.45,
-        "y": 7.441
+        "x": 6.769355555555555,
+        "y": 7.445555555555555
       },
       "isLocked": false,
-      "linkedName": "Dump Left"
+      "linkedName": "Trench Exit Left"
     },
     {
       "anchor": {
-        "x": 5.8,
-        "y": 7.441
+        "x": 7.863058712121212,
+        "y": 5.671070075757575
       },
       "prevControl": {
-        "x": 4.8,
-        "y": 7.441
+        "x": 7.8553435266774105,
+        "y": 6.416734876592162
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Trench Exit Left"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -90.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -46,13 +41,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 3.0,
-    "rotation": -90.0
+    "velocity": 0.0,
+    "rotation": -170.18069936124203
   },
   "reversed": false,
-  "folder": "Trench",
+  "folder": "Collection",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 3.0,
     "rotation": -90.0
   },
   "useDefaultConstraints": true

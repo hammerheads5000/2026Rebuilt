@@ -21,7 +21,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Left Greedy Flip"
+                        "pathName": "1 Greedy Flip"
                       }
                     }
                   ]
@@ -30,7 +30,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Deploy Left"
+                  "name": "Deploy"
                 }
               }
             ]
@@ -65,6 +65,74 @@
           "type": "wait",
           "data": {
             "waitTime": 4.0
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Dump Left to Trench Left Flipped"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Duck"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 Recycle Flipped Rev"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Trench Left to Dump Left Flipped"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 4.0
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Dump Left to Trench Left Flipped"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Duck"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3 Greedy Flipped Rev"
           }
         }
       ]
