@@ -93,21 +93,31 @@ public class Superstructure extends SubsystemBase {
         goalCommands = Map.of(
                 Goal.SCORING,
                 () -> Commands.sequence(
-                                this.turret.setGoal(TurretGoal.SCORING), this.indexer.setGoal(IndexerGoal.ACTIVATING))
+                                this.turret.setGoal(TurretGoal.SCORING),
+                                this.indexer.setGoal(IndexerGoal.ACTIVATING).asProxy())
                         .withName("Start scoring"),
                 Goal.PASSING,
                 () -> Commands.sequence(
                                 this.turret.setGoal(TurretGoal.PASSING).onlyIf(inAllianceZoneTrigger.negate()),
-                                this.indexer.setGoal(IndexerGoal.ACTIVATING).onlyIf(inAllianceZoneTrigger.negate()))
+                                this.indexer
+                                        .setGoal(IndexerGoal.ACTIVATING)
+                                        .onlyIf(inAllianceZoneTrigger.negate())
+                                        .asProxy())
                         .withName("Start passing"),
                 Goal.COLLECTING,
-                () -> Commands.sequence(this.turret.setGoal(TurretGoal.IDLE), this.indexer.setGoal(IndexerGoal.IDLE))
+                () -> Commands.sequence(
+                                this.turret.setGoal(TurretGoal.IDLE),
+                                this.indexer.setGoal(IndexerGoal.IDLE).asProxy())
                         .withName("Start collecting"),
                 Goal.DUCKING,
-                () -> Commands.sequence(this.turret.setGoal(TurretGoal.DUCKING), this.indexer.setGoal(IndexerGoal.IDLE))
+                () -> Commands.sequence(
+                                this.turret.setGoal(TurretGoal.DUCKING),
+                                this.indexer.setGoal(IndexerGoal.IDLE).asProxy())
                         .withName("Start ducking"),
                 Goal.IDLE,
-                () -> Commands.sequence(this.turret.setGoal(TurretGoal.IDLE), this.indexer.setGoal(IndexerGoal.IDLE))
+                () -> Commands.sequence(
+                                this.turret.setGoal(TurretGoal.IDLE),
+                                this.indexer.setGoal(IndexerGoal.IDLE).asProxy())
                         .withName("Idle"));
 
         underTrenchTrigger = Zones.TRENCH_DUCK_ZONES.willContain(poseSupplier, fieldSpeedsSupplier, DUCK_TIME);

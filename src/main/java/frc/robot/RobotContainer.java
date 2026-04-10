@@ -11,6 +11,8 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -29,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ClimberConstants.ClimbPosition;
 import frc.robot.Constants.Dimensions;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.VisionConstants;
@@ -68,10 +71,10 @@ import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.FuelSim;
 import frc.robot.util.Zones;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -140,9 +143,10 @@ public class RobotContainer {
     private final Trigger zeroLeftIntake = pushButtons.button(4);
     private final Trigger zeroRightIntake = pushButtons.button(5);
 
+    private final BooleanSupplier isOnRightSide;
+
     // Dashboard inputs
-    private final LoggedDashboardChooser<Command> autoChooser;
-    private final LoggedNetworkBoolean usePrebuiltAuto;
+    private LoggedDashboardChooser<Command> autoChooser;
 
     //     public final AutoCreator autoCreator;
 
@@ -263,44 +267,8 @@ public class RobotContainer {
         // autoChooser.addOption("Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
         // autoChooser.addOption("Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
-        // configure autos
-        // autoCreator = new AutoCreator();
-        AutoBuilder.configure(
-                drive::getPose,
-                drive::setPose,
-                drive::getChassisSpeeds,
-                (speeds, feedforwards) -> drive.runVelocity(speeds, feedforwards),
-                new PPHolonomicDriveController(
-                        AutoConstants.PP_TRANSLATION_CONSTANTS, AutoConstants.PP_ROTATION_CONSTANTS),
-                AutoConstants.PP_CONFIG,
-                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-                drive);
-        PathPlannerLogging.setLogActivePathCallback(
-                (path) -> Logger.recordOutput("Odometry/Active Path", path.toArray(Pose2d[]::new)));
-        PathPlannerLogging.setLogTargetPoseCallback((target) -> Logger.recordOutput("Odometry/Target Pose", target));
-
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Prebuilt Autos");
-        usePrebuiltAuto = new LoggedNetworkBoolean("Autos/Use Prebuilt Autos", true);
-
-        autoChooser.addDefaultOption("None", Commands.none());
-
-        // for (String option : AutoConstants.PREBUILT_AUTOS.keySet()) {
-        //     autoChooser.addOption(
-        //             option,
-        //             AutoCreator.buildAuto(
-        //                     drive,
-        //                     vision,
-        //                     intakes,
-        //                     indexer,
-        //                     turret,
-        //                     climber,
-        //                     superstructure,
-        //                     AutoCreator.autoPathsFromString(
-        //                             AutoConstants.PREBUILT_AUTOS.get(option).substring(2)),
-        //                     false,
-        //                     AutoConstants.PREBUILT_AUTOS.get(option).charAt(0) == 'L'));
-        // }
 
         teleopDrive = new TeleopDrive(
                 drive, controller, intakes.left.deployedTrigger, intakes.right.deployedTrigger, vision::isEnabled);
@@ -340,8 +308,66 @@ public class RobotContainer {
         slowDownTrigger = new Trigger(() -> superstructure.getGoal() == Goal.SCORING);
         slowDownTrigger.whileTrue(teleopDrive.slowDownCommand());
 
+        isOnRightSide = () -> drive.getPose().getMeasureY().lt(FieldConstants.FIELD_WIDTH.div(2))
+                == (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue);
+
+        configureAutos();
+
         // Configure the button bindings
         configureButtonBindings();
+    }
+
+    private void configureAutos() {
+        AutoBuilder.configure(
+                drive::getPose,
+                drive::setPose,
+                drive::getChassisSpeeds,
+                (speeds, feedforwards) -> drive.runVelocity(speeds, feedforwards),
+                new PPHolonomicDriveController(
+                        AutoConstants.PP_TRANSLATION_CONSTANTS, AutoConstants.PP_ROTATION_CONSTANTS),
+                AutoConstants.PP_CONFIG,
+                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                drive);
+        PathPlannerLogging.setLogActivePathCallback(
+                (path) -> Logger.recordOutput("Odometry/Active Path", path.toArray(Pose2d[]::new)));
+        PathPlannerLogging.setLogTargetPoseCallback((target) -> Logger.recordOutput("Odometry/Target Pose", target));
+
+        NamedCommands.registerCommand(
+                "Deploy", Commands.either(intakes.deployRight(), intakes.deployLeft(), isOnRightSide));
+        NamedCommands.registerCommand(
+                "Deploy Rev", Commands.either(intakes.deployLeft(), intakes.deployRight(), isOnRightSide));
+        NamedCommands.registerCommand("Duck", turret.setGoal(TurretGoal.DUCKING).asProxy());
+        NamedCommands.registerCommand(
+                "Shoot",
+                Commands.either(
+                        superstructure.setGoal(Goal.SCORING).asProxy(),
+                        superstructure.setGoal(Goal.PASSING).asProxy(),
+                        superstructure.inAllianceZoneTrigger));
+
+        autoChooser.addDefaultOption("", Commands.none());
+
+        List<String> autoNames = AutoBuilder.getAllAutoNames();
+
+        for (String name : autoNames) {
+            if (!isAutoMirrorable(name)) {
+                autoChooser.addOption(name, new PathPlannerAuto(name));
+                continue;
+            }
+
+            autoChooser.addOption(name, new PathPlannerAuto(name));
+            autoChooser.addOption(name.replace("Left", "Right"), mirroredAuto(name));
+        }
+    }
+
+    private boolean isAutoMirrorable(String name) {
+        return name.contains("Left");
+    }
+
+    private PathPlannerAuto mirroredAuto(String name) {
+        PathPlannerAuto auto = new PathPlannerAuto(name, true);
+        auto.setName(name.replace("Left", "Right"));
+
+        return auto;
     }
 
     /**
@@ -499,7 +525,11 @@ public class RobotContainer {
         // if (!usePrebuiltAuto.get()) {
         //     return autoCreator.buildAuto(drive, vision, intakes, indexer, turret, climber, superstructure);
         // }
-
+        SmartDashboard.putStringArray(
+                "sdkfj",
+                autoChooser.get().getRequirements().stream()
+                        .map(s -> s.getName())
+                        .toArray(String[]::new));
         return autoChooser.get();
     }
 }
