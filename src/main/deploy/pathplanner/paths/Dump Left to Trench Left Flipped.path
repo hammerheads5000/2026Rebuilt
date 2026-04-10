@@ -45,7 +45,7 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Trench",
+  "folder": "Bump + Trench",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 90.0

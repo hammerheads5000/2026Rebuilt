@@ -16,19 +16,40 @@
     },
     {
       "anchor": {
-        "x": 3.5,
-        "y": 5.525899999999999
+        "x": 3.751,
+        "y": 5.526
       },
       "prevControl": {
-        "x": 4.5,
-        "y": 5.525899999999999
+        "x": 4.155832334460621,
+        "y": 5.526
+      },
+      "nextControl": {
+        "x": 3.214888283622867,
+        "y": 5.526
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.7,
+        "y": 5.022
+      },
+      "prevControl": {
+        "x": 2.9314103472714397,
+        "y": 5.433396172927003
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Bump Start Left"
+      "linkedName": "Bump Dump Left"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -90.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,12 +63,12 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -45.0
+    "rotation": -39.868438405802074
   },
   "reversed": false,
-  "folder": "Dumping",
+  "folder": "Bump + Trench",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 2.0,
     "rotation": -90.0
   },
   "useDefaultConstraints": true
