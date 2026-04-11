@@ -348,7 +348,9 @@ public class RobotContainer {
                                 Commands.waitUntil(superstructure.inAllianceZoneTrigger),
                                 turret.setGoal(TurretGoal.SCORING).asProxy()),
                         indexer.setGoal(IndexerGoal.ACTIVATING).asProxy(),
-                        intakes.press().asProxy()));
+                        Commands.repeatingSequence(
+                                Commands.waitSeconds(0.5),
+                                intakes.press().asProxy())));
 
         autoChooser.addDefaultOption("", Commands.none());
 
