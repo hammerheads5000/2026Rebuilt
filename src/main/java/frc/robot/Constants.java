@@ -22,6 +22,7 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GainSchedBehaviorValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
@@ -155,7 +156,9 @@ public final class Constants {
                 .withKD(0.0)
                 .withKS(4.3) // 0.11367, 0.1301, 0.15349, 0.16187 -> 0.140
                 .withKV(0.0) // 0.13879, 0.13555, 0.13894, 0.13109 -> 0.136
-                .withKA(0.0); // 0.016363, 0.016268, 0.0085342, 0.011084 -> 0.013
+                .withKA(0.0)
+                .withGainSchedBehavior(
+                        GainSchedBehaviorValue.ZeroOutput); // 0.016363, 0.016268, 0.0085342, 0.011084 -> 0.013
 
         private static final ClosedLoopOutputType STEER_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.TorqueCurrentFOC;
         private static final ClosedLoopOutputType DRIVE_CLOSED_LOOP_OUTPUT = ClosedLoopOutputType.TorqueCurrentFOC;
@@ -169,7 +172,7 @@ public final class Constants {
 
         private static final TalonFXConfiguration DRIVE_CONFIGS = new TalonFXConfiguration()
                 .withCurrentLimits(new CurrentLimitsConfigs()
-                        .withStatorCurrentLimit(Amps.of(80))
+                        .withStatorCurrentLimit(Amps.of(100))
                         .withStatorCurrentLimitEnable(true))
                 .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
 
@@ -848,8 +851,8 @@ public final class Constants {
                         1),
                 SwerveConstants.GET_MODULE_POSITIONS.get());
 
-        public static final PIDConstants PP_TRANSLATION_CONSTANTS = new PIDConstants(20, 0.05);
-        public static final PIDConstants PP_ROTATION_CONSTANTS = new PIDConstants(12, 0.05);
+        public static final PIDConstants PP_TRANSLATION_CONSTANTS = new PIDConstants(5, 0.05);
+        public static final PIDConstants PP_ROTATION_CONSTANTS = new PIDConstants(5, 0.05);
 
         public static final PathConstraints CONSTRAINTS = new PathConstraints(
                 MetersPerSecond.of(3),

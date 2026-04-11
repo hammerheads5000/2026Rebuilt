@@ -336,13 +336,19 @@ public class RobotContainer {
                 "Deploy", Commands.either(intakes.deployRight(), intakes.deployLeft(), isOnRightSide));
         NamedCommands.registerCommand(
                 "Deploy Rev", Commands.either(intakes.deployLeft(), intakes.deployRight(), isOnRightSide));
-        NamedCommands.registerCommand("Duck", turret.setGoal(TurretGoal.DUCKING).asProxy());
+        NamedCommands.registerCommand(
+                "Duck",
+                Commands.parallel(
+                        turret.setGoal(TurretGoal.DUCKING).asProxy(),
+                        indexer.setGoal(IndexerGoal.IDLE).asProxy()));
         NamedCommands.registerCommand(
                 "Shoot",
-                Commands.either(
-                        superstructure.setGoal(Goal.SCORING).asProxy(),
-                        superstructure.setGoal(Goal.PASSING).asProxy(),
-                        superstructure.inAllianceZoneTrigger));
+                Commands.parallel(
+                        Commands.sequence(
+                                Commands.waitUntil(superstructure.inAllianceZoneTrigger),
+                                turret.setGoal(TurretGoal.SCORING).asProxy()),
+                        indexer.setGoal(IndexerGoal.ACTIVATING).asProxy(),
+                        intakes.press().asProxy()));
 
         autoChooser.addDefaultOption("", Commands.none());
 

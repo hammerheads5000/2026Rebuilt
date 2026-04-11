@@ -3,71 +3,67 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.8,
-        "y": 0.65
+        "x": 3.535954922894425,
+        "y": 4.029620403321471
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.147930545712261,
-        "y": 0.7856130403968813
-      },
-      "isLocked": false,
-      "linkedName": "Trench Exit Right"
-    },
-    {
-      "anchor": {
-        "x": 8.628411290322582,
-        "y": 2.484322580645162
-      },
-      "prevControl": {
-        "x": 8.628411290322582,
-        "y": 2.045714322403789
-      },
-      "nextControl": {
-        "x": 8.628411290322582,
-        "y": 2.7530025550996036
+        "x": 4.535954922894427,
+        "y": 4.029620403321471
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.8328915662650616,
-        "y": 3.832515946137491
+        "x": 2.2018149466192183,
+        "y": 5.589703440094898
       },
       "prevControl": {
-        "x": 8.58423064651579,
-        "y": 3.9490503882532337
+        "x": 1.2018149466192183,
+        "y": 5.589703440094898
       },
       "nextControl": {
-        "x": 6.736128860794224,
-        "y": 3.662405494844653
+        "x": 3.2018149466192183,
+        "y": 5.589703440094898
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.99,
-        "y": 2.3784444444444444
+        "x": 2.5138315539739033,
+        "y": 2.6954804270462636
       },
       "prevControl": {
-        "x": 7.048667611622963,
-        "y": 3.0290077958894392
+        "x": 3.0245907473309623,
+        "y": 3.8036773428232515
+      },
+      "nextControl": {
+        "x": 2.0030723606168443,
+        "y": 1.5872835112692756
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.5138315539739033,
+        "y": 4.029620403321471
+      },
+      "prevControl": {
+        "x": 2.2584519572953736,
+        "y": 2.6685824436536176
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Bump Exit Right"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.777975133214923,
-      "rotationDegrees": -154.2672508931085
-    },
-    {
-      "waypointRelativePos": 2.0,
-      "rotationDegrees": 180.0
+      "waypointRelativePos": 1.1563055062166963,
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
@@ -82,14 +78,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 3.0,
-    "rotation": 90.0
+    "velocity": 0,
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Old Collection 2.0",
+  "folder": null,
   "idealStartingState": {
-    "velocity": 3.0,
-    "rotation": 90.0
+    "velocity": 0,
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

@@ -21,7 +21,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "1 Safe"
+                        "pathName": "1 Greedy Flip"
                       }
                     }
                   ]
@@ -43,7 +43,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Trench Left to Dump Left"
+                  "pathName": "Trench Left to Dump Left Flipped"
                 }
               },
               {
@@ -81,7 +81,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Dump Left to Trench Left"
+                  "pathName": "Dump Left to Trench Left Flipped"
                 }
               },
               {
@@ -96,13 +96,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2 Safe"
+            "pathName": "2 Recycle Greedy Flipped"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Trench Left to Dump Left"
+            "pathName": "Trench Left to Dump Left Flipped"
           }
         },
         {
@@ -131,7 +131,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Dump Left to Trench Left"
+                  "pathName": "Dump Left to Trench Left Flipped"
                 }
               },
               {
@@ -146,7 +146,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2.5 Return"
+            "pathName": "2.5 Recycle Flipped Rev"
           }
         }
       ]

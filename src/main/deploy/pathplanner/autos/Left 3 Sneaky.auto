@@ -50,15 +50,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              }
+            ]
           }
         },
         {
@@ -69,6 +76,12 @@
                 "type": "path",
                 "data": {
                   "pathName": "Bump Dump Left to Bump Left Flipped"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Duck"
                 }
               }
             ]
@@ -87,15 +100,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              }
+            ]
           }
         },
         {
@@ -106,6 +126,12 @@
                 "type": "path",
                 "data": {
                   "pathName": "Bump Dump Left to Bump Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Duck"
                 }
               }
             ]
