@@ -92,6 +92,7 @@ public class Robot extends LoggedRobot {
         PhoenixUtil.refreshAll();
 
         VirtualPD.logTotalCurrent();
+        robotContainer.leds.periodic();
 
         // Runs the Scheduler. This is responsible for polling buttons, adding
         // newly-scheduled commands, running already-scheduled commands, removing

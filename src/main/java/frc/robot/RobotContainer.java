@@ -40,6 +40,7 @@ import frc.robot.commands.AutoClimb;
 // import frc.robot.commands.AutoCreator;
 import frc.robot.commands.SystemChecks;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberIO;
 import frc.robot.subsystems.climber.ClimberIOSim;
@@ -91,6 +92,7 @@ public class RobotContainer {
     private final Climber climber;
     private final Superstructure superstructure;
     private final Vision vision;
+    public final Leds leds;
 
     // Controller
     private final CommandXboxController controller = new CommandXboxController(0);
@@ -254,6 +256,8 @@ public class RobotContainer {
         }
 
         superstructure = new Superstructure(turret, indexer, drive::getPose, drive::getFieldSpeeds);
+
+        leds = new Leds();
 
         // Set up SysId routines
         // autoChooser.addOption(
