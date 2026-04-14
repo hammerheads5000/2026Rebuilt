@@ -1,0 +1,247 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.8,
+        "y": 7.55
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.921193181818181,
+        "y": 7.523068181818182
+      },
+      "isLocked": false,
+      "linkedName": "Trench Exit Angled"
+    },
+    {
+      "anchor": {
+        "x": 7.979327651515151,
+        "y": 6.418513257575757
+      },
+      "prevControl": {
+        "x": 7.713570075757577,
+        "y": 7.033077651515152
+      },
+      "nextControl": {
+        "x": 8.273051511166718,
+        "y": 5.739276832131502
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.186950757575758,
+        "y": 4.475160984848484
+      },
+      "prevControl": {
+        "x": 8.62711174242424,
+        "y": 5.272433712121212
+      },
+      "nextControl": {
+        "x": 7.863337965439943,
+        "y": 3.8889944179609666
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.78341856060606,
+        "y": 4.0266950757575755
+      },
+      "prevControl": {
+        "x": 7.256799242424242,
+        "y": 3.7526325757575756
+      },
+      "nextControl": {
+        "x": 6.310037878787879,
+        "y": 4.300757575757576
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.476136363636364,
+        "y": 5.637850378787878
+      },
+      "prevControl": {
+        "x": 6.347562564882212,
+        "y": 4.724976407633419
+      },
+      "nextControl": {
+        "x": 6.559185606060608,
+        "y": 6.227499999999999
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.979327651515151,
+        "y": 6.069706439393939
+      },
+      "prevControl": {
+        "x": 6.608332711400446,
+        "y": 6.272816800892415
+      },
+      "nextControl": {
+        "x": 8.876259469696969,
+        "y": 5.93682765151515
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.186950757575758,
+        "y": 7.55
+      },
+      "prevControl": {
+        "x": 9.175236742424241,
+        "y": 7.514763257575758
+      },
+      "nextControl": {
+        "x": 7.198664772727275,
+        "y": 7.585236742424241
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.185464015151515,
+        "y": 7.441
+      },
+      "prevControl": {
+        "x": 6.151889026107945,
+        "y": 7.6887351814150025
+      },
+      "nextControl": {
+        "x": 6.219039004195086,
+        "y": 7.193264818584997
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.979327651515151,
+        "y": 7.307140151515151
+      },
+      "prevControl": {
+        "x": 7.979327651515151,
+        "y": 7.057140151515151
+      },
+      "nextControl": {
+        "x": 7.979327651515151,
+        "y": 7.557140151515151
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.8,
+        "y": 7.441
+      },
+      "prevControl": {
+        "x": 7.245056818181817,
+        "y": 7.604963068181817
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Trench Exit Left Flipped"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.1347517730496388,
+      "rotationDegrees": 175.3952162619163
+    },
+    {
+      "waypointRelativePos": 2.7148936170212323,
+      "rotationDegrees": 130.77371234828925
+    },
+    {
+      "waypointRelativePos": 3.719148936170206,
+      "rotationDegrees": 88.76460140860353
+    },
+    {
+      "waypointRelativePos": 5.987234042553194,
+      "rotationDegrees": 179.1907974760496
+    },
+    {
+      "waypointRelativePos": 7.034042553191572,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 8.323404255319177,
+      "rotationDegrees": 90.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.196930946291549,
+      "maxWaypointRelativePos": 2.409207161125335,
+      "constraints": {
+        "maxVelocity": 2.5,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 3.9744245524296975,
+      "maxWaypointRelativePos": 5.739130434782606,
+      "constraints": {
+        "maxVelocity": 2.0,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 7.3196930946291126,
+      "maxWaypointRelativePos": 9.0,
+      "constraints": {
+        "maxVelocity": 2.5,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 3.0,
+    "rotation": 90.0
+  },
+  "reversed": false,
+  "folder": "Collection",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": false
+}

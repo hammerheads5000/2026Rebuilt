@@ -36,6 +36,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import frc.robot.Constants;
 import frc.robot.util.PhoenixUtil;
@@ -60,6 +61,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     private final StatusSignal<Current> spinCurrent;
     private final StatusSignal<Current> spinSupplyCurrent;
     private final StatusSignal<Voltage> spinAppliedVolts;
+    private final StatusSignal<Temperature> spinTemp;
 
     private final MotionMagicVoltage rackPositionRequest = new MotionMagicVoltage(0);
     private final VoltageOut rackVoltageRequest = new VoltageOut(0);
@@ -110,6 +112,7 @@ public class IntakeIOTalonFX implements IntakeIO {
         this.spinCurrent = spinMotor.getStatorCurrent();
         this.spinSupplyCurrent = spinMotor.getSupplyCurrent();
         this.spinAppliedVolts = spinMotor.getMotorVoltage();
+        this.spinTemp = spinMotor.getDeviceTemp();
 
         PhoenixUtil.registerStatusSignals(
                 Hertz.of(50),
@@ -158,11 +161,12 @@ public class IntakeIOTalonFX implements IntakeIO {
         inputs.rackAppliedVolts = rackAppliedVolts.getValue();
 
         inputs.spinMotorConnected =
-                BaseStatusSignal.isAllGood(spinVelocity, spinCurrent, spinSupplyCurrent, spinAppliedVolts);
+                BaseStatusSignal.isAllGood(spinVelocity, spinCurrent, spinSupplyCurrent, spinAppliedVolts, spinTemp);
         inputs.spinVelocity = spinVelocity.getValue();
         inputs.spinCurrent = spinCurrent.getValue();
         inputs.spinSupplyCurrent = spinSupplyCurrent.getValue();
         inputs.spinAppliedVolts = spinAppliedVolts.getValue();
+        inputs.spinTemp = spinTemp.getValue();
     }
 
     @Override

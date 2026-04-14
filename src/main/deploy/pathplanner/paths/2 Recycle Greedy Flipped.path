@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.769355555555555,
-        "y": 7.445555555555555
+        "x": 7.226358244365363,
+        "y": 7.461803084223013
       },
       "isLocked": false,
       "linkedName": "Trench Exit Left Flipped"
     },
     {
       "anchor": {
-        "x": 6.325983333329125,
-        "y": 6.091077777775224
+        "x": 6.301067615658363,
+        "y": 6.052348754448399
       },
       "prevControl": {
-        "x": 6.546625520452706,
-        "y": 6.621998040541343
+        "x": 6.6204460854134615,
+        "y": 6.583856979045654
       },
       "nextControl": {
-        "x": 6.014161111106903,
-        "y": 5.340755555553001
+        "x": 5.882564563847548,
+        "y": 5.355877842595555
       },
       "isLocked": false,
       "linkedName": null
@@ -68,8 +68,8 @@
         "y": 7.441
       },
       "prevControl": {
-        "x": 7.441542111506526,
-        "y": 7.472562277580071
+        "x": 7.516856465005931,
+        "y": 7.451043890865955
       },
       "nextControl": null,
       "isLocked": false,
@@ -77,6 +77,10 @@
     }
   ],
   "rotationTargets": [
+    {
+      "waypointRelativePos": 0.1705150976909538,
+      "rotationDegrees": 90.0
+    },
     {
       "waypointRelativePos": 1.477797513321492,
       "rotationDegrees": 174.32595878884362
@@ -108,8 +112,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 4.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

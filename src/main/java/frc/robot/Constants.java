@@ -123,18 +123,18 @@ public final class Constants {
     }
 
     public static class SwerveConstants {
-        public static final LinearVelocity DEFAULT_DRIVE_SPEED = MetersPerSecond.of(3);
-        public static final AngularVelocity DEFAULT_ROT_SPEED = RotationsPerSecond.of(0.75);
+        public static final LinearVelocity DEFAULT_DRIVE_SPEED = MetersPerSecond.of(3.5);
+        public static final AngularVelocity DEFAULT_ROT_SPEED = RotationsPerSecond.of(1.5);
 
         public static final LinearVelocity FAST_DRIVE_SPEED = MetersPerSecond.of(6);
-        public static final AngularVelocity FAST_ROT_SPEED = RotationsPerSecond.of(1.5);
+        public static final AngularVelocity FAST_ROT_SPEED = RotationsPerSecond.of(2);
 
         public static final LinearAcceleration MAX_TELEOP_ACCEL = MetersPerSecondPerSecond.of(25);
 
         public static final LinearVelocity SLOW_DRIVE_SPEED = MetersPerSecond.of(2);
         public static final AngularVelocity SLOW_ROT_SPEED = RotationsPerSecond.of(0.5);
 
-        public static final LinearAcceleration SLOW_TELEOP_ACCEL = MetersPerSecondPerSecond.of(8);
+        public static final LinearAcceleration SLOW_TELEOP_ACCEL = MetersPerSecondPerSecond.of(4);
 
         public static final AngularVelocity MAX_MODULE_ROT_SPEED = RotationsPerSecond.of(5);
 
@@ -453,8 +453,8 @@ public final class Constants {
         public static final Angle MAX_TURN_ANGLE = Degrees.of(195);
         public static final Angle TURNAROUND_ZONE = Degrees.of(30);
 
-        public static final Distance EXTRA_DUCK_DISTANCE = Meters.of(0.3);
-        public static final Time DUCK_TIME = Seconds.of(0.2);
+        public static final Distance EXTRA_DUCK_DISTANCE = Meters.of(0.5);
+        public static final Time DUCK_TIME = Seconds.of(0.4);
 
         public static final Angle MIN_HOOD_ANGLE = Degrees.of(6.24);
         public static final Angle MAX_HOOD_ANGLE = Degrees.of(47);
@@ -821,7 +821,7 @@ public final class Constants {
         public static final Distance TOWER_X = Inches.of(49.25);
         public static final Distance TOWER_CENTER_Y = FIELD_WIDTH.div(2).minus(Inches.of(11.46));
         public static final Distance TOWER_CENTER_X = Inches.of(18);
-        public static final Distance TOWER_WIDTH = Inches.of(47);
+        public static final Distance TOWER_WIDTH = Inches.of(51);
     }
 
     public static class AutoConstants {

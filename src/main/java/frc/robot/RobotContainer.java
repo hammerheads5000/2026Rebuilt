@@ -9,6 +9,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -259,6 +261,8 @@ public class RobotContainer {
 
         leds = new Leds();
 
+        RobotController.setBrownoutVoltage(Volts.of(6));
+
         // Set up SysId routines
         // autoChooser.addOption(
         //         "Drive Wheel Radius Characterization", DriveCharacterization.wheelRadiusCharacterization(drive));
@@ -352,9 +356,17 @@ public class RobotContainer {
                                 Commands.waitUntil(superstructure.inAllianceZoneTrigger),
                                 turret.setGoal(TurretGoal.SCORING).asProxy()),
                         indexer.setGoal(IndexerGoal.ACTIVATING).asProxy(),
-                        Commands.repeatingSequence(
-                                Commands.waitSeconds(0.5),
-                                intakes.press().asProxy())));
+                        Commands.waitSeconds(0.5)
+                                .andThen(Commands.repeatingSequence(
+                                        Commands.waitSeconds(0.5),
+                                        intakes.press().asProxy().withTimeout(2)))));
+        NamedCommands.registerCommand(
+                "Shoot No Press",
+                Commands.parallel(
+                        Commands.sequence(
+                                Commands.waitUntil(superstructure.inAllianceZoneTrigger),
+                                turret.setGoal(TurretGoal.SCORING).asProxy()),
+                        indexer.setGoal(IndexerGoal.ACTIVATING).asProxy()));
 
         autoChooser.addDefaultOption("", Commands.none());
 

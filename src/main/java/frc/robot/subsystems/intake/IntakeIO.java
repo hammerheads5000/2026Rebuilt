@@ -5,6 +5,7 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -14,6 +15,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
 
@@ -35,6 +37,7 @@ public interface IntakeIO {
         public Current spinCurrent = Amps.of(0.0);
         public Current spinSupplyCurrent = Amps.of(0.0);
         public Voltage spinAppliedVolts = Volts.of(0.0);
+        public Temperature spinTemp = Celsius.of(0);
     }
 
     public default void updateInputs(IntakeIOInputs inputs) {}

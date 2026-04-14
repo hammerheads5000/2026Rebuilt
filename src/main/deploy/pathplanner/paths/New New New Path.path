@@ -3,42 +3,55 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.4,
-        "y": 5.525899999999999
+        "x": 4.2,
+        "y": 7.441
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.225565931547465,
-        "y": 5.525899999999999
+        "x": 2.9743087121212124,
+        "y": 7.456628787878787
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Dump Left Flipped"
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 3.9
+        "x": 0.5547253787878785,
+        "y": 7.441
       },
       "prevControl": {
-        "x": 2.89294688263975,
-        "y": 3.9
+        "x": 1.6426704545454538,
+        "y": 7.464933712121212
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Climb Left"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.0,
+      "minWaypointRelativePos": 0.5,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.5,
-        "maxAcceleration": 3.0,
+        "maxVelocity": 0.5,
+        "maxAcceleration": 5.0,
         "maxAngularVelocity": 360.0,
-        "maxAngularAcceleration": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.2,
+      "maxWaypointRelativePos": 0.5,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -55,14 +68,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -90.0
+    "velocity": 0.0,
+    "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Climbs",
+  "folder": "Collection",
   "idealStartingState": {
-    "velocity": 2.0,
-    "rotation": -45.0
+    "velocity": 3.0,
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

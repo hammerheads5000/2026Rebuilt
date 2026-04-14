@@ -4,15 +4,15 @@
     {
       "anchor": {
         "x": 5.8,
-        "y": 7.441
+        "y": 7.55
       },
       "prevControl": null,
       "nextControl": {
         "x": 6.8,
-        "y": 7.441
+        "y": 7.55
       },
       "isLocked": false,
-      "linkedName": "Trench Exit Left"
+      "linkedName": "Trench Exit Angled"
     },
     {
       "anchor": {
@@ -74,12 +74,26 @@
       "rotationDegrees": -90.0
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 4.0,
+        "maxAcceleration": 8.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 4.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -93,7 +107,7 @@
   "folder": "Collection",
   "idealStartingState": {
     "velocity": 3.0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }
