@@ -151,7 +151,7 @@ public final class Constants {
                 .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign);
 
         public static final Slot0Configs DRIVE_GAINS = new Slot0Configs()
-                .withKP(70)
+                .withKP(100)
                 .withKI(0.0)
                 .withKD(0.0)
                 .withKS(4.3) // 0.11367, 0.1301, 0.15349, 0.16187 -> 0.140
@@ -489,55 +489,55 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            SHOT_MAP.put(6.3, new ShotData(RPM.of(3660), Degrees.of(43)));
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3660 * 0.93), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.1);
 
-            SHOT_MAP.put(5.63, new ShotData(RPM.of(3550), Degrees.of(42)));
+            SHOT_MAP.put(5.63, new ShotData(RPM.of(3550 * 0.93), Degrees.of(42)));
             TOF_MAP.put(5.63, 1.0917);
 
-            SHOT_MAP.put(5.25, new ShotData(RPM.of(3500), Degrees.of(39)));
+            SHOT_MAP.put(5.25, new ShotData(RPM.of(3500 * 0.93), Degrees.of(39)));
             TOF_MAP.put(5.25, 1.23);
 
-            SHOT_MAP.put(4.75, new ShotData(RPM.of(3440 * 0.99), Degrees.of(37)));
+            SHOT_MAP.put(4.75, new ShotData(RPM.of(3440 * 0.99 * 0.93), Degrees.of(37)));
             TOF_MAP.put(4.75, 1.158);
 
-            SHOT_MAP.put(4.25, new ShotData(RPM.of(3300 * 0.98), Degrees.of(36)));
+            SHOT_MAP.put(4.25, new ShotData(RPM.of(3300 * 0.98 * 0.93), Degrees.of(36)));
             TOF_MAP.put(4.25, 1.09);
 
-            SHOT_MAP.put(3.75, new ShotData(RPM.of(3150 * 0.98), Degrees.of(35)));
+            SHOT_MAP.put(3.75, new ShotData(RPM.of(3150 * 0.98 * 0.93), Degrees.of(35)));
             TOF_MAP.put(3.75, 1.02);
 
-            SHOT_MAP.put(3.5, new ShotData(RPM.of(3060 * 0.98), Degrees.of(34)));
+            SHOT_MAP.put(3.5, new ShotData(RPM.of(3060 * 0.98 * 0.93), Degrees.of(34)));
             TOF_MAP.put(3.5, 1.06);
 
-            SHOT_MAP.put(3.25, new ShotData(RPM.of(3000 * 0.98), Degrees.of(33)));
+            SHOT_MAP.put(3.25, new ShotData(RPM.of(3000 * 0.98 * 0.93), Degrees.of(33)));
             TOF_MAP.put(3.25, 0.99);
 
-            SHOT_MAP.put(3.0, new ShotData(RPM.of(2970 * 0.98), Degrees.of(32)));
+            SHOT_MAP.put(3.0, new ShotData(RPM.of(2970 * 0.98 * 0.93), Degrees.of(32)));
             TOF_MAP.put(3.0, 1.01);
 
-            SHOT_MAP.put(2.75, new ShotData(RPM.of(2950 * 0.98), Degrees.of(30)));
+            SHOT_MAP.put(2.75, new ShotData(RPM.of(2950 * 0.98 * 0.93), Degrees.of(30)));
             TOF_MAP.put(2.75, 1.01);
 
-            SHOT_MAP.put(2.5, new ShotData(RPM.of(2900 * 0.98), Degrees.of(27)));
+            SHOT_MAP.put(2.5, new ShotData(RPM.of(2900 * 0.98 * 0.93), Degrees.of(27)));
             TOF_MAP.put(2.5, 1.01);
 
-            SHOT_MAP.put(2.25, new ShotData(RPM.of(2850 * 0.98), Degrees.of(25)));
+            SHOT_MAP.put(2.25, new ShotData(RPM.of(2850 * 0.98 * 0.93), Degrees.of(25)));
             TOF_MAP.put(2.25, 1.08);
 
-            SHOT_MAP.put(2.0, new ShotData(RPM.of(2800 * 0.98), Degrees.of(24)));
+            SHOT_MAP.put(2.0, new ShotData(RPM.of(2800 * 0.98 * 0.93), Degrees.of(24)));
             TOF_MAP.put(2.0, 0.96);
 
-            SHOT_MAP.put(1.75, new ShotData(RPM.of(2750 * 0.98), Degrees.of(23)));
+            SHOT_MAP.put(1.75, new ShotData(RPM.of(2750 * 0.98 * 0.93), Degrees.of(23)));
             TOF_MAP.put(1.75, 0.96);
 
-            SHOT_MAP.put(1.5, new ShotData(RPM.of(2700 * 0.98), Degrees.of(22)));
+            SHOT_MAP.put(1.5, new ShotData(RPM.of(2700 * 0.98 * 0.93), Degrees.of(22)));
             TOF_MAP.put(1.5, 0.96);
 
-            SHOT_MAP.put(1.07, new ShotData(RPM.of(2700 * 0.98), Degrees.of(16)));
+            SHOT_MAP.put(1.07, new ShotData(RPM.of(2700 * 0.98 * 0.93), Degrees.of(16)));
             TOF_MAP.put(1.07, 0.98);
 
-            SHOT_MAP.put(0.01, new ShotData(RPM.of(2700 * 0.98), Degrees.of(8)));
+            SHOT_MAP.put(0.01, new ShotData(RPM.of(2700 * 0.98 * 0.93), Degrees.of(8)));
             TOF_MAP.put(0.01, 0.99);
 
             PASSING_MAP.put(12.6, new ShotData(RPM.of(5700), Degrees.of(47)));
@@ -656,7 +656,7 @@ public final class Constants {
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(100);
 
         public static final Voltage SPIN_VOLTAGE = Volts.of(7);
-        public static final Voltage FEED_VOLTAGE = Volts.of(7);
+        public static final Voltage FEED_VOLTAGE = Volts.of(8);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-8);
         public static final Time SPIN_RAMP = Seconds.of(1.5);
@@ -851,7 +851,7 @@ public final class Constants {
                         1),
                 SwerveConstants.GET_MODULE_POSITIONS.get());
 
-        public static final PIDConstants PP_TRANSLATION_CONSTANTS = new PIDConstants(5, 0.05);
+        public static final PIDConstants PP_TRANSLATION_CONSTANTS = new PIDConstants(7, 0.05);
         public static final PIDConstants PP_ROTATION_CONSTANTS = new PIDConstants(5, 0.05);
 
         public static final PathConstraints CONSTRAINTS = new PathConstraints(
