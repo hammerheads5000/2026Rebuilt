@@ -472,11 +472,12 @@ public final class Constants {
         public static final Angle HOOD_PASSING_OVERRIDE = Degrees.of(47);
 
         public static final Translation3d PASSING_SPOT_LEFT =
-                new Translation3d(Inches.of(75), FieldConstants.FIELD_WIDTH.minus(Inches.of(70)), Inches.zero());
+                new Translation3d(Inches.of(20), FieldConstants.FIELD_WIDTH.minus(Inches.of(30)), Inches.zero());
         public static final Translation3d PASSING_SPOT_CENTER =
                 new Translation3d(Inches.of(90), FieldConstants.FIELD_WIDTH.div(2), Inches.zero());
         public static final Translation3d PASSING_SPOT_RIGHT =
-                new Translation3d(Inches.of(75), Inches.of(70), Inches.zero());
+                new Translation3d(Inches.of(20), Inches.of(30), Inches.zero());
+        public static final Distance PASSING_ROLL_DISTANCE = Inches.of(80);
 
         public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP =
                 new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData::interpolate);
@@ -540,16 +541,16 @@ public final class Constants {
             SHOT_MAP.put(0.01, new ShotData(RPM.of(2700 * 0.98 * 0.93), Degrees.of(8)));
             TOF_MAP.put(0.01, 0.99);
 
-            PASSING_MAP.put(12.6, new ShotData(RPM.of(5700), Degrees.of(47)));
+            PASSING_MAP.put(12.6, new ShotData(RPM.of(5700 * 0.93), Degrees.of(47)));
             PASS_TOF_MAP.put(12.6, 1.5);
 
-            PASSING_MAP.put(7.7, new ShotData(RPM.of(3600), Degrees.of(47)));
+            PASSING_MAP.put(7.7, new ShotData(RPM.of(3600 * 0.93), Degrees.of(47)));
             PASS_TOF_MAP.put(7.7, 1.4);
 
-            PASSING_MAP.put(5.5, new ShotData(RPM.of(3400), Degrees.of(47)));
+            PASSING_MAP.put(5.5, new ShotData(RPM.of(3400 * 0.93), Degrees.of(47)));
             PASS_TOF_MAP.put(5.5, 1.3);
 
-            PASSING_MAP.put(1.0, new ShotData(RPM.of(700), Degrees.of(40)));
+            PASSING_MAP.put(1.0, new ShotData(RPM.of(700 * 0.93), Degrees.of(40)));
             PASS_TOF_MAP.put(1.0, 1.);
         }
 

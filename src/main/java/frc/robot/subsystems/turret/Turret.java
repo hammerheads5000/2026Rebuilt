@@ -6,6 +6,7 @@ package frc.robot.subsystems.turret;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
@@ -234,7 +235,14 @@ public class Turret extends SubsystemBase {
         boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
         boolean onBlueLeftSide = poseSupplier.get().getMeasureY().gt(FieldConstants.FIELD_WIDTH.div(2));
 
-        return isBlue == onBlueLeftSide ? PASSING_SPOT_LEFT : PASSING_SPOT_RIGHT;
+        Translation3d target = isBlue == onBlueLeftSide ? PASSING_SPOT_LEFT : PASSING_SPOT_RIGHT;
+
+        Translation2d dir = pose.getTranslation().minus(target.toTranslation2d());
+        dir = dir.div(dir.getNorm()); // 1 m
+        dir = dir.times(PASSING_ROLL_DISTANCE.in(Meters));
+
+        target = target.plus(new Translation3d(dir));
+        return target;
     }
 
     private boolean inTurnaroundZoneMax() {
