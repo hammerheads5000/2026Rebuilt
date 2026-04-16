@@ -477,7 +477,7 @@ public final class Constants {
                 new Translation3d(Inches.of(90), FieldConstants.FIELD_WIDTH.div(2), Inches.zero());
         public static final Translation3d PASSING_SPOT_RIGHT =
                 new Translation3d(Inches.of(20), Inches.of(30), Inches.zero());
-        public static final Distance PASSING_ROLL_DISTANCE = Inches.of(80);
+        public static final Distance PASSING_ROLL_DISTANCE = Meters.of(2.5);
 
         public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP =
                 new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData::interpolate);
