@@ -389,7 +389,7 @@ public final class Constants {
                 50.0 / 14.0 * 22.0 / 20.0 * 156.0 / 10.0; // 50:14 gear, 22:20 belt, 156:10 rack
 
         public static final Slot0Configs TURN_GAINS =
-                new Slot0Configs().withKP(100).withKD(0.0).withKS(0.6).withKV(2.7);
+                new Slot0Configs().withKP(80).withKD(0.0).withKS(0.7).withKV(4.5);
 
         public static final Slot0Configs HOOD_GAINS =
                 new Slot0Configs().withKP(800).withKD(5).withKS(0.28);
