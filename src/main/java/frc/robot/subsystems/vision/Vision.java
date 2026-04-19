@@ -163,9 +163,10 @@ public class Vision extends SubsystemBase {
             }
 
             // Log camera metadata
-            Logger.recordOutput("Vision/" + io[cameraIndex].getName() + "/TagPoses", tagPoses.toArray(new Pose3d[0]));
-            Logger.recordOutput(
-                    "Vision/" + io[cameraIndex].getName() + "/RobotPoses", robotPoses.toArray(new Pose3d[0]));
+            // Logger.recordOutput("Vision/" + io[cameraIndex].getName() + "/TagPoses", tagPoses.toArray(new
+            // Pose3d[0]));
+            // Logger.recordOutput(
+            //         "Vision/" + io[cameraIndex].getName() + "/RobotPoses", robotPoses.toArray(new Pose3d[0]));
             Logger.recordOutput(
                     "Vision/" + io[cameraIndex].getName() + "/RobotPosesAccepted",
                     robotPosesAccepted.toArray(new Pose3d[0]));
@@ -179,8 +180,8 @@ public class Vision extends SubsystemBase {
         }
 
         // Log summary data
-        Logger.recordOutput("Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[0]));
-        Logger.recordOutput("Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[0]));
+        // Logger.recordOutput("Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[0]));
+        // Logger.recordOutput("Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[0]));
         Logger.recordOutput("Vision/Summary/RobotPosesAccepted", allRobotPosesAccepted.toArray(new Pose3d[0]));
         Logger.recordOutput("Vision/Summary/RobotPosesRejected", allRobotPosesRejected.toArray(new Pose3d[0]));
     }

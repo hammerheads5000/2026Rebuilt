@@ -91,7 +91,7 @@ public class TurretCalculator {
         double current = currentAngle.in(Rotations);
         if (current > 0 && angle + 1 <= MAX_TURN_ANGLE.in(Rotations)) angle += 1;
         if (current < 0 && angle - 1 >= MIN_TURN_ANGLE.in(Rotations)) angle -= 1;
-        Logger.recordOutput("Turret/DesiredAzimuthRad", angle);
+        Logger.recordOutput("Turret/DesiredAzimuth", Rotations.of(angle));
         return Rotations.of(angle);
     }
 

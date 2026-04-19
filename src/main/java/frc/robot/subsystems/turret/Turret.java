@@ -24,7 +24,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -90,8 +89,8 @@ public class Turret extends SubsystemBase {
     @AutoLogOutput
     private Time tofFudgeFactor = Seconds.zero();
 
-    private Angle[] turnVelFilterPos = new Angle[] {Radians.zero(), Radians.zero()};
-    private Time[] turnVelFilterTimes = new Time[] {Seconds.zero(), Seconds.zero()};
+    private Angle prevTurnPos = Radians.zero();
+    private Time prevTurnTime = Seconds.zero();
 
     @AutoLogOutput
     private AngularVelocity velocitySetpoint = RadiansPerSecond.zero();
@@ -253,22 +252,12 @@ public class Turret extends SubsystemBase {
         return inputs.turnPosition.isNear(MIN_TURN_ANGLE, TURNAROUND_ZONE);
     }
 
-    private void updateVelocitySetpoint() {
-        MutAngularVelocity sumVelocities = RadiansPerSecond.zero().mutableCopy();
-
-        // update filter window
-        for (int i = turnVelFilterPos.length - 1; i >= 1; i--) {
-            Angle deltaAngle = turnVelFilterPos[i - 1].minus(turnVelFilterPos[i]);
-            Time deltaTime = turnVelFilterTimes[i - 1].minus(turnVelFilterTimes[i]);
-            sumVelocities.mut_plus(deltaAngle.div(deltaTime));
-
-            turnVelFilterPos[i] = turnVelFilterPos[i - 1];
-            turnVelFilterTimes[i] = turnVelFilterTimes[i - 1];
-        }
-        turnVelFilterPos[0] = inputs.turnSetpoint;
-        turnVelFilterTimes[0] = Microseconds.of(RobotController.getFPGATime());
-
-        velocitySetpoint = sumVelocities.copy();
+    private void updateVelocitySetpoint(Angle turnSetpoint) {
+        velocitySetpoint = turnSetpoint
+                .minus(prevTurnPos)
+                .div(Microseconds.of(RobotController.getFPGATime()).minus(prevTurnTime));
+        prevTurnPos = turnSetpoint;
+        prevTurnTime = Microseconds.of(RobotController.getFPGATime());
     }
 
     public Command disable() {
@@ -397,13 +386,15 @@ public class Turret extends SubsystemBase {
                 TurretCalculator.calculateAzimuthAngle(robotPose, calculatedShot.target(), inputs.turnPosition);
         // AngularVelocity azimuthVelocity = RadiansPerSecond.of(-fieldSpeeds.omegaRadiansPerSecond);
 
-        updateVelocitySetpoint();
+        updateVelocitySetpoint(azimuthAngle);
 
-        io.setTurnSetpoint(azimuthAngle, velocitySetpoint);
+        io.setTurnSetpoint(azimuthAngle.plus(velocitySetpoint.times(Seconds.of(0.02))), velocitySetpoint);
         io.setHoodAngle(calculatedShot.getHoodAngle());
         io.setFlywheelSpeed(calculatedShot.getAngularExitVelocity().times(flywheelFudgeFactor));
 
         Logger.recordOutput("Turret/Shot", calculatedShot);
+        Logger.recordOutput("Turret/PosError", azimuthAngle.minus(inputs.turnPosition));
+        Logger.recordOutput("Turret/VelError", velocitySetpoint.minus(inputs.turnVelocity));
     }
 
     public Command resetTurnEncoder() {
