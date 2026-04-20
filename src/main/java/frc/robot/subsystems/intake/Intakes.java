@@ -8,13 +8,11 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.intake.Intake.IntakeGoal;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -30,18 +28,6 @@ public class Intakes extends SubsystemBase {
     @AutoLogOutput
     private IntakesGoal goal = IntakesGoal.IDLE;
 
-    @AutoLogOutput
-    public Trigger deployLeftTrigger = new Trigger(this::travelingLeft)
-            .and(() -> goal == IntakesGoal.AUTOSWITCH)
-            .and(DriverStation::isTeleop)
-            .debounce(0.08);
-
-    @AutoLogOutput
-    public Trigger deployRightTrigger = new Trigger(this::travelingRight)
-            .and(() -> goal == IntakesGoal.AUTOSWITCH)
-            .and(DriverStation::isTeleop)
-            .debounce(0.08);
-
     private final IntakeVisualizer measuredVisualizer = new IntakeVisualizer("Measured", Color.kGreen);
 
     /** Creates a new Intake. */
@@ -50,9 +36,6 @@ public class Intakes extends SubsystemBase {
         this.right = new Intake(rightIO, IntakeSide.Right);
 
         this.chassisSpeedsSupplier = chassisSpeedsSupplier;
-
-        this.deployLeftTrigger.onTrue(deployLeft());
-        this.deployRightTrigger.onTrue(deployRight());
 
         SmartDashboard.putData("Intakes/Deploy Left", left.deploy());
         SmartDashboard.putData("Intakes/Deploy Right", right.deploy());

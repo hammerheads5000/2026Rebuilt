@@ -229,12 +229,36 @@ public class RobotContainer {
                 vision = new Vision(
                         drive::addVisionMeasurement,
                         drive::setPose,
-                        new VisionIO() {},
-                        new VisionIO() {},
-                        new VisionIO() {},
-                        new VisionIO() {},
-                        new VisionIO() {},
-                        new VisionIO() {});
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[0];
+                            }
+                        },
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[1];
+                            }
+                        },
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[2];
+                            }
+                        },
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[3];
+                            }
+                        },
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[4];
+                            }
+                        },
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[5];
+                            }
+                        });
                 configureFuelSimRobot(turretSim::canIntake, turretSim::intakeFuel);
                 break;
 
@@ -250,12 +274,36 @@ public class RobotContainer {
                 vision = new Vision(
                         drive::addVisionMeasurement,
                         drive::setPose,
-                        new VisionIO() {},
-                        new VisionIO() {},
-                        new VisionIO() {},
-                        new VisionIO() {},
-                        new VisionIO() {},
-                        new VisionIO() {});
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[0];
+                            }
+                        },
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[1];
+                            }
+                        },
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[2];
+                            }
+                        },
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[3];
+                            }
+                        },
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[4];
+                            }
+                        },
+                        new VisionIO() {
+                            public String getName() {
+                                return VisionConstants.CAMERA_NAMES[5];
+                            }
+                        });
                 break;
         }
 
@@ -551,11 +599,6 @@ public class RobotContainer {
         // if (!usePrebuiltAuto.get()) {
         //     return autoCreator.buildAuto(drive, vision, intakes, indexer, turret, climber, superstructure);
         // }
-        SmartDashboard.putStringArray(
-                "sdkfj",
-                autoChooser.get().getRequirements().stream()
-                        .map(s -> s.getName())
-                        .toArray(String[]::new));
         return autoChooser.get();
     }
 }

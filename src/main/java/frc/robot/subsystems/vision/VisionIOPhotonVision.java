@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
@@ -57,7 +58,9 @@ public class VisionIOPhotonVision implements VisionIO {
         // Read new camera observations
         Set<Short> tagIds = new HashSet<>();
         List<PoseObservation> poseObservations = new LinkedList<>();
-        for (var result : camera.getAllUnreadResults()) {
+        List<PhotonPipelineResult> results = camera.getAllUnreadResults();
+        results = results.subList(0, Math.min(5, results.size())); // Limit to 5 results to prevent overload
+        for (var result : results) {
             // Update latest target observation
             if (result.hasTargets()) {
                 inputs.latestTargetObservation = new TargetObservation(
@@ -65,6 +68,11 @@ public class VisionIOPhotonVision implements VisionIO {
                         Rotation2d.fromDegrees(result.getBestTarget().getPitch()));
             } else {
                 inputs.latestTargetObservation = new TargetObservation(Rotation2d.kZero, Rotation2d.kZero);
+                continue;
+            }
+
+            if (result.getBestTarget().getPoseAmbiguity() > MAX_AMBIGUITY) {
+                continue; // Skip targets with high ambiguity
             }
 
             // Add pose observation

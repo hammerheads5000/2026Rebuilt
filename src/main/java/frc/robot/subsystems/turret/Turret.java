@@ -376,9 +376,9 @@ public class Turret extends SubsystemBase {
         Angle azimuthAngle =
                 TurretCalculator.calculateAzimuthAngle(robotPose, calculatedShot.target(), inputs.turnPosition);
 
-        AngularVelocity velocitySetpoint = getVelocitySetpoint(requestedFieldSpeeds);
+        AngularVelocity velocitySetpoint = getVelocitySetpoint(fieldSpeeds);
 
-        io.setTurnSetpoint(azimuthAngle, velocitySetpoint);
+        io.setTurnSetpoint(azimuthAngle.plus(velocitySetpoint.times(Seconds.of(0.02))), velocitySetpoint);
         io.setHoodAngle(calculatedShot.getHoodAngle());
         io.setFlywheelSpeed(calculatedShot.getAngularExitVelocity().times(flywheelFudgeFactor));
 

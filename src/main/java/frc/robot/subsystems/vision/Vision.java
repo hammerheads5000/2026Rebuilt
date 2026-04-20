@@ -135,10 +135,10 @@ public class Vision extends SubsystemBase {
 
                 // Add tag poses
                 for (int tagId : inputs[cameraIndex].tagIds) {
-                    var tagPose = APRIL_TAGS.getTagPose(tagId);
-                    if (tagPose.isPresent()) {
-                        tagPoses.add(tagPose.get());
-                    }
+                    // var tagPose = APRIL_TAGS.getTagPose(tagId);
+                    // if (tagPose.isPresent()) {
+                    //     tagPoses.add(tagPose.get());
+                    // }
                     if (climbing && !climbTags.contains(tagId)) {
                         stdDevFactor += CLIMB_TAG_STD_DEV_BIAS; // Non-climb tags are less accurate
                     } else if (!climbing && !hubTags.contains(tagId)) {
@@ -173,7 +173,7 @@ public class Vision extends SubsystemBase {
             Logger.recordOutput(
                     "Vision/" + io[cameraIndex].getName() + "/RobotPosesRejected",
                     robotPosesRejected.toArray(new Pose3d[0]));
-            allTagPoses.addAll(tagPoses);
+            // allTagPoses.addAll(tagPoses);
             allRobotPoses.addAll(robotPoses);
             allRobotPosesAccepted.addAll(robotPosesAccepted);
             allRobotPosesRejected.addAll(robotPosesRejected);
