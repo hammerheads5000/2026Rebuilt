@@ -177,7 +177,8 @@ public class RobotContainer {
                         drive::getChassisSpeeds);
                 indexer = new Indexer(new IndexerIOTalonFX());
                 // indexer = new Indexer(new IndexerIO() {}, drive::getRotation);
-                turret = new Turret(new TurretIOTalonFX(), drive::getPose, drive::getFieldSpeeds);
+                turret = new Turret(
+                        new TurretIOTalonFX(), drive::getPose, drive::getFieldSpeeds, drive::getRequestedChassisSpeeds);
                 // turret = new Turret(new TurretIO() {}, drive::getPose, drive::getFieldSpeeds);
                 climber = new Climber(new ClimberIO() {});
                 vision = new Vision(
@@ -203,7 +204,7 @@ public class RobotContainer {
                         new ModuleIOSim(SwerveConstants.BackLeft.MODULE_CONSTANTS),
                         new ModuleIOSim(SwerveConstants.BackRight.MODULE_CONSTANTS));
                 intakes = new Intakes(new IntakeIOSim(), new IntakeIOSim(), drive::getChassisSpeeds);
-                turret = new Turret(turretSim, drive::getPose, drive::getFieldSpeeds);
+                turret = new Turret(turretSim, drive::getPose, drive::getFieldSpeeds, drive::getRequestedChassisSpeeds);
                 climber = new Climber(new ClimberIOSim());
                 // vision = new Vision(
                 //         drive::addVisionMeasurement,
@@ -242,7 +243,8 @@ public class RobotContainer {
                 drive = new Drive(
                         new GyroIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
                 intakes = new Intakes(new IntakeIO() {}, new IntakeIO() {}, drive::getChassisSpeeds);
-                turret = new Turret(new TurretIO() {}, drive::getPose, drive::getFieldSpeeds);
+                turret = new Turret(
+                        new TurretIO() {}, drive::getPose, drive::getFieldSpeeds, drive::getRequestedChassisSpeeds);
                 indexer = new Indexer(new IndexerIO() {});
                 climber = new Climber(new ClimberIO() {});
                 vision = new Vision(

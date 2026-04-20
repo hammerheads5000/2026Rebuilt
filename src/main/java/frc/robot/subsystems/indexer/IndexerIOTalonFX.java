@@ -81,6 +81,7 @@ public class IndexerIOTalonFX implements IndexerIO {
                 feedCurrent,
                 feedSupplyCurrent,
                 feedAppliedVolts);
+        PhoenixUtil.registerStatusSignals(Hertz.of(4), spinTemp, feedTemp);
 
         spinMotor.optimizeBusUtilization();
         feedMotor.optimizeBusUtilization();

@@ -7,12 +7,10 @@ package frc.robot.subsystems.turret;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Value;
 import static frc.robot.Constants.TurretConstants.*;
 
 import com.pathplanner.lib.util.FlippingUtil;
@@ -29,7 +27,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -51,6 +48,7 @@ public class Turret extends SubsystemBase {
     private final TurretIOInputsAutoLogged inputs;
     private final Supplier<Pose2d> poseSupplier;
     private final Supplier<ChassisSpeeds> fieldSpeedsSupplier;
+    private final Supplier<ChassisSpeeds> requestedRobotSpeedsSupplier;
 
     @AutoLogOutput
     Translation3d currentTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
@@ -89,23 +87,22 @@ public class Turret extends SubsystemBase {
     @AutoLogOutput
     private Time tofFudgeFactor = Seconds.zero();
 
-    private Angle prevTurnPos = Radians.zero();
-    private Time prevTurnTime = Seconds.zero();
-
-    @AutoLogOutput
-    private AngularVelocity velocitySetpoint = RadiansPerSecond.zero();
-
     private final Alert flywheelDisconnectedAlert = new Alert("Turret Flywheel Motor Disconnected!", AlertType.kError);
     private final Alert hoodDisconnectedAlert = new Alert("Turret Hood Motor Disconnected!", AlertType.kError);
     private final Alert turnDisconnectedAlert = new Alert("Turret Turn Motor Disconnected!", AlertType.kError);
     private final Alert disabledAlert = new Alert("Turret Disabled", AlertType.kWarning);
     private final Alert manualOverrideAlert = new Alert("Turret Override", AlertType.kWarning);
 
-    public Turret(TurretIO io, Supplier<Pose2d> poseSupplier, Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
+    public Turret(
+            TurretIO io,
+            Supplier<Pose2d> poseSupplier,
+            Supplier<ChassisSpeeds> fieldSpeedsSupplier,
+            Supplier<ChassisSpeeds> requestedFieldSpeedsSupplier) {
         this.io = io;
         this.inputs = new TurretIOInputsAutoLogged();
         this.poseSupplier = poseSupplier;
         this.fieldSpeedsSupplier = fieldSpeedsSupplier;
+        this.requestedRobotSpeedsSupplier = requestedFieldSpeedsSupplier;
 
         io.zeroHoodPosition();
         setTarget(FieldConstants.HUB_BLUE);
@@ -252,12 +249,8 @@ public class Turret extends SubsystemBase {
         return inputs.turnPosition.isNear(MIN_TURN_ANGLE, TURNAROUND_ZONE);
     }
 
-    private void updateVelocitySetpoint(Angle turnSetpoint) {
-        velocitySetpoint = turnSetpoint
-                .minus(prevTurnPos)
-                .div(Microseconds.of(RobotController.getFPGATime()).minus(prevTurnTime));
-        prevTurnPos = turnSetpoint;
-        prevTurnTime = Microseconds.of(RobotController.getFPGATime());
+    private static AngularVelocity getVelocitySetpoint(ChassisSpeeds requestedFieldSpeeds) {
+        return RadiansPerSecond.of(-requestedFieldSpeeds.omegaRadiansPerSecond);
     }
 
     public Command disable() {
@@ -331,9 +324,6 @@ public class Turret extends SubsystemBase {
                 this.getCurrentCommand() == null
                         ? "None"
                         : this.getCurrentCommand().getName());
-        Logger.recordOutput(
-                "Turret/Ratio",
-                inputs.turnEncoderPosition.div(inputs.turnPosition).in(Value));
 
         Pose2d pose = poseSupplier.get();
 
@@ -367,6 +357,7 @@ public class Turret extends SubsystemBase {
 
     private void calculateShot(Pose2d robotPose) {
         ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
+        ChassisSpeeds requestedFieldSpeeds = requestedRobotSpeedsSupplier.get();
 
         ShotData calculatedShot;
         if (Constants.CURRENT_MODE == Mode.REAL) {
@@ -384,16 +375,15 @@ public class Turret extends SubsystemBase {
         }
         Angle azimuthAngle =
                 TurretCalculator.calculateAzimuthAngle(robotPose, calculatedShot.target(), inputs.turnPosition);
-        // AngularVelocity azimuthVelocity = RadiansPerSecond.of(-fieldSpeeds.omegaRadiansPerSecond);
 
-        updateVelocitySetpoint(azimuthAngle);
+        AngularVelocity velocitySetpoint = getVelocitySetpoint(requestedFieldSpeeds);
 
-        io.setTurnSetpoint(azimuthAngle.plus(velocitySetpoint.times(Seconds.of(0.02))), velocitySetpoint);
+        io.setTurnSetpoint(azimuthAngle, velocitySetpoint);
         io.setHoodAngle(calculatedShot.getHoodAngle());
         io.setFlywheelSpeed(calculatedShot.getAngularExitVelocity().times(flywheelFudgeFactor));
 
         Logger.recordOutput("Turret/Shot", calculatedShot);
-        Logger.recordOutput("Turret/PosError", azimuthAngle.minus(inputs.turnPosition));
+        Logger.recordOutput("Turret/PosError", inputs.turnSetpoint.minus(inputs.turnPosition));
         Logger.recordOutput("Turret/VelError", velocitySetpoint.minus(inputs.turnVelocity));
     }
 

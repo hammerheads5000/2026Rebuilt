@@ -38,15 +38,12 @@ public class TurretIOTalonFX implements TurretIO {
     private final TalonFX flywheelMotor;
     private final TalonFX flywheelFollowerMotor;
 
-    // private final CANcoder encoder;
-
     private final TalonFXConfiguration turnConfig;
     private final TalonFXConfiguration hoodConfig;
     private final TalonFXConfiguration flywheelConfig;
     private final TalonFXConfiguration flywheelFollowerConfig;
 
     private final StatusSignal<Angle> turnPosition;
-    // private final StatusSignal<Angle> turnEncoderPosition;
     private final StatusSignal<Double> turnSetpoint;
     private final StatusSignal<AngularVelocity> turnVelocity;
     private final StatusSignal<Voltage> turnAppliedVolts;

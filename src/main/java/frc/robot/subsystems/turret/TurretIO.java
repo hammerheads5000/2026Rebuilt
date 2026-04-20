@@ -26,8 +26,8 @@ public interface TurretIO {
         public Current turnCurrent = Amps.of(0.0);
         public Current turnSupplyCurrent = Amps.of(0.0);
         public Angle turnPosition = Radians.of(0.0);
-        public Angle turnEncoderPosition = Radians.of(0.0);
         public Angle turnSetpoint = Radians.of(0.0);
+        public AngularVelocity turnVelocitySetpoint = RadiansPerSecond.of(0.0);
         public AngularVelocity turnVelocity = RadiansPerSecond.of(0.0);
 
         public boolean hoodMotorConnected = false;

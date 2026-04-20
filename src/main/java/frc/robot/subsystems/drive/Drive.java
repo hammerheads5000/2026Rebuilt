@@ -76,6 +76,7 @@ public class Drive extends SubsystemBase {
             };
     private SwerveDrivePoseEstimator poseEstimator =
             new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, Pose2d.kZero);
+    private ChassisSpeeds requestedRobotSpeeds = new ChassisSpeeds();
     private Field2d field = new Field2d();
 
     private LoggedTunableNumber driveKP = new LoggedTunableNumber("Swerve/Drive/kP", SwerveConstants.DRIVE_GAINS.kP);
@@ -203,6 +204,7 @@ public class Drive extends SubsystemBase {
     public void runVelocity(ChassisSpeeds speeds, DriveFeedforwards feedforwards) {
         // Calculate module setpoints
         ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+        this.requestedRobotSpeeds = discreteSpeeds;
         SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, SwerveConstants.SPEED_AT_12V);
 
@@ -285,6 +287,10 @@ public class Drive extends SubsystemBase {
 
     public ChassisSpeeds getFieldSpeeds() {
         return ChassisSpeeds.fromRobotRelativeSpeeds(getChassisSpeeds(), getRotation());
+    }
+
+    public ChassisSpeeds getRequestedChassisSpeeds() {
+        return requestedRobotSpeeds;
     }
 
     /** Returns the position of each module in radians. */
