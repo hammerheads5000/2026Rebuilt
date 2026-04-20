@@ -54,7 +54,6 @@ public class Turret extends SubsystemBase {
     private final TurretIOInputsAutoLogged inputs;
     private final Supplier<Pose2d> poseSupplier;
     private final Supplier<ChassisSpeeds> fieldSpeedsSupplier;
-    private final Supplier<ChassisSpeeds> requestedRobotSpeedsSupplier;
 
     @AutoLogOutput
     Translation3d currentTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
@@ -111,7 +110,6 @@ public class Turret extends SubsystemBase {
         this.inputs = new TurretIOInputsAutoLogged();
         this.poseSupplier = poseSupplier;
         this.fieldSpeedsSupplier = fieldSpeedsSupplier;
-        this.requestedRobotSpeedsSupplier = requestedFieldSpeedsSupplier;
 
         io.zeroHoodPosition();
         setTarget(FieldConstants.HUB_BLUE);
@@ -143,7 +141,7 @@ public class Turret extends SubsystemBase {
     }
 
     public Command setGoal(TurretGoal goal) {
-        return this.runOnce(() -> {
+        return Commands.runOnce(() -> {
                     if (this.goal == TurretGoal.DISABLED || this.goal == TurretGoal.MANUAL_OVERRIDE) {
                         return;
                     }
@@ -217,15 +215,15 @@ public class Turret extends SubsystemBase {
     }
 
     public Command setTurnPosition(Angle position) {
-        return this.runOnce(() -> io.setTurnSetpoint(position, RadiansPerSecond.zero()));
+        return Commands.runOnce(() -> io.setTurnSetpoint(position, RadiansPerSecond.zero()));
     }
 
     public Command setHoodPosition(Angle angle) {
-        return this.runOnce(() -> io.setHoodAngle(angle));
+        return Commands.runOnce(() -> io.setHoodAngle(angle));
     }
 
     public Command setFlywheelSpeed(AngularVelocity speed) {
-        return this.runOnce(() -> io.setFlywheelSpeed(speed));
+        return Commands.runOnce(() -> io.setFlywheelSpeed(speed));
     }
 
     public void setTarget(Translation3d target) {
