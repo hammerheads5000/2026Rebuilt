@@ -7,6 +7,9 @@ package frc.robot.subsystems.turret;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -22,11 +25,14 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -86,6 +92,9 @@ public class Turret extends SubsystemBase {
 
     @AutoLogOutput
     private Time tofFudgeFactor = Seconds.zero();
+
+    private LinearVelocity prevTangentialVel = MetersPerSecond.zero();
+    private long prevTimeMicros = 0;
 
     private final Alert flywheelDisconnectedAlert = new Alert("Turret Flywheel Motor Disconnected!", AlertType.kError);
     private final Alert hoodDisconnectedAlert = new Alert("Turret Hood Motor Disconnected!", AlertType.kError);
@@ -249,8 +258,53 @@ public class Turret extends SubsystemBase {
         return inputs.turnPosition.isNear(MIN_TURN_ANGLE, TURNAROUND_ZONE);
     }
 
-    private static AngularVelocity getVelocitySetpoint(ChassisSpeeds requestedFieldSpeeds) {
-        return RadiansPerSecond.of(-requestedFieldSpeeds.omegaRadiansPerSecond);
+    private AngularVelocity getVelocitySetpoint(
+            Translation2d robotToTarget, ChassisSpeeds fieldSpeeds, Time timeOfFlight) {
+        LinearVelocity tangentialVel = getTangentialVelocity(robotToTarget, fieldSpeeds);
+        return RadiansPerSecond.of(-fieldSpeeds.omegaRadiansPerSecond)
+                .plus(tangentVelToAngularVel(robotToTarget, tangentialVel))
+                .plus(angularVelSOTM(robotToTarget, fieldSpeeds, timeOfFlight));
+    }
+
+    private static LinearVelocity getTangentialComponent(Translation2d robotToTarget, Translation2d vec) {
+        Translation2d dir = robotToTarget.div(robotToTarget.getNorm());
+        dir = dir.rotateBy(Rotation2d.kCW_90deg);
+        return MetersPerSecond.of(vec.dot(dir));
+    }
+
+    private static LinearVelocity getTangentialVelocity(Translation2d robotToTarget, ChassisSpeeds fieldSpeeds) {
+        return getTangentialComponent(
+                robotToTarget, new Translation2d(fieldSpeeds.vxMetersPerSecond, fieldSpeeds.vyMetersPerSecond));
+    }
+
+    private LinearAcceleration getTangentialAcceleration(Translation2d robotToTarget, ChassisSpeeds fieldSpeeds) {
+        LinearVelocity tangentialVel = getTangentialVelocity(robotToTarget, fieldSpeeds);
+        LinearAcceleration tangentialAccel = (tangentialVel.minus(prevTangentialVel))
+                .div(Microseconds.of(RobotController.getFPGATime() - prevTimeMicros));
+        prevTangentialVel = tangentialVel;
+        prevTimeMicros = RobotController.getFPGATime();
+        return tangentialAccel;
+    }
+
+    private static AngularVelocity tangentVelToAngularVel(Translation2d robotToTarget, LinearVelocity tangentialVel) {
+        double radius = robotToTarget.getNorm();
+        if (radius == 0) {
+            return RadiansPerSecond.zero();
+        }
+        return RadiansPerSecond.of(tangentialVel.in(MetersPerSecond) / radius);
+    }
+
+    private AngularVelocity angularVelSOTM(Translation2d robotToTarget, ChassisSpeeds fieldSpeeds, Time timeOfFlight) {
+        double tangentialVel = getTangentialVelocity(robotToTarget, fieldSpeeds).in(MetersPerSecond);
+        double tangentialAccel =
+                getTangentialAcceleration(robotToTarget, fieldSpeeds).in(MetersPerSecondPerSecond);
+        double distance = robotToTarget.getNorm();
+        double tof = timeOfFlight.in(Seconds);
+        if (distance == 0) {
+            return RadiansPerSecond.zero();
+        }
+        return RadiansPerSecond.of(
+                tof * tangentialAccel * distance / (Math.pow(distance, 2) + Math.pow(tangentialVel * tof, 2)));
     }
 
     public Command disable() {
@@ -357,7 +411,7 @@ public class Turret extends SubsystemBase {
 
     private void calculateShot(Pose2d robotPose) {
         ChassisSpeeds fieldSpeeds = fieldSpeedsSupplier.get();
-        ChassisSpeeds requestedFieldSpeeds = requestedRobotSpeedsSupplier.get();
+        // ChassisSpeeds requestedFieldSpeeds = requestedRobotSpeedsSupplier.get();
 
         ShotData calculatedShot;
         if (Constants.CURRENT_MODE == Mode.REAL) {
@@ -376,7 +430,10 @@ public class Turret extends SubsystemBase {
         Angle azimuthAngle =
                 TurretCalculator.calculateAzimuthAngle(robotPose, calculatedShot.target(), inputs.turnPosition);
 
-        AngularVelocity velocitySetpoint = getVelocitySetpoint(fieldSpeeds);
+        Translation2d robotToTarget = calculatedShot.target().toTranslation2d().minus(robotPose.getTranslation());
+        Time timeOfFlight =
+                Seconds.of((goal == TurretGoal.PASSING ? PASS_TOF_MAP : TOF_MAP).get(robotToTarget.getNorm()));
+        AngularVelocity velocitySetpoint = getVelocitySetpoint(robotToTarget, fieldSpeeds, timeOfFlight);
 
         io.setTurnSetpoint(azimuthAngle.plus(velocitySetpoint.times(Seconds.of(0.02))), velocitySetpoint);
         io.setHoodAngle(calculatedShot.getHoodAngle());

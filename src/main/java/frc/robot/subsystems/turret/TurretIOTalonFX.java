@@ -45,6 +45,7 @@ public class TurretIOTalonFX implements TurretIO {
 
     private final StatusSignal<Angle> turnPosition;
     private final StatusSignal<Double> turnSetpoint;
+    private final StatusSignal<Double> turnVelocitySetpoint;
     private final StatusSignal<AngularVelocity> turnVelocity;
     private final StatusSignal<Voltage> turnAppliedVolts;
     private final StatusSignal<Current> turnCurrent;
@@ -129,6 +130,7 @@ public class TurretIOTalonFX implements TurretIO {
         turnPosition = turnMotor.getPosition();
         // turnEncoderPosition = encoder.getPosition();
         turnSetpoint = turnMotor.getClosedLoopReference();
+        turnVelocitySetpoint = turnMotor.getClosedLoopReferenceSlope();
         turnVelocity = turnMotor.getVelocity();
         turnAppliedVolts = turnMotor.getMotorVoltage();
         turnCurrent = turnMotor.getTorqueCurrent();
@@ -155,6 +157,7 @@ public class TurretIOTalonFX implements TurretIO {
                 Hertz.of(50),
                 // turnPosition,
                 turnSetpoint,
+                turnVelocitySetpoint,
                 // turnVelocity,
                 // turnAppliedVolts,
                 turnCurrent,
@@ -201,6 +204,7 @@ public class TurretIOTalonFX implements TurretIO {
                 turnPosition,
                 // turnEncoderPosition,
                 turnSetpoint,
+                turnVelocitySetpoint,
                 turnVelocity,
                 turnAppliedVolts,
                 turnCurrent,
@@ -208,6 +212,7 @@ public class TurretIOTalonFX implements TurretIO {
         inputs.turnPosition = turnPosition.getValue();
         // inputs.turnEncoderPosition = turnEncoderPosition.getValue().div(ENCODER_TO_TURRET_RATIO);
         inputs.turnSetpoint = Rotations.of(turnSetpoint.getValueAsDouble());
+        inputs.turnVelocitySetpoint = RotationsPerSecond.of(turnVelocitySetpoint.getValueAsDouble());
         inputs.turnVelocity = turnVelocity.getValue();
         inputs.turnAppliedVolts = turnAppliedVolts.getValue();
         inputs.turnCurrent = turnCurrent.getValue();
