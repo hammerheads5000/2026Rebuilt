@@ -67,8 +67,8 @@ public class Indexer extends SubsystemBase {
         this.io = io;
         this.visualizer = new IndexerVisualizer();
 
-        VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent, "Indexer");
-        VirtualPD.registerMotor(() -> inputs.feedSupplyCurrent, "Indexer");
+        VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent, "IndexerHook");
+        VirtualPD.registerMotor(() -> inputs.feedSupplyCurrent, "IndexerFeed");
 
         hookStallTrigger
                 .or(feedStallTrigger)
