@@ -131,10 +131,10 @@ public final class Constants {
 
         public static final LinearAcceleration MAX_TELEOP_ACCEL = MetersPerSecondPerSecond.of(25);
 
-        public static final LinearVelocity SLOW_DRIVE_SPEED = MetersPerSecond.of(2);
-        public static final AngularVelocity SLOW_ROT_SPEED = RotationsPerSecond.of(0.5);
+        public static final LinearVelocity SLOW_DRIVE_SPEED = MetersPerSecond.of(2.5);
+        public static final AngularVelocity SLOW_ROT_SPEED = RotationsPerSecond.of(0.75);
 
-        public static final LinearAcceleration SLOW_TELEOP_ACCEL = MetersPerSecondPerSecond.of(4);
+        public static final LinearAcceleration SLOW_TELEOP_ACCEL = MetersPerSecondPerSecond.of(5);
 
         public static final AngularVelocity MAX_MODULE_ROT_SPEED = RotationsPerSecond.of(5);
 
@@ -396,7 +396,7 @@ public final class Constants {
                 new Slot0Configs().withKP(800).withKD(5).withKS(0.28);
 
         public static final Slot0Configs FLYWHEEL_GAINS =
-                new Slot0Configs().withKP(8).withKD(0.0).withKS(7).withKV(0.0);
+                new Slot0Configs().withKP(10).withKD(0.0).withKS(7).withKV(0.0);
 
         public static final CurrentLimitsConfigs TURN_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30);
