@@ -3,51 +3,51 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.4911032028469755,
-        "y": 4.782763938315539
+        "x": 5.99,
+        "y": 2.3784444444444444
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4911032028469755,
-        "y": 4.782763938315539
+        "x": 6.19376893939394,
+        "y": 2.531808712121211
       },
       "isLocked": false,
-      "linkedName": "Depot"
+      "linkedName": "Bump Exit Right Sideways"
     },
     {
       "anchor": {
-        "x": 3.6353649893692417,
-        "y": 5.525899999999999
+        "x": 5.936316287878787,
+        "y": 3.6031439393939397
       },
       "prevControl": {
-        "x": 2.9026927671470193,
-        "y": 5.631870833333332
+        "x": 5.938516470459396,
+        "y": 3.220312170368075
       },
       "nextControl": {
-        "x": 4.368037211591464,
-        "y": 5.419929166666666
+        "x": 5.91970643939394,
+        "y": 6.493257575757575
       },
       "isLocked": false,
-      "linkedName": "Bump Start Left"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.145711111111111,
-        "y": 5.525899999999999
+        "x": 5.8,
+        "y": 7.441
       },
       "prevControl": {
-        "x": 5.145711111111111,
-        "y": 5.525899999999999
+        "x": 6.675454545454545,
+        "y": 7.473238636363636
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Bump Exit Left"
+      "linkedName": "Trench Exit Left"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": -45.0
+      "waypointRelativePos": 1.3600000000000012,
+      "rotationDegrees": 180.0
     }
   ],
   "constraintZones": [],
@@ -66,7 +66,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Inside Zone",
+  "folder": "Traversal",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

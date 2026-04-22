@@ -18,6 +18,8 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -31,21 +33,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.ClimberConstants.ClimbPosition;
 import frc.robot.Constants.Dimensions;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.AlignToClimb;
-import frc.robot.commands.AutoClimb;
-// import frc.robot.commands.AutoCreator;
 import frc.robot.commands.SystemChecks;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.Leds;
-import frc.robot.subsystems.climber.Climber;
-import frc.robot.subsystems.climber.ClimberIO;
-import frc.robot.subsystems.climber.ClimberIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -91,7 +86,6 @@ public class RobotContainer {
     private final Intakes intakes;
     private final Turret turret;
     private final Indexer indexer;
-    private final Climber climber;
     private final Superstructure superstructure;
     private final Vision vision;
     public final Leds leds;
@@ -144,13 +138,16 @@ public class RobotContainer {
     private final Trigger fudgeDown = pushButtons.button(1);
     private final Trigger fudgeUp = pushButtons.button(2);
     private final Trigger zeroHood = pushButtons.button(3);
-    private final Trigger zeroLeftIntake = pushButtons.button(4);
-    private final Trigger zeroRightIntake = pushButtons.button(5);
+    //     private final Trigger zeroLeftIntake = pushButtons.button(4);
+    //     private final Trigger zeroRightIntake = pushButtons.button(5);
+    private final Trigger turnTrimLeft = pushButtons.button(4);
+    private final Trigger turnTrimRight = pushButtons.button(5);
 
     private final BooleanSupplier isOnRightSide;
 
     // Dashboard inputs
     private LoggedDashboardChooser<Command> autoChooser;
+    private final Alert autoAlert = new Alert("Auto Mismatch!", AlertType.kWarning);
 
     //     public final AutoCreator autoCreator;
 
@@ -180,7 +177,6 @@ public class RobotContainer {
                 turret = new Turret(
                         new TurretIOTalonFX(), drive::getPose, drive::getFieldSpeeds, drive::getRequestedChassisSpeeds);
                 // turret = new Turret(new TurretIO() {}, drive::getPose, drive::getFieldSpeeds);
-                climber = new Climber(new ClimberIO() {});
                 vision = new Vision(
                         drive::addVisionMeasurement,
                         drive::setPose,
@@ -205,7 +201,6 @@ public class RobotContainer {
                         new ModuleIOSim(SwerveConstants.BackRight.MODULE_CONSTANTS));
                 intakes = new Intakes(new IntakeIOSim(), new IntakeIOSim(), drive::getChassisSpeeds);
                 turret = new Turret(turretSim, drive::getPose, drive::getFieldSpeeds, drive::getRequestedChassisSpeeds);
-                climber = new Climber(new ClimberIOSim());
                 // vision = new Vision(
                 //         drive::addVisionMeasurement,
                 //         new VisionIOPhotonVisionSim(
@@ -270,7 +265,6 @@ public class RobotContainer {
                 turret = new Turret(
                         new TurretIO() {}, drive::getPose, drive::getFieldSpeeds, drive::getRequestedChassisSpeeds);
                 indexer = new Indexer(new IndexerIO() {});
-                climber = new Climber(new ClimberIO() {});
                 vision = new Vision(
                         drive::addVisionMeasurement,
                         drive::setPose,
@@ -334,14 +328,6 @@ public class RobotContainer {
 
         Zones.logAllZones();
 
-        SmartDashboard.putData("Align/ClimbFL", new AlignToClimb(ClimbPosition.FRONT_LEFT, drive, vision));
-        SmartDashboard.putData("Align/ClimbFR", new AlignToClimb(ClimbPosition.FRONT_RIGHT, drive, vision));
-        SmartDashboard.putData("Align/ClimbBL", new AlignToClimb(ClimbPosition.BACK_LEFT, drive, vision));
-        SmartDashboard.putData("Align/ClimbBR", new AlignToClimb(ClimbPosition.BACK_RIGHT, drive, vision));
-        SmartDashboard.putData(
-                "Auto Climb",
-                AutoClimb.getAutoClimbCommand(drive, vision, climber)
-                        .beforeStarting(superstructure.setGoal(Goal.IDLE)));
         SmartDashboard.putData(
                 "Overrides/Manual Pass",
                 turret.manualPass()
@@ -357,7 +343,7 @@ public class RobotContainer {
 
         SmartDashboard.putData("X Wheels", drive.runOnce(drive::stopWithX));
 
-        systemChecks = new SystemChecks(turret, intakes, indexer, climber);
+        systemChecks = new SystemChecks(turret, intakes, indexer);
 
         // Turret turnaround danger zone controller rumble
         turret.turnaroundZoneMaxTrigger.whileTrue(rumbleLeft);
@@ -405,7 +391,7 @@ public class RobotContainer {
                         Commands.sequence(
                                 Commands.waitUntil(superstructure.inAllianceZoneTrigger),
                                 turret.setGoal(TurretGoal.SCORING).asProxy()),
-                        indexer.setGoal(IndexerGoal.ACTIVATING).asProxy(),
+                        indexer.setGoal(IndexerGoal.ACTIVATING).asProxy().beforeStarting(Commands.waitSeconds(0.1)),
                         Commands.waitSeconds(0.5)
                                 .andThen(Commands.repeatingSequence(
                                         Commands.waitSeconds(0.5),
@@ -431,6 +417,8 @@ public class RobotContainer {
             autoChooser.addOption(name, new PathPlannerAuto(name));
             autoChooser.addOption(name.replace("Left", "Right"), mirroredAuto(name));
         }
+
+        autoChooser.onChange((cmd) -> autoAlert.set(cmd.getName().contains("Right") != isOnRightSide.getAsBoolean()));
     }
 
     private boolean isAutoMirrorable(String name) {
@@ -546,10 +534,12 @@ public class RobotContainer {
         fudgeDown.whileTrue(turret.decreaseFudgeFactor());
         fudgeUp.whileTrue(turret.increaseFudgeFactor());
         zeroHood.whileTrue(turret.zeroHoodSequence());
-        zeroLeftIntake.whileTrue(intakes.left.zeroSequence());
-        zeroLeftIntake.onFalse(intakes.left.stow());
-        zeroRightIntake.whileTrue(intakes.right.zeroSequence());
-        zeroRightIntake.onFalse(intakes.right.stow());
+        // zeroLeftIntake.whileTrue(intakes.left.zeroSequence());
+        // zeroLeftIntake.onFalse(intakes.left.stow());
+        // zeroRightIntake.whileTrue(intakes.right.zeroSequence());
+        // zeroRightIntake.onFalse(intakes.right.stow());
+        turnTrimLeft.onTrue(turret.increaseTurnTrim());
+        turnTrimRight.onTrue(turret.decreaseTurnTrim());
     }
 
     private void configureFuelSim() {

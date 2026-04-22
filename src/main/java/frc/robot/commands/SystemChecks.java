@@ -7,7 +7,6 @@ import static frc.robot.Constants.TurretConstants.MIN_HOOD_ANGLE;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.Indexer.IndexerGoal;
 import frc.robot.subsystems.intake.Intakes;
@@ -20,13 +19,11 @@ public class SystemChecks {
     private final Turret turret;
     private final Intakes intakes;
     private final Indexer indexer;
-    private final Climber climber;
 
-    public SystemChecks(Turret turret, Intakes intakes, Indexer indexer, Climber climber) {
+    public SystemChecks(Turret turret, Intakes intakes, Indexer indexer) {
         this.turret = turret;
         this.intakes = intakes;
         this.indexer = indexer;
-        this.climber = climber;
 
         SmartDashboard.putData("System Checks/Turret", turret());
         SmartDashboard.putData("System Checks/TurretTurn", turretTurn());
@@ -36,7 +33,6 @@ public class SystemChecks {
         SmartDashboard.putData("System Checks/LeftIntake", leftIntake());
         SmartDashboard.putData("System Checks/RightIntake", rightIntake());
         SmartDashboard.putData("System Checks/Indexer", indexer());
-        SmartDashboard.putData("System Checks/Climber", climber());
     }
 
     /** Check turret turn, then hood, then flywheels */
@@ -97,11 +93,5 @@ public class SystemChecks {
     public Command indexer() {
         return Commands.sequence(
                 indexer.setGoal(IndexerGoal.ACTIVATING), Commands.waitSeconds(3), indexer.setGoal(IndexerGoal.IDLE));
-    }
-
-    /** Zero climber, then extend, then stow */
-    public Command climber() {
-        return Commands.sequence(
-                climber.zero(), Commands.waitSeconds(1), climber.extend(), Commands.waitSeconds(1), climber.stow());
     }
 }

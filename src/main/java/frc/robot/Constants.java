@@ -405,7 +405,7 @@ public final class Constants {
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30);
 
         public static final CurrentLimitsConfigs FLYWHEEL_CURRENT_LIMITS =
-                new CurrentLimitsConfigs().withStatorCurrentLimit(100);
+                new CurrentLimitsConfigs().withStatorCurrentLimit(120);
 
         public static final MotorOutputConfigs TURN_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withInverted(InvertedValue.CounterClockwise_Positive)
@@ -455,7 +455,7 @@ public final class Constants {
         public static final Angle MAX_TURN_ANGLE = Degrees.of(195);
         public static final Angle TURNAROUND_ZONE = Degrees.of(30);
 
-        public static final Distance EXTRA_DUCK_DISTANCE = Meters.of(0.5);
+        public static final Distance EXTRA_DUCK_DISTANCE = Inches.of(12);
         public static final Time DUCK_TIME = Seconds.of(0.4);
 
         public static final Angle MIN_HOOD_ANGLE = Degrees.of(6.24);
@@ -466,6 +466,7 @@ public final class Constants {
         public static final Voltage HOOD_ZEROING_VOLTAGE = Volts.of(-3);
 
         public static final double FLYWHEEL_FUDGE_AMOUNT = 0.01;
+        public static final Angle TURN_TRIM_AMOUNT = Degrees.of(0.5);
 
         public static final AngularVelocity FLYWHEEL_SCORING_OVERRIDE = RPM.of(3300);
         public static final Angle HOOD_SCORING_OVERRIDE = Degrees.of(30);
@@ -493,19 +494,19 @@ public final class Constants {
 
         static {
             final double multiplier = 0.99;
-            SHOT_MAP.put(6.3, new ShotData(RPM.of(3660 * multiplier), Degrees.of(43)));
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3685 * multiplier), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.1);
 
-            SHOT_MAP.put(5.63, new ShotData(RPM.of(3550 * multiplier), Degrees.of(42)));
+            SHOT_MAP.put(5.63, new ShotData(RPM.of(3575 * multiplier), Degrees.of(42)));
             TOF_MAP.put(5.63, 1.0917);
 
-            SHOT_MAP.put(5.25, new ShotData(RPM.of(3500 * multiplier), Degrees.of(39)));
+            SHOT_MAP.put(5.25, new ShotData(RPM.of(3520 * multiplier), Degrees.of(39)));
             TOF_MAP.put(5.25, 1.23);
 
-            SHOT_MAP.put(4.75, new ShotData(RPM.of(3400 * multiplier), Degrees.of(37)));
+            SHOT_MAP.put(4.75, new ShotData(RPM.of(3390 * multiplier), Degrees.of(37)));
             TOF_MAP.put(4.75, 1.158);
 
-            SHOT_MAP.put(4.25, new ShotData(RPM.of(3300 * multiplier), Degrees.of(36)));
+            SHOT_MAP.put(4.25, new ShotData(RPM.of(3280 * multiplier), Degrees.of(36)));
             TOF_MAP.put(4.25, 1.09);
 
             SHOT_MAP.put(3.75, new ShotData(RPM.of(3150 * multiplier), Degrees.of(35)));
@@ -641,6 +642,7 @@ public final class Constants {
     public static class IndexerConstants {
         public static final int SPIN_ID = 17;
         public static final int FEED_ID = 8;
+        public static final int FEED_FOLLOWER_ID = 7;
 
         public static final MotorOutputConfigs SPIN_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
@@ -813,7 +815,7 @@ public final class Constants {
         public static final Distance TRENCH_BUMP_X =
                 Inches.of(181.56); // x position of the center of the trench and bump
         public static final Distance TRENCH_WIDTH = Inches.of(49.86); // y width of the trench
-        public static final Distance TRENCH_BUMP_LENGTH = Inches.of(40); // x length of the trench and bump
+        public static final Distance TRENCH_BUMP_LENGTH = Inches.of(20); // x length of the trench and bump
         public static final Distance TRENCH_BAR_WIDTH = Inches.of(4); // x width of the trench bar
         public static final Distance TRENCH_BLOCK_WIDTH = Inches.of(12); // y width of block separating bump and trench
         public static final Distance BUMP_WIDTH = Inches.of(73); // y width of bump

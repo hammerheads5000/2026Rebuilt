@@ -11,7 +11,6 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.TurretConstants.*;
@@ -90,6 +89,9 @@ public class Turret extends SubsystemBase {
     private double flywheelFudgeFactor = 1;
 
     @AutoLogOutput
+    private double turnTrimDeg = 0;
+
+    @AutoLogOutput
     private Time tofFudgeFactor = Seconds.zero();
 
     private LinearVelocity prevTangentialVel = MetersPerSecond.zero();
@@ -133,6 +135,8 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putData("Overrides/Turret Manual", manualOverride());
         SmartDashboard.putData("Turret/Fudge Up", increaseFudgeFactor());
         SmartDashboard.putData("Turret/Fudge Down", decreaseFudgeFactor());
+        SmartDashboard.putData("Turret/Turn Trim Left", increaseTurnTrim());
+        SmartDashboard.putData("Turret/Turn Trim Right", decreaseTurnTrim());
         SmartDashboard.putData("Turret/Reset Encoder", resetTurnEncoder());
         SmartDashboard.putData("Turret/ToF Fudge Up", increaseToFFudgeFactor());
         SmartDashboard.putData("Turret/ToF Fudge Down", decreaseToFFudgeFactor());
@@ -179,21 +183,35 @@ public class Turret extends SubsystemBase {
                         case MANUAL_OVERRIDE:
                             io.stopFlywheel();
                             io.setHoodAngle(MIN_HOOD_ANGLE);
-                            io.setTurnSetpoint(Radians.of(0), RadiansPerSecond.of(0));
+                            io.setTurnSetpoint(Degrees.of(turnTrimDeg), RadiansPerSecond.of(0));
                             break;
                     }
                 })
                 .withName("Set Turret Goal");
     }
 
+    public Command increaseTurnTrim() {
+        return Commands.runOnce(() -> turnTrimDeg += TURN_TRIM_AMOUNT.in(Degrees))
+                .ignoringDisable(true)
+                .withName("Trim Left");
+    }
+
+    public Command decreaseTurnTrim() {
+        return Commands.runOnce(() -> turnTrimDeg -= TURN_TRIM_AMOUNT.in(Degrees))
+                .ignoringDisable(true)
+                .withName("Trim Right");
+    }
+
     public Command increaseFudgeFactor() {
-        return Commands.runOnce(() -> this.flywheelFudgeFactor *= (1 + FLYWHEEL_FUDGE_AMOUNT))
+        return Commands.runOnce(() -> this.flywheelFudgeFactor =
+                        Math.round(100 * flywheelFudgeFactor * (1 + FLYWHEEL_FUDGE_AMOUNT)) / 100.0)
                 .ignoringDisable(true)
                 .withName("Fudge Up");
     }
 
     public Command decreaseFudgeFactor() {
-        return Commands.runOnce(() -> this.flywheelFudgeFactor *= (1 - FLYWHEEL_FUDGE_AMOUNT))
+        return Commands.runOnce(() -> this.flywheelFudgeFactor =
+                        Math.round(100 * flywheelFudgeFactor * (1 - FLYWHEEL_FUDGE_AMOUNT)) / 100.0)
                 .ignoringDisable(true)
                 .withName("Fudge Down");
     }
@@ -215,7 +233,8 @@ public class Turret extends SubsystemBase {
     }
 
     public Command setTurnPosition(Angle position) {
-        return Commands.runOnce(() -> io.setTurnSetpoint(position, RadiansPerSecond.zero()));
+        return Commands.runOnce(
+                () -> io.setTurnSetpoint(position.plus(Degrees.of(turnTrimDeg)), RadiansPerSecond.zero()));
     }
 
     public Command setHoodPosition(Angle angle) {
@@ -340,12 +359,12 @@ public class Turret extends SubsystemBase {
                         () -> {
                             io.setFlywheelSpeed(FLYWHEEL_SCORING_OVERRIDE.times(flywheelFudgeFactor));
                             io.setHoodAngle(HOOD_SCORING_OVERRIDE);
-                            io.setTurnSetpoint(Radians.zero(), RadiansPerSecond.zero());
+                            io.setTurnSetpoint(Degrees.of(turnTrimDeg), RadiansPerSecond.zero());
                         },
                         () -> {
                             io.stopFlywheel();
                             io.setHoodAngle(MIN_HOOD_ANGLE);
-                            io.setTurnSetpoint(Radians.zero(), RadiansPerSecond.zero());
+                            io.setTurnSetpoint(Degrees.of(turnTrimDeg), RadiansPerSecond.zero());
                         })
                 .onlyIf(() -> goal == TurretGoal.MANUAL_OVERRIDE)
                 .withName("Turret Manual Score");
@@ -356,12 +375,12 @@ public class Turret extends SubsystemBase {
                         () -> {
                             io.setFlywheelSpeed(FLYWHEEL_PASSING_OVERRIDE.times(flywheelFudgeFactor));
                             io.setHoodAngle(HOOD_PASSING_OVERRIDE);
-                            io.setTurnSetpoint(Radians.zero(), RadiansPerSecond.zero());
+                            io.setTurnSetpoint(Degrees.of(turnTrimDeg), RadiansPerSecond.zero());
                         },
                         () -> {
                             io.stopFlywheel();
                             io.setHoodAngle(MIN_HOOD_ANGLE);
-                            io.setTurnSetpoint(Radians.zero(), RadiansPerSecond.zero());
+                            io.setTurnSetpoint(Degrees.of(turnTrimDeg), RadiansPerSecond.zero());
                         })
                 .onlyIf(() -> goal == TurretGoal.MANUAL_OVERRIDE)
                 .withName("Turret Manual Pass");
@@ -391,7 +410,9 @@ public class Turret extends SubsystemBase {
                 io.setFlywheelSpeed(RPM.of(tuningFlywheelSpeed.get()));
                 io.setHoodAngle(Degrees.of(tuningHoodAngle.get()));
                 io.setTurnSetpoint(
-                        TurretCalculator.calculateAzimuthAngle(pose, currentTarget, inputs.turnPosition), RPM.zero());
+                        TurretCalculator.calculateAzimuthAngle(pose, currentTarget, inputs.turnPosition)
+                                .plus(Degrees.of(turnTrimDeg)),
+                        RPM.zero());
                 break;
             default:
                 break;
@@ -433,7 +454,9 @@ public class Turret extends SubsystemBase {
                 Seconds.of((goal == TurretGoal.PASSING ? PASS_TOF_MAP : TOF_MAP).get(robotToTarget.getNorm()));
         AngularVelocity velocitySetpoint = getVelocitySetpoint(robotToTarget, fieldSpeeds, timeOfFlight);
 
-        io.setTurnSetpoint(azimuthAngle.plus(velocitySetpoint.times(Seconds.of(0.02))), velocitySetpoint);
+        io.setTurnSetpoint(
+                azimuthAngle.plus(velocitySetpoint.times(Seconds.of(0.02))).plus(Degrees.of(turnTrimDeg)),
+                velocitySetpoint);
         io.setHoodAngle(calculatedShot.getHoodAngle());
         io.setFlywheelSpeed(calculatedShot.getAngularExitVelocity().times(flywheelFudgeFactor));
 
@@ -463,7 +486,7 @@ public class Turret extends SubsystemBase {
         return this.runOnce(() -> {
             io.setHoodAngle(MIN_HOOD_ANGLE);
             io.stopFlywheel();
-            io.setTurnSetpoint(Radians.zero(), RadiansPerSecond.zero());
+            io.setTurnSetpoint(Degrees.of(turnTrimDeg), RadiansPerSecond.zero());
         });
     }
 

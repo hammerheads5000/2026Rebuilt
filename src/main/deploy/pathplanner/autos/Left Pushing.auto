@@ -1,0 +1,81 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Trench Mid Start Left to Trench Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Deploy"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Crazy pushing"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Duck"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Trench Left to Dump Left Flipped"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Corner collect"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot No Press"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}

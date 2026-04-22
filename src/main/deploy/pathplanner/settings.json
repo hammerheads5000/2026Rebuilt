@@ -3,15 +3,16 @@
     "robotLength": 0.882,
     "holonomicMode": true,
     "pathFolders": [
+        "Bump + Trench",
         "Climbs",
         "Collection",
         "Collection Rev Intake",
         "Dumping",
         "Inside Zone",
+        "Traversal",
         "Old Collection",
         "Old Collection 2.0",
-        "Starts",
-        "Bump + Trench"
+        "Starts"
     ],
     "autoFolders": [],
     "defaultMaxVel": 3.0,

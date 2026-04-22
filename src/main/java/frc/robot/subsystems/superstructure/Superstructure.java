@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -152,9 +153,9 @@ public class Superstructure extends SubsystemBase {
 
     public Command setGoal(Goal newGoal) {
         return Commands.either(
-                        this.runOnce(() -> this.nonDuckingGoal = newGoal),
+                        Commands.runOnce(() -> this.nonDuckingGoal = newGoal),
                         // .unless(() -> nonDuckingGoal == Goal.COLLECTING && newGoal == Goal.PASSING),
-                        this.runOnce(() -> this.goal = newGoal)
+                        Commands.runOnce(() -> this.goal = newGoal)
                                 .andThen(goalCommands.get(newGoal).get()),
                         underTrenchTrigger.and(() -> newGoal != Goal.DUCKING))
                 .withName("Set goal");
@@ -168,7 +169,7 @@ public class Superstructure extends SubsystemBase {
     /** Handle state logic for transitioning out of PASSING/COLLECTING */
     public Command stopPassCollecting() {
         return Commands.either(this.setGoal(Goal.SCORING), this.setGoal(Goal.COLLECTING), activeInZoneTrigger)
-                .onlyIf(() -> this.goal == Goal.PASSING || this.goal == Goal.COLLECTING)
+                // .onlyIf(() -> this.goal == Goal.PASSING || this.goal == Goal.COLLECTING)
                 .withName("Stop passing");
     }
 
@@ -183,7 +184,7 @@ public class Superstructure extends SubsystemBase {
                         () -> this.setGoal(nonDuckingGoal), // == Goal.SCORING
                         //         ? (inAllianceZone() ? Goal.SCORING : Goal.COLLECTING)
                         //         : nonDuckingGoal),
-                        Set.of(this))
+                        Set.of())
                 .withName("Unduck");
     }
 
@@ -214,6 +215,10 @@ public class Superstructure extends SubsystemBase {
                 this.getCurrentCommand() == null
                         ? "None"
                         : this.getCurrentCommand().getName());
+
+        if (underTrenchTrigger.getAsBoolean() && goal != Goal.DUCKING) {
+            CommandScheduler.getInstance().schedule(this.duck());
+        }
     }
 
     public static enum Goal {

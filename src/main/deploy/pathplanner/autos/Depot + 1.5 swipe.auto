@@ -1,0 +1,144 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Deploy Rev"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Bump Start Left to Depot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Depot"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Depot to Dump Left Flip"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Duck"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Dump Left to Trench Left Flipped"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Trench To Bump Unflip"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Bump Left to Bump Dump Left"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Bump Dump Left to Dump Left Flip"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Duck"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Dump Left to Trench Left Flipped"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2.5 Recycle Flipped"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}

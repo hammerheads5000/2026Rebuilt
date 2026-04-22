@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.4911032028469755,
-        "y": 4.782763938315539
+        "x": 3.5,
+        "y": 2.4174222222222226
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.1050032028469756,
-        "y": 4.816869493871096
+        "x": 3.963008931366006,
+        "y": 2.4174222222222226
       },
       "isLocked": false,
-      "linkedName": "Depot"
+      "linkedName": "Bump Start Right Sideways"
     },
     {
       "anchor": {
-        "x": 4.2,
-        "y": 7.441
+        "x": 5.99,
+        "y": 2.3784444444444444
       },
       "prevControl": {
-        "x": 2.4923131672597867,
-        "y": 7.623190984578885
+        "x": 5.338538233169454,
+        "y": 2.378444444444445
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Dump Left"
+      "linkedName": "Bump Exit Right Sideways"
     }
   ],
   "rotationTargets": [],
@@ -34,21 +34,21 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -90.0
-  },
-  "reversed": false,
-  "folder": "Dumping",
-  "idealStartingState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": 180.0
   },
-  "useDefaultConstraints": false
+  "reversed": false,
+  "folder": "Starts",
+  "idealStartingState": {
+    "velocity": 0.0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
 }

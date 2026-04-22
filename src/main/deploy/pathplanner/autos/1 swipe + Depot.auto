@@ -9,15 +9,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "Trench Mid Start Left to Trench Left"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Deploy"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Trench Mid Start Left to Trench Left"
                 }
               }
             ]
@@ -26,44 +26,38 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New New Path"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Duck"
+            "pathName": "Trench Angled To Bump Flip"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Trench Left to Dump Left Flipped"
+            "pathName": "Bump Left to Bump Dump Left Flipped"
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "New New New Path"
+                  "pathName": "Bump Dump Left to Depot Flipped"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Shoot No Press"
+                  "name": "Shoot"
                 }
               }
             ]
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 1.0
+            "pathName": "Depot Flipped"
           }
         },
         {

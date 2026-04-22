@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.4,
-        "y": 5.525899999999999
+        "x": 2.8904033214709375,
+        "y": 5.526
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.606132291666667,
-        "y": 5.619994791666666
+        "x": 2.099441287878788,
+        "y": 5.488361742424242
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Bump Dump Left Sideways"
     },
     {
       "anchor": {
-        "x": 1.2150222222222222,
-        "y": 5.9497833333333325
+        "x": 0.4911032028469755,
+        "y": 4.782763938315539
       },
       "prevControl": {
-        "x": 2.17485,
-        "y": 5.837722222222221
+        "x": 1.4509309806247535,
+        "y": 4.670702827204428
       },
       "nextControl": null,
       "isLocked": false,
@@ -56,13 +56,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "Inside Zone",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -45.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

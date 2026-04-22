@@ -104,9 +104,15 @@ public class TeleopDrive extends Command {
 
         inTowerZoneTrigger = Zones.TOWER_ZONES.contains(drive::getPose).debounce(0.1);
 
-        inTrenchZoneTrigger.and(autoAlign).onTrue(updateDriveMode(DriveMode.TRENCH_LOCK));
+        inTrenchZoneTrigger
+                .and(autoAlign)
+                .and(() -> currentDriveMode != DriveMode.UNLIMITED)
+                .onTrue(updateDriveMode(DriveMode.TRENCH_LOCK));
         // inBumpZoneTrigger.and(autoAlign).onTrue(updateDriveMode(DriveMode.BUMP_LOCK));
-        inTrenchZoneTrigger.and(autoAlign).onFalse(updateDriveMode(DriveMode.NORMAL));
+        inTrenchZoneTrigger
+                .and(autoAlign)
+                .or(() -> currentDriveMode == DriveMode.UNLIMITED)
+                .onFalse(updateDriveMode(DriveMode.NORMAL));
         // inTowerZoneTrigger.and(() -> wallAvoidance).onTrue(updateDriveMode(DriveMode.TOWER_LOCK));
 
         addRequirements(drive);
@@ -241,6 +247,10 @@ public class TeleopDrive extends Command {
                 linearVelocity = new Translation2d(xVel, linearVelocity.getY());
                 angularVelocity = RadiansPerSecond.of(rotSpeedToForward);
                 break;
+            case UNLIMITED:
+                break;
+            default:
+                break;
         }
 
         Logger.recordOutput(
@@ -266,6 +276,7 @@ public class TeleopDrive extends Command {
     public Command speedUpCommand() {
         return Commands.startEnd(
                         () -> {
+                            currentDriveMode = DriveMode.UNLIMITED;
                             driveLimiter.setRateLimit(SwerveConstants.MAX_TELEOP_ACCEL.in(MetersPerSecondPerSecond));
                             if (slowingDown) {
                                 setDriveSpeed(SwerveConstants.DEFAULT_DRIVE_SPEED);
@@ -276,6 +287,7 @@ public class TeleopDrive extends Command {
                             }
                         },
                         () -> {
+                            currentDriveMode = DriveMode.NORMAL;
                             if (slowingDown) {
                                 setDriveSpeed(SwerveConstants.SLOW_DRIVE_SPEED);
                                 setRotSpeed(SwerveConstants.SLOW_ROT_SPEED);
@@ -388,6 +400,7 @@ public class TeleopDrive extends Command {
         NORMAL,
         TRENCH_LOCK,
         BUMP_LOCK,
-        TOWER_LOCK
+        TOWER_LOCK,
+        UNLIMITED
     }
 }

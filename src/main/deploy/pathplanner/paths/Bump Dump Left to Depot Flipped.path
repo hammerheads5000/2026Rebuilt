@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.6353649893692417,
+        "x": 2.976476868327403,
         "y": 5.525899999999999
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.041032028469752,
-        "y": 5.309964412811388
+        "x": 2.1826091599940702,
+        "y": 5.619994791666666
       },
       "isLocked": false,
-      "linkedName": "Bump Start Left"
+      "linkedName": "Bump Dump Left Flipped"
     },
     {
       "anchor": {
@@ -20,30 +20,25 @@
         "y": 4.782763938315539
       },
       "prevControl": {
-        "x": 1.597365908932896,
-        "y": 4.782763938315539
+        "x": 1.4509309806247535,
+        "y": 4.670702827204428
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Depot"
+      "linkedName": "Depot Flipped"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": -90.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.0,
-      "maxWaypointRelativePos": 1.75,
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.0,
+        "maxVelocity": 1.5,
         "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 540.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
@@ -61,13 +56,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Starts",
+  "folder": "Inside Zone",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

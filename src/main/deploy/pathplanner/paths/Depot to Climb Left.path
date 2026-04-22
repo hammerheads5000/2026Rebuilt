@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2150222222222222,
-        "y": 5.9497833333333325
+        "x": 0.4911032028469755,
+        "y": 4.782763938315539
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0725333333333333,
-        "y": 5.477177777777777
+        "x": 1.3486143139580866,
+        "y": 4.310158382759983
       },
       "isLocked": false,
       "linkedName": "Depot"
@@ -64,7 +64,7 @@
   "folder": "Climbs",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

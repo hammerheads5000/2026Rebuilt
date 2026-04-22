@@ -3,32 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.4911032028469755,
-        "y": 4.782763938315539
+        "x": 5.99,
+        "y": 2.3784444444444444
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4911032028469755,
-        "y": 4.782763938315539
+        "x": 6.5747821969696965,
+        "y": 2.4331698232323244
       },
       "isLocked": false,
-      "linkedName": "Depot"
+      "linkedName": "Bump Exit Right Sideways"
     },
     {
       "anchor": {
-        "x": 3.6353649893692417,
-        "y": 5.525899999999999
+        "x": 5.936316287878787,
+        "y": 3.6031439393939397
       },
       "prevControl": {
-        "x": 2.9026927671470193,
-        "y": 5.631870833333332
+        "x": 5.96123106060606,
+        "y": 3.2211174242424248
       },
       "nextControl": {
-        "x": 4.368037211591464,
-        "y": 5.419929166666666
+        "x": 5.86819684737015,
+        "y": 4.647642027193029
       },
       "isLocked": false,
-      "linkedName": "Bump Start Left"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -36,20 +36,15 @@
         "y": 5.525899999999999
       },
       "prevControl": {
-        "x": 5.145711111111111,
-        "y": 5.525899999999999
+        "x": 6.916297348484849,
+        "y": 5.56310606060606
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Bump Exit Left"
+      "linkedName": "Bump Exit Left Sideways"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 1.0,
-      "rotationDegrees": -45.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -63,10 +58,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": -179.63314646768202
   },
   "reversed": false,
-  "folder": "Inside Zone",
+  "folder": "Traversal",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 180.0

@@ -2,6 +2,7 @@ package frc.robot.subsystems.indexer;
 
 import static edu.wpi.first.units.Units.Hertz;
 import static frc.robot.Constants.IndexerConstants.FEED_CURRENT_LIMITS;
+import static frc.robot.Constants.IndexerConstants.FEED_FOLLOWER_ID;
 import static frc.robot.Constants.IndexerConstants.FEED_ID;
 import static frc.robot.Constants.IndexerConstants.FEED_OUTPUT_CONFIGS;
 import static frc.robot.Constants.IndexerConstants.SPIN_CURRENT_LIMITS;
@@ -12,9 +13,11 @@ import static frc.robot.Constants.IndexerConstants.SPIN_RAMPS;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -25,6 +28,7 @@ import frc.robot.util.PhoenixUtil;
 public class IndexerIOTalonFX implements IndexerIO {
     private final TalonFX spinMotor;
     private final TalonFX feedMotor;
+    private final TalonFX feedFollowerMotor;
 
     private final VoltageOut spinVoltageOut = new VoltageOut(0);
     private final VoltageOut feedVoltageOut = new VoltageOut(0).withEnableFOC(false);
@@ -46,6 +50,7 @@ public class IndexerIOTalonFX implements IndexerIO {
     public IndexerIOTalonFX() {
         spinMotor = new TalonFX(SPIN_ID, Constants.CAN_FD_BUS);
         feedMotor = new TalonFX(FEED_ID, Constants.CAN_FD_BUS);
+        feedFollowerMotor = new TalonFX(FEED_FOLLOWER_ID, Constants.CAN_FD_BUS);
 
         TalonFXConfiguration spinConfig = new TalonFXConfiguration()
                 .withMotorOutput(SPIN_OUTPUT_CONFIGS)
@@ -58,6 +63,7 @@ public class IndexerIOTalonFX implements IndexerIO {
                 new TalonFXConfiguration().withMotorOutput(FEED_OUTPUT_CONFIGS).withCurrentLimits(FEED_CURRENT_LIMITS);
 
         PhoenixUtil.tryUntilOk(5, () -> feedMotor.getConfigurator().apply(feedConfig, 0.25));
+        PhoenixUtil.tryUntilOk(5, () -> feedFollowerMotor.getConfigurator().apply(feedConfig, 0.25));
 
         spinVelocity = spinMotor.getVelocity();
         spinCurrent = spinMotor.getTorqueCurrent();
@@ -85,6 +91,8 @@ public class IndexerIOTalonFX implements IndexerIO {
 
         spinMotor.optimizeBusUtilization();
         feedMotor.optimizeBusUtilization();
+
+        feedFollowerMotor.setControl(new Follower(FEED_ID, MotorAlignmentValue.Aligned));
     }
 
     @Override

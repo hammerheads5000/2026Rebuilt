@@ -24,14 +24,15 @@ import org.littletonrobotics.junction.AutoLogOutput;
 public class Leds {
     private static final int START = 8; // front of right
     private static final int END_RIGHT = 85; // back of right
-    private static final int END = 161; // back of left
+    private static final int END = 162; // back of left
     private static final int ENDGAME_RIGHT_PIX = (int) (30.0 / 55.0 * (END_RIGHT - START)) + START;
     private static final int ENDGAME_LEFT_PIX = (int) (30.0 / 55.0 * (END - END_RIGHT - 1)) + END_RIGHT + 1;
+    private static final int TRANSITON_RIGHT_PIX = (int) (25.0 / 35.0 * (END_RIGHT - START)) + START;
+    private static final int TRANSITION_LEFT_PIX = (int) (25.0 / 35.0 * (END - END_RIGHT - 1)) + END_RIGHT + 1;
     private static final double BRIGHTNESS = 0.6;
 
     private static final SolidColor BLANK = new SolidColor(START, END).withColor(new RGBWColor());
-    private static final SolidColor WHITE =
-            new SolidColor(START, END).withColor(new RGBWColor(Color.kWhite).scaleBrightness(BRIGHTNESS / 3.0));
+    private static final RGBWColor WHITE = new RGBWColor(Color.kWhite).scaleBrightness(BRIGHTNESS / 3.0);
     private static final SingleFadeAnimation LOW_BATTERY = new SingleFadeAnimation(START, END)
             .withFrameRate(250)
             .withColor(new RGBWColor(Color.kRed).scaleBrightness(BRIGHTNESS));
@@ -43,9 +44,9 @@ public class Leds {
             .withSize(15)
             .withFrameRate(50);
 
-    private RGBWColor activeColor = new RGBWColor(Color.kBlue).scaleBrightness(BRIGHTNESS);
-    private RGBWColor inactiveColor = new RGBWColor(Color.kRed).scaleBrightness(BRIGHTNESS);
-    private RGBWColor endgameColor = new RGBWColor(Color.kPurple).scaleBrightness(BRIGHTNESS);
+    private final RGBWColor activeColor = new RGBWColor(Color.kBlue).scaleBrightness(BRIGHTNESS);
+    private final RGBWColor inactiveColor = new RGBWColor(Color.kRed).scaleBrightness(BRIGHTNESS);
+    private final RGBWColor endgameColor = new RGBWColor(Color.kPurple).scaleBrightness(BRIGHTNESS);
 
     private final CANdle candle;
 
@@ -116,13 +117,14 @@ public class Leds {
         //     candle.setControl(BLANK);
         // }
 
-        RGBWColor color = shiftInfo.currentShift() == ShiftEnum.ENDGAME
-                ? endgameColor
-                : (shiftInfo.active() ? activeColor : inactiveColor);
-        RGBWColor offColor = new RGBWColor(Color.kWhite);
+        RGBWColor color =
+                (shiftInfo.currentShift() == ShiftEnum.ENDGAME || shiftInfo.currentShift() == ShiftEnum.TRANSITION)
+                        ? endgameColor
+                        : (shiftInfo.active() ? activeColor : inactiveColor);
+        RGBWColor offColor = WHITE;
         double proportion = shiftInfo.remainingTime() / (shiftInfo.remainingTime() + shiftInfo.elapsedTime());
 
-        // candle.clearAllAnimations();
+        candle.clearAllAnimations();
 
         if (shiftInfo.remainingTime() <= 5.0) {
             // color = shiftInfo.currentShift() == ShiftEnum.SHIFT4
@@ -147,6 +149,12 @@ public class Leds {
 
             candle.setControl(new SolidColor(START, ENDGAME_RIGHT_PIX).withColor(endgameColor));
             candle.setControl(new SolidColor(END_RIGHT + 1, ENDGAME_LEFT_PIX).withColor(endgameColor));
+        } else if (shiftInfo.currentShift() == ShiftEnum.TRANSITION && shiftInfo.remainingTime() > 10) {
+            candle.setControl(new SolidColor(TRANSITON_RIGHT_PIX + 1, rightPixel).withColor(color));
+            candle.setControl(new SolidColor(TRANSITION_LEFT_PIX + 1, leftPixel).withColor(color));
+
+            candle.setControl(new SolidColor(START, TRANSITON_RIGHT_PIX).withColor(activeColor));
+            candle.setControl(new SolidColor(END_RIGHT + 1, TRANSITION_LEFT_PIX).withColor(activeColor));
         } else {
             candle.setControl(new SolidColor(START, rightPixel).withColor(color));
             candle.setControl(new SolidColor(END_RIGHT + 1, leftPixel).withColor(color));
