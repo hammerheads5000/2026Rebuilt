@@ -391,7 +391,9 @@ public class RobotContainer {
                         Commands.sequence(
                                 Commands.waitUntil(superstructure.inAllianceZoneTrigger),
                                 turret.setGoal(TurretGoal.SCORING).asProxy()),
-                        indexer.setGoal(IndexerGoal.ACTIVATING).asProxy().beforeStarting(Commands.waitSeconds(0.1)),
+                        indexer.setGoal(IndexerGoal.ACTIVATING)
+                                .asProxy()
+                                .beforeStarting(Commands.waitUntil(turret.atTurnSetpoint)),
                         Commands.waitSeconds(0.5)
                                 .andThen(Commands.repeatingSequence(
                                         Commands.waitSeconds(0.5),
@@ -402,7 +404,9 @@ public class RobotContainer {
                         Commands.sequence(
                                 Commands.waitUntil(superstructure.inAllianceZoneTrigger),
                                 turret.setGoal(TurretGoal.SCORING).asProxy()),
-                        indexer.setGoal(IndexerGoal.ACTIVATING).asProxy()));
+                        indexer.setGoal(IndexerGoal.ACTIVATING)
+                                .asProxy()
+                                .beforeStarting(Commands.waitUntil(turret.atTurnSetpoint))));
 
         autoChooser.addDefaultOption("", Commands.none());
 

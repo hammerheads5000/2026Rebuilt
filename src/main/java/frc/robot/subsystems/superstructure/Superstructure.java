@@ -135,6 +135,19 @@ public class Superstructure extends SubsystemBase {
                 .onFalse(indexer.setGoal(IndexerGoal.ACTIVATING)
                         .onlyIf(() -> goal == Goal.SCORING || goal == Goal.PASSING));
 
+        turret.atTurnSetpoint
+                .and(DriverStation::isTeleop)
+                .and(() -> indexer.getGoal() == IndexerGoal.IDLE
+                        && (turret.getGoal() == TurretGoal.SCORING || turret.getGoal() == TurretGoal.PASSING))
+                .onTrue(indexer.setGoal(IndexerGoal.ACTIVATING).asProxy().onlyIf(behindTowerTrigger.negate()));
+        turret.atTurnSetpoint
+                .negate()
+                .and(DriverStation::isTeleop)
+                .and(() -> indexer.getGoal() == IndexerGoal.ACTIVATING
+                        || indexer.getGoal() == IndexerGoal.ACTIVE
+                        || indexer.getGoal() == IndexerGoal.UNJAMMING)
+                .onTrue(indexer.setGoal(IndexerGoal.IDLE).asProxy());
+
         // turret.underTrenchTrigger.onTrue(indexer.runOnce(() -> indexer.stop(false)));
         // turret.underTrenchTrigger.onFalse(Commands.defer(() -> indexer.setGoal(indexer.getGoal()), Set.of()));
 

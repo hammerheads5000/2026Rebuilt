@@ -393,7 +393,7 @@ public final class Constants {
                 new Slot0Configs().withKP(800).withKD(5).withKS(0.28);
 
         public static final Slot0Configs FLYWHEEL_GAINS =
-                new Slot0Configs().withKP(10).withKD(0.0).withKS(7).withKV(0.0);
+                new Slot0Configs().withKP(11).withKD(0.0).withKS(7).withKV(0.0);
 
         public static final CurrentLimitsConfigs TURN_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30);
@@ -448,6 +448,7 @@ public final class Constants {
         public static final Distance SHOOT_RADIUS = Inches.of(1);
         public static final int LOOKAHEAD_ITERATIONS = 5;
 
+        public static final Angle TURN_TOLERANCE = Degrees.of(20);
         public static final Angle MIN_TURN_ANGLE = Degrees.of(-250);
         public static final Angle MAX_TURN_ANGLE = Degrees.of(195);
         public static final Angle TURNAROUND_ZONE = Degrees.of(30);

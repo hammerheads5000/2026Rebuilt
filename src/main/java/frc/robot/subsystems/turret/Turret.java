@@ -96,6 +96,9 @@ public class Turret extends SubsystemBase {
     @AutoLogOutput
     private Time tofFudgeFactor = Seconds.zero();
 
+    @AutoLogOutput
+    public final Trigger atTurnSetpoint;
+
     private LinearVelocity prevTangentialVel = MetersPerSecond.zero();
     private long prevTimeMicros = 0;
 
@@ -132,6 +135,9 @@ public class Turret extends SubsystemBase {
                                 .rotateAround(poseSupplier.get().getTranslation(), new Rotation2d(inputs.turnPosition)))
                         .transformBy(ROBOT_TO_TURRET_TRANSFORM),
                 fieldSpeedsSupplier);
+
+        atTurnSetpoint =
+                new Trigger(() -> inputs.turnPosition.isNear(inputs.turnSetpoint, TURN_TOLERANCE)).debounce(0.1);
 
         SmartDashboard.putData("Overrides/Turret Disable", disable());
         SmartDashboard.putData("Overrides/Turret Manual", manualOverride());
