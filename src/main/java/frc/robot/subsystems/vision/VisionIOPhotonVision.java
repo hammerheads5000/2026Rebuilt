@@ -13,6 +13,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.util.LoggedTunableNumber;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -100,6 +102,11 @@ public class VisionIOPhotonVision implements VisionIO {
                         robotPose, // 3D pose estimate
                         multitagResult.estimatedPose.ambiguity, // Ambiguity
                         multitagResult.fiducialIDsUsed.size(), // Tag count
+                        multitagResult.fiducialIDsUsed.stream()
+                                .anyMatch(id -> (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                                                ? BLUE_HUB_TAG_IDS
+                                                : RED_HUB_TAG_IDS)
+                                        .contains(id.intValue())), // Has hub tag
                         totalTagDistance / result.targets.size(), // Average tag distance
                         PoseObservationType.PHOTONVISION)); // Observation type
 
@@ -125,6 +132,10 @@ public class VisionIOPhotonVision implements VisionIO {
                             robotPose, // 3D pose estimate
                             target.poseAmbiguity, // Ambiguity
                             1, // Tag count
+                            (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+                                            ? BLUE_HUB_TAG_IDS
+                                            : RED_HUB_TAG_IDS)
+                                    .contains(target.fiducialId), // Has hub tag
                             cameraToTarget.getTranslation().getNorm(), // Average tag distance
                             PoseObservationType.PHOTONVISION)); // Observation type
                 }

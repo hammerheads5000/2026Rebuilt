@@ -131,7 +131,7 @@ public class RobotContainer {
     private final Trigger disableRightIntake = toggleSwitches.button(5);
     private final Trigger manualOverrideTurret = toggleSwitches.button(8);
     private final Trigger disableWallAvoidance = toggleSwitches.button(7);
-    //     private final Trigger flashLEDs = toggleSwitches.button(8);
+    private final Trigger hubTagsOnly = toggleSwitches.button(8);
     private final Trigger hubShiftOverride = toggleSwitches.button(9);
     private final Trigger slowDrive = toggleSwitches.button(10);
 
@@ -527,7 +527,7 @@ public class RobotContainer {
         disableRightIntake.whileTrue(intakes.right.disable());
         manualOverrideTurret.whileTrue(turret.manualOverride());
         disableWallAvoidance.whileTrue(teleopDrive.disableWallAvoidance());
-        // flashLEDs.whileTrue();
+        hubTagsOnly.whileTrue(vision.onlyUseHubTags());
         hubShiftOverride.whileTrue(superstructure.enableShiftOverride());
         slowDrive.whileTrue(teleopDrive.slowDownCommand());
 

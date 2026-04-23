@@ -16,6 +16,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.TurretConstants.*;
 
 import com.pathplanner.lib.util.FlippingUtil;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,6 +25,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
@@ -155,7 +157,7 @@ public class Turret extends SubsystemBase {
                             setTarget(FieldConstants.HUB_BLUE);
                             break;
                         case PASSING:
-                            setTarget(getPassingTarget(poseSupplier.get()));
+                            setTarget(getPassingTarget(poseSupplier.get()), false);
                             break;
                         case IDLE:
                             io.stopFlywheel();
@@ -246,10 +248,15 @@ public class Turret extends SubsystemBase {
     }
 
     public void setTarget(Translation3d target) {
-        currentTarget = target;
-        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+        setTarget(target, DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red);
+    }
+
+    public void setTarget(Translation3d target, boolean flip) {
+        if (flip) {
             Translation2d flipped = FlippingUtil.flipFieldPosition(target.toTranslation2d());
             currentTarget = new Translation3d(flipped.getX(), flipped.getY(), target.getZ());
+        } else {
+            currentTarget = target;
         }
     }
 
@@ -258,13 +265,22 @@ public class Turret extends SubsystemBase {
         boolean onBlueLeftSide = poseSupplier.get().getMeasureY().gt(FieldConstants.FIELD_WIDTH.div(2));
 
         Translation3d target = isBlue == onBlueLeftSide ? PASSING_SPOT_LEFT : PASSING_SPOT_RIGHT;
+        if (DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red) {
+            target = new Translation3d(FlippingUtil.flipFieldPosition(target.toTranslation2d()));
+        }
 
         Translation2d dir = pose.getTranslation().minus(target.toTranslation2d());
+        Distance rollDistance = getRollDistance(dir.getNorm());
         dir = dir.div(dir.getNorm()); // 1 m
-        dir = dir.times(PASSING_ROLL_DISTANCE.in(Meters));
+        dir = dir.times(rollDistance.in(Meters));
 
         target = target.plus(new Translation3d(dir));
         return target;
+    }
+
+    private static Distance getRollDistance(double distance) {
+        double rollingDist = distance * ROLL_PROPORTION;
+        return Meters.of(MathUtil.clamp(rollingDist, 0, MAX_PASSING_ROLL_DISTANCE.in(Meters)));
     }
 
     private boolean inTurnaroundZoneMax() {
@@ -404,7 +420,7 @@ public class Turret extends SubsystemBase {
                 break;
             case PASSING:
                 calculateShot(pose);
-                setTarget(getPassingTarget(pose));
+                setTarget(getPassingTarget(pose), false);
                 break;
             case TUNING:
                 io.setFlywheelSpeed(RPM.of(tuningFlywheelSpeed.get()));

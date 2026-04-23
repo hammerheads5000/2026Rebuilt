@@ -29,6 +29,7 @@ public interface VisionIO {
             Pose3d pose,
             double ambiguity,
             int tagCount,
+            boolean hasHubTag,
             double averageTagDistance,
             PoseObservationType type) {}
 

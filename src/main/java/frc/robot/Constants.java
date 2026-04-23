@@ -17,7 +17,6 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
-import com.ctre.phoenix6.configs.OpenLoopRampsConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -63,12 +62,10 @@ import edu.wpi.first.networktables.StringArrayTopic;
 import edu.wpi.first.networktables.StructArrayTopic;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.*;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.subsystems.turret.TurretCalculator.ShotData;
 import frc.robot.util.TunableControls.ControlConstants;
 import frc.robot.util.TunableControls.TunableControlConstants;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -475,12 +472,13 @@ public final class Constants {
         public static final Angle HOOD_PASSING_OVERRIDE = Degrees.of(47);
 
         public static final Translation3d PASSING_SPOT_LEFT =
-                new Translation3d(Inches.of(20), FieldConstants.FIELD_WIDTH.minus(Inches.of(30)), Inches.zero());
+                new Translation3d(Inches.of(20), FieldConstants.FIELD_WIDTH.minus(Inches.of(40)), Inches.zero());
         public static final Translation3d PASSING_SPOT_CENTER =
                 new Translation3d(Inches.of(90), FieldConstants.FIELD_WIDTH.div(2), Inches.zero());
         public static final Translation3d PASSING_SPOT_RIGHT =
-                new Translation3d(Inches.of(20), Inches.of(30), Inches.zero());
-        public static final Distance PASSING_ROLL_DISTANCE = Meters.of(2.5);
+                new Translation3d(Inches.of(20), Inches.of(40), Inches.zero());
+        public static final Distance MAX_PASSING_ROLL_DISTANCE = Meters.of(3.7);
+        public static final double ROLL_PROPORTION = 0.27;
 
         public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP =
                 new InterpolatingTreeMap<>(InverseInterpolator.forDouble(), ShotData::interpolate);
@@ -648,9 +646,6 @@ public final class Constants {
                 .withNeutralMode(NeutralModeValue.Brake)
                 .withInverted(InvertedValue.CounterClockwise_Positive);
 
-        public static final OpenLoopRampsConfigs SPIN_RAMPS =
-                new OpenLoopRampsConfigs().withVoltageOpenLoopRampPeriod(Seconds.of(1));
-
         public static final MotorOutputConfigs FEED_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake)
                 .withInverted(InvertedValue.CounterClockwise_Positive);
@@ -665,7 +660,7 @@ public final class Constants {
         public static final Voltage FEED_VOLTAGE = Volts.of(8);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-8);
-        public static final Time SPIN_RAMP = Seconds.of(1.5);
+        public static final Time SPIN_RAMP = Seconds.of(0.5);
 
         public static final AngularVelocity HOOK_STALL_ANGULAR_VELOCITY = RPM.of(1000);
         public static final Current HOOK_STALL_CURRENT = Amps.of(30);
@@ -757,14 +752,14 @@ public final class Constants {
 
         static {
             AprilTagFieldLayout tryAprilTags;
-            try {
-                tryAprilTags =
-                        new AprilTagFieldLayout(Filesystem.getDeployDirectory().toPath() + "/apriltags.json");
-                Logger.recordOutput("AprilTagLayoutType", "Custom");
-            } catch (IOException e) {
-                tryAprilTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
-                Logger.recordOutput("AprilTagLayoutType", "Andymark");
-            }
+            //     try {
+            //         tryAprilTags =
+            //                 new AprilTagFieldLayout(Filesystem.getDeployDirectory().toPath() + "/apriltags.json");
+            //         Logger.recordOutput("AprilTagLayoutType", "Custom");
+            //     } catch (IOException e) {
+            tryAprilTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+            Logger.recordOutput("AprilTagLayoutType", "Andymark");
+            //     }
             APRIL_TAGS = tryAprilTags;
         }
 
@@ -773,8 +768,7 @@ public final class Constants {
         public static final Set<Integer> BLUE_CLIMB_TAG_IDS = Set.of(31, 32);
         public static final Set<Integer> RED_CLIMB_TAG_IDS = Set.of(15, 16);
 
-        public static final double HUB_TAG_STD_DEV_BIAS = 1.0; // added to non-hub tags in hub mode
-        public static final double CLIMB_TAG_STD_DEV_BIAS = 0.08; // added to non-climb tags in climb mode
+        public static final double HUB_TAG_STD_DEV_BIAS = 3; // multiplied to non-hub tag std devs in hub mode
 
         // Transforms from robot to cameras, (x forward, y left, z up), (roll, pitch,
         // yaw)

@@ -39,9 +39,12 @@ public class Vision extends SubsystemBase {
     private final VisionIOInputsAutoLogged[] inputs;
     private final Alert[] disconnectedAlerts;
     private final Alert disabledAlert = new Alert("Vision Disabled", AlertType.kWarning);
+    private final Alert hubTagsOnlyAlert = new Alert("Hub Tags Only", AlertType.kInfo);
 
     private boolean disabled = false;
-    private boolean climbing = false;
+
+    @AutoLogOutput
+    private boolean hubTagsOnly = false;
 
     @AutoLogOutput
     private boolean hasHadVision = false;
@@ -115,18 +118,15 @@ public class Vision extends SubsystemBase {
                         || observation.pose().getX() < 0.0
                         || observation.pose().getX() > APRIL_TAGS.getFieldLength()
                         || observation.pose().getY() < 0.0
-                        || observation.pose().getY() > APRIL_TAGS.getFieldWidth();
+                        || observation.pose().getY() > APRIL_TAGS.getFieldWidth()
+                        || (!observation.hasHubTag() && hubTagsOnly);
 
                 // Add pose to log
                 robotPoses.add(observation.pose());
-                if (rejectPose) {
-                    robotPosesRejected.add(observation.pose());
-                } else {
+                if (!rejectPose) {
                     robotPosesAccepted.add(observation.pose());
-                }
-
-                // Skip if rejected
-                if (rejectPose) {
+                } else {
+                    robotPosesRejected.add(observation.pose());
                     continue;
                 }
 
@@ -134,16 +134,15 @@ public class Vision extends SubsystemBase {
                 double stdDevFactor = Math.pow(observation.averageTagDistance(), 3.0) / observation.tagCount();
 
                 // Add tag poses
-                for (int tagId : inputs[cameraIndex].tagIds) {
-                    // var tagPose = APRIL_TAGS.getTagPose(tagId);
-                    // if (tagPose.isPresent()) {
-                    //     tagPoses.add(tagPose.get());
-                    // }
-                    if (climbing && !climbTags.contains(tagId)) {
-                        stdDevFactor += CLIMB_TAG_STD_DEV_BIAS; // Non-climb tags are less accurate
-                    } else if (!climbing && !hubTags.contains(tagId)) {
-                        stdDevFactor += HUB_TAG_STD_DEV_BIAS; // Non-hub tags are less accurate
-                    }
+                // for (int tagId : observation.tagIds()) {
+                //     var tagPose = APRIL_TAGS.getTagPose(tagId);
+                //     if (tagPose.isPresent()) {
+                //         tagPoses.add(tagPose.get());
+                //     }
+                // }
+
+                if (!observation.hasHubTag()) {
+                    stdDevFactor *= HUB_TAG_STD_DEV_BIAS;
                 }
                 double linearStdDev = LINEAR_STD_DEV_BASELINES[cameraIndex] * stdDevFactor;
                 double angularStdDev = ANGULAR_STD_DEV_BASELINE * stdDevFactor;
@@ -204,8 +203,15 @@ public class Vision extends SubsystemBase {
         return !disabled;
     }
 
-    public void setClimbing(boolean climbing) {
-        this.climbing = climbing;
+    private void setHubTagsOnly(boolean hubTagsOnly) {
+        this.hubTagsOnly = hubTagsOnly;
+        hubTagsOnlyAlert.set(hubTagsOnly);
+    }
+
+    public Command onlyUseHubTags() {
+        return Commands.startEnd(() -> setHubTagsOnly(true), () -> setHubTagsOnly(false))
+                .ignoringDisable(true)
+                .withName("Hub Tags Only");
     }
 
     @FunctionalInterface

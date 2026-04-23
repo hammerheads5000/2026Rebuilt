@@ -3,57 +3,52 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.2,
+        "x": 4.461245551601425,
         "y": 7.441
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.45,
+        "x": 4.924254482967431,
         "y": 7.441
       },
       "isLocked": false,
-      "linkedName": "Dump Left"
+      "linkedName": "Trench Start Left Flipped"
     },
     {
       "anchor": {
         "x": 5.8,
-        "y": 7.441
+        "y": 7.55
       },
       "prevControl": {
-        "x": 4.8,
-        "y": 7.441
+        "x": 5.148538233169454,
+        "y": 7.55
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Trench Exit Left"
+      "linkedName": "Trench Exit Angled Flipped"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -90.0
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.5,
-    "maxAcceleration": 10.0,
+    "maxAcceleration": 8.0,
     "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 1.5,
-    "rotation": -90.0
+    "velocity": 3.0,
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Bump + Trench",
+  "folder": "Starts",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 17.0
   },
   "useDefaultConstraints": false
 }

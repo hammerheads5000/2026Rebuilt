@@ -15,13 +15,13 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Trench Mid Start Left to Trench Left"
+                        "pathName": "Trench Mid Start Left to Trench Left Flipped"
                       }
                     },
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "1 Greedy Flip"
+                        "pathName": "1 Greedy Unflip"
                       }
                     }
                   ]
@@ -30,7 +30,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Deploy"
+                  "name": "Deploy Rev"
                 }
               }
             ]
@@ -43,7 +43,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Trench Left to Dump Left Flipped"
+                  "pathName": "Trench Left to Dump Left"
                 }
               },
               {
@@ -81,7 +81,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Dump Left to Trench Left Flipped"
+                  "pathName": "Dump Left to Trench Left"
                 }
               },
               {
@@ -96,13 +96,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2 Recycle Greedy Flipped"
+            "pathName": "2 Recycle Greedy"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Trench Left to Dump Left Flipped"
+            "pathName": "Trench Left to Dump Left"
           }
         },
         {
@@ -131,7 +131,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Dump Left to Trench Left Flipped"
+                  "pathName": "Dump Left to Trench Left"
                 }
               },
               {
@@ -146,7 +146,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2.5 Recycle Flipped Rev"
+            "pathName": "2.5 Recycle Rev"
           }
         }
       ]

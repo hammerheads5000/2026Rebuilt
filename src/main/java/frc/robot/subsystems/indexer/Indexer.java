@@ -155,8 +155,8 @@ public class Indexer extends SubsystemBase {
 
     private Command activate() {
         return Commands.sequence(
-                        this.runOnce(() -> io.setFeedOutput(UNJAM_FEED_VOLTAGE)),
-                        Commands.waitSeconds(0.1),
+                        // this.runOnce(() -> io.setFeedOutput(UNJAM_FEED_VOLTAGE)),
+                        // Commands.waitSeconds(0.1),
                         this.runOnce(() -> io.setFeedOutput(Volts.of(feedVoltageTunable.get()))),
                         this.startRun(
                                         () -> spinVoltageLimiter.reset(0),
