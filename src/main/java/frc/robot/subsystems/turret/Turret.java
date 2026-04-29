@@ -433,7 +433,7 @@ public class Turret extends SubsystemBase {
                 io.setHoodAngle(Degrees.of(tuningHoodAngle.get()));
                 io.setTurnSetpoint(
                         TurretCalculator.calculateAzimuthAngle(pose, currentTarget, inputs.turnPosition)
-                                .plus(Degrees.of(turnTrimDeg)),
+                                .plus(Degrees.of(turnTrimDeg).plus(BASE_TRIM)),
                         RPM.zero());
                 break;
             default:
@@ -477,7 +477,9 @@ public class Turret extends SubsystemBase {
         AngularVelocity velocitySetpoint = getVelocitySetpoint(robotToTarget, fieldSpeeds, timeOfFlight);
 
         io.setTurnSetpoint(
-                azimuthAngle.plus(velocitySetpoint.times(Seconds.of(0.02))).plus(Degrees.of(turnTrimDeg)),
+                azimuthAngle
+                        .plus(velocitySetpoint.times(Seconds.of(0.02)))
+                        .plus(Degrees.of(turnTrimDeg).plus(BASE_TRIM)),
                 velocitySetpoint);
         io.setHoodAngle(calculatedShot.getHoodAngle());
         io.setFlywheelSpeed(calculatedShot.getAngularExitVelocity().times(flywheelFudgeFactor));

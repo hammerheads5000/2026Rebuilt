@@ -465,6 +465,7 @@ public final class Constants {
 
         public static final double FLYWHEEL_FUDGE_AMOUNT = 0.01;
         public static final Angle TURN_TRIM_AMOUNT = Degrees.of(0.5);
+        public static final Angle BASE_TRIM = Degrees.of(1); // trim turret 1 deg CCW to compensate for dye rotor
 
         public static final AngularVelocity FLYWHEEL_SCORING_OVERRIDE = RPM.of(3300);
         public static final Angle HOOD_SCORING_OVERRIDE = Degrees.of(30);
@@ -508,7 +509,7 @@ public final class Constants {
             SHOT_MAP.put(4.25, new ShotData(RPM.of(3280 * multiplier), Degrees.of(36)));
             TOF_MAP.put(4.25, 1.09);
 
-            SHOT_MAP.put(3.75, new ShotData(RPM.of(3150 * multiplier), Degrees.of(35)));
+            SHOT_MAP.put(3.75, new ShotData(RPM.of(3130 * multiplier), Degrees.of(35)));
             TOF_MAP.put(3.75, 1.02);
 
             SHOT_MAP.put(3.5, new ShotData(RPM.of(3090 * multiplier), Degrees.of(34)));
@@ -558,6 +559,7 @@ public final class Constants {
         }
 
         public static final Time ACTIVE_PRESHOOT_TIME = Seconds.of(2);
+        public static final Time ACTIVE_POSTSHOOT_TIME = Seconds.of(1);
     }
 
     public static class IntakeConstants {

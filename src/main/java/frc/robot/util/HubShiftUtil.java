@@ -8,6 +8,7 @@
 package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Seconds;
+import static frc.robot.Constants.TurretConstants.ACTIVE_POSTSHOOT_TIME;
 import static frc.robot.Constants.TurretConstants.ACTIVE_PRESHOOT_TIME;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -35,6 +36,7 @@ public class HubShiftUtil {
     private static final double[] shiftEndTimes = {10.0, 35.0, 60.0, 85.0, 110.0, 140.0};
 
     private static final double approachingActiveFudge = -ACTIVE_PRESHOOT_TIME.in(Seconds);
+    private static final double leavingActiveFudge = ACTIVE_POSTSHOOT_TIME.in(Seconds);
 
     public static final double autoEndTime = 20.0;
     public static final double teleopDuration = 140.0;
@@ -143,18 +145,38 @@ public class HubShiftUtil {
         // Starting active
         if (shiftSchedule[1] == true) {
             double[] shiftedShiftStartTimes = {
-                0.0, 10.0, 35.0, 60.0 + approachingActiveFudge, 85.0, 110.0 + approachingActiveFudge
+                0.0,
+                10.0,
+                35.0 + leavingActiveFudge,
+                60.0 + approachingActiveFudge,
+                85.0 + leavingActiveFudge,
+                110.0 + approachingActiveFudge
             };
             double[] shiftedShiftEndTimes = {
-                10.0, 35.0, 60.0 + approachingActiveFudge, 85.0, 110.0 + approachingActiveFudge, 140.0
+                10.0,
+                35.0 + leavingActiveFudge,
+                60.0 + approachingActiveFudge,
+                85.0 + leavingActiveFudge,
+                110.0 + approachingActiveFudge,
+                140.0 + leavingActiveFudge
             };
             return getShiftInfo(shiftSchedule, shiftedShiftStartTimes, shiftedShiftEndTimes, override);
         }
         double[] shiftedShiftStartTimes = {
-            0.0, 10.0, 35.0 + approachingActiveFudge, 60.0, 85.0 + approachingActiveFudge, 110.0
+            0.0,
+            10.0 + leavingActiveFudge,
+            35.0 + approachingActiveFudge,
+            60.0 + leavingActiveFudge,
+            85.0 + approachingActiveFudge,
+            110.0
         };
         double[] shiftedShiftEndTimes = {
-            10.0, 35.0 + approachingActiveFudge, 60.0, 85.0 + approachingActiveFudge, 110.0, 140.0
+            10.0 + leavingActiveFudge,
+            35.0 + approachingActiveFudge,
+            60.0 + leavingActiveFudge,
+            85.0 + approachingActiveFudge,
+            110.0,
+            140.0 + leavingActiveFudge
         };
         return getShiftInfo(shiftSchedule, shiftedShiftStartTimes, shiftedShiftEndTimes, override);
     }
