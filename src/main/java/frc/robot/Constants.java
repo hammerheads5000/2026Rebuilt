@@ -760,7 +760,7 @@ public final class Constants {
             //                 new AprilTagFieldLayout(Filesystem.getDeployDirectory().toPath() + "/apriltags.json");
             //         Logger.recordOutput("AprilTagLayoutType", "Custom");
             //     } catch (IOException e) {
-            tryAprilTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
+            tryAprilTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
             Logger.recordOutput("AprilTagLayoutType", "Andymark");
             //     }
             APRIL_TAGS = tryAprilTags;
