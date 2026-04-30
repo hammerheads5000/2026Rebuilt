@@ -402,7 +402,7 @@ public final class Constants {
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30);
 
         public static final CurrentLimitsConfigs FLYWHEEL_CURRENT_LIMITS =
-                new CurrentLimitsConfigs().withStatorCurrentLimit(120);
+                new CurrentLimitsConfigs().withStatorCurrentLimit(120).withSupplyCurrentLimit(80);
 
         public static final MotorOutputConfigs TURN_OUTPUT_CONFIGS = new MotorOutputConfigs()
                 .withInverted(InvertedValue.CounterClockwise_Positive)
