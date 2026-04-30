@@ -494,19 +494,19 @@ public final class Constants {
 
         static {
             final double multiplier = 0.99;
-            SHOT_MAP.put(6.3, new ShotData(RPM.of(3685 * multiplier), Degrees.of(43)));
+            SHOT_MAP.put(6.3, new ShotData(RPM.of(3685 * 1.01 * multiplier), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.1);
 
-            SHOT_MAP.put(5.63, new ShotData(RPM.of(3575 * multiplier), Degrees.of(42)));
+            SHOT_MAP.put(5.63, new ShotData(RPM.of(3575 * 1.01 * multiplier), Degrees.of(42)));
             TOF_MAP.put(5.63, 1.0917);
 
-            SHOT_MAP.put(5.25, new ShotData(RPM.of(3520 * multiplier), Degrees.of(39)));
+            SHOT_MAP.put(5.25, new ShotData(RPM.of(3520 * 1.01 * multiplier), Degrees.of(39)));
             TOF_MAP.put(5.25, 1.23);
 
-            SHOT_MAP.put(4.75, new ShotData(RPM.of(3390 * multiplier), Degrees.of(37)));
+            SHOT_MAP.put(4.75, new ShotData(RPM.of(3390 * 1.01 * multiplier), Degrees.of(37)));
             TOF_MAP.put(4.75, 1.158);
 
-            SHOT_MAP.put(4.25, new ShotData(RPM.of(3280 * multiplier), Degrees.of(36)));
+            SHOT_MAP.put(4.25, new ShotData(RPM.of(3280 * 1.01 * multiplier), Degrees.of(36)));
             TOF_MAP.put(4.25, 1.09);
 
             SHOT_MAP.put(3.75, new ShotData(RPM.of(3130 * multiplier), Degrees.of(35)));
