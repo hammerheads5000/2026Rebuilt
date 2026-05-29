@@ -174,16 +174,21 @@ public class Superstructure extends SubsystemBase {
                 .withName("Set goal");
     }
 
-    public Command togglePassing() {
-        return Commands.either(stopPassCollecting(), this.setGoal(Goal.PASSING), () -> this.goal == Goal.PASSING)
-                .withName("Toggle passing");
+//     public Command togglePassing() {
+//         return Commands.either(stopPassCollecting(), this.setGoal(Goal.PASSING), () -> this.goal == Goal.PASSING)
+//                 .withName("Toggle passing");
+//     }
+
+    public Command toggleCollecting() {
+        return Commands.either(stopPassCollecting(), this.setGoal(Goal.COLLECTING), () -> this.goal == Goal.COLLECTING)
+                .withName("Toggle collecting");
     }
 
     /** Handle state logic for transitioning out of PASSING/COLLECTING */
     public Command stopPassCollecting() {
-        return Commands.either(this.setGoal(Goal.SCORING), this.setGoal(Goal.COLLECTING), activeInZoneTrigger)
+        return Commands.either(this.setGoal(Goal.SCORING), this.setGoal(Goal.PASSING), activeInZoneTrigger)
                 // .onlyIf(() -> this.goal == Goal.PASSING || this.goal == Goal.COLLECTING)
-                .withName("Stop passing");
+                .withName("Stop collecting");
     }
 
     public Command duck() {
