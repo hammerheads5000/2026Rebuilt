@@ -468,10 +468,10 @@ public class RobotContainer {
         passCollectTrigger
                 .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)
                 .onTrue(superstructure.setGoal(Goal.COLLECTING));
-                // .onTrue(Commands.either(
-                //         superstructure.setGoal(Goal.COLLECTING),
-                //         superstructure.setGoal(Goal.PASSING),
-                //         superstructure.inAllianceZoneTrigger));
+        // .onTrue(Commands.either(
+        //         superstructure.setGoal(Goal.COLLECTING),
+        //         superstructure.setGoal(Goal.PASSING),
+        //         superstructure.inAllianceZoneTrigger));
         passCollectTrigger
                 .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)
                 .onFalse(superstructure.stopPassCollecting());
