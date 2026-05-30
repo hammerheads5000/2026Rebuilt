@@ -493,7 +493,7 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            final double multiplier = 1.00;
+            final double multiplier = 0.98;
             SHOT_MAP.put(6.3, new ShotData(RPM.of(3685 * 1.01 * multiplier), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.1);
 
