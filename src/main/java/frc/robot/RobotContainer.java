@@ -467,11 +467,10 @@ public class RobotContainer {
         // intakes.deployRight().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
         passCollectTrigger
                 .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)
-                .onTrue(superstructure.setGoal(Goal.COLLECTING));
-        // .onTrue(Commands.either(
-        //         superstructure.setGoal(Goal.COLLECTING),
-        //         superstructure.setGoal(Goal.PASSING),
-        //         superstructure.inAllianceZoneTrigger));
+                .onTrue(Commands.either(
+                        superstructure.setGoal(Goal.COLLECTING),
+                        superstructure.setGoal(Goal.PASSING),
+                        superstructure.inAllianceZoneTrigger));
         passCollectTrigger
                 .and(() -> turret.getGoal() != TurretGoal.MANUAL_OVERRIDE)
                 .onFalse(superstructure.stopPassCollecting());

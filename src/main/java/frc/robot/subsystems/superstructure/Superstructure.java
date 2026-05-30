@@ -128,7 +128,7 @@ public class Superstructure extends SubsystemBase {
         underTrenchTrigger.and(DriverStation::isTeleop).onFalse(this.unduck());
         activeInZoneTrigger.onTrue(this.setGoal(Goal.SCORING));
         inactiveInZoneTrigger.onTrue(this.setGoal(Goal.IDLE));
-        leaveZoneTrigger.onTrue(this.setGoal(Goal.PASSING));
+        leaveZoneTrigger.onTrue(this.setGoal(Goal.COLLECTING).onlyIf(() -> this.goal != Goal.PASSING));
         behindTowerTrigger.and(DriverStation::isTeleop).onTrue(indexer.setGoal(IndexerGoal.IDLE));
         behindTowerTrigger
                 .and(DriverStation::isTeleop)
@@ -174,21 +174,16 @@ public class Superstructure extends SubsystemBase {
                 .withName("Set goal");
     }
 
-    //     public Command togglePassing() {
-    //         return Commands.either(stopPassCollecting(), this.setGoal(Goal.PASSING), () -> this.goal == Goal.PASSING)
-    //                 .withName("Toggle passing");
-    //     }
-
-    public Command toggleCollecting() {
-        return Commands.either(stopPassCollecting(), this.setGoal(Goal.COLLECTING), () -> this.goal == Goal.COLLECTING)
-                .withName("Toggle collecting");
+    public Command togglePassing() {
+        return Commands.either(stopPassCollecting(), this.setGoal(Goal.PASSING), () -> this.goal == Goal.PASSING)
+                .withName("Toggle passing");
     }
 
     /** Handle state logic for transitioning out of PASSING/COLLECTING */
     public Command stopPassCollecting() {
-        return Commands.either(this.setGoal(Goal.SCORING), this.setGoal(Goal.PASSING), activeInZoneTrigger)
+        return Commands.either(this.setGoal(Goal.SCORING), this.setGoal(Goal.COLLECTING), activeInZoneTrigger)
                 // .onlyIf(() -> this.goal == Goal.PASSING || this.goal == Goal.COLLECTING)
-                .withName("Stop collecting");
+                .withName("Stop passing");
     }
 
     public Command duck() {
