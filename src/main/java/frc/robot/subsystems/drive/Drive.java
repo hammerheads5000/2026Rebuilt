@@ -250,6 +250,12 @@ public class Drive extends SubsystemBase {
         stop();
     }
 
+    public void slide() {
+        for (int i = 0; i < 4; i++) {
+            modules[i].slide();
+        }
+    }
+
     /** Returns a command to run a quasistatic test in the specified direction. */
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return run(() -> runCharacterization(Volts.zero())).withTimeout(1.0).andThen(sysId.quasistatic(direction));

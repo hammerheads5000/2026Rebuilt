@@ -14,6 +14,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
@@ -187,6 +188,11 @@ public class ModuleIOTalonFX implements ModuleIO {
                 turnSupplyCurrent);
         PhoenixUtil.registerStatusSignals(SwerveConstants.ODOMETRY_UPDATE_FREQ, drivePosition, turnPosition);
         ParentDevice.optimizeBusUtilizationForAll(driveTalon, turnTalon);
+    }
+
+    @Override
+    public void coast() {
+        driveTalon.setControl(new CoastOut());
     }
 
     @Override

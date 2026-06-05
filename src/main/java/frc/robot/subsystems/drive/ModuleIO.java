@@ -57,4 +57,6 @@ public interface ModuleIO {
 
     /** Apply a new kP, kD, and kS to the turn motor. */
     public default void setTurnPID(double kP, double kD, double kS) {}
+
+    public default void coast() {}
 }

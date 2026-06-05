@@ -109,6 +109,10 @@ public class Module {
         io.setTurnOpenLoop(0.0);
     }
 
+    public void slide() {
+        io.coast();
+    }
+
     /** Returns the current turn angle of the module. */
     public Rotation2d getAngle() {
         return inputs.turnPosition;

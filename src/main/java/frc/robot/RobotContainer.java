@@ -593,6 +593,6 @@ public class RobotContainer {
         // if (!usePrebuiltAuto.get()) {
         //     return autoCreator.buildAuto(drive, vision, intakes, indexer, turret, climber, superstructure);
         // }
-        return autoChooser.get();
+        return autoChooser.get().alongWith(Commands.waitSeconds(19.8).andThen(drive::slide));
     }
 }
