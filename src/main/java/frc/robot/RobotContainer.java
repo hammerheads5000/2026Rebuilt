@@ -123,6 +123,7 @@ public class RobotContainer {
     //     private final Trigger stowTrigger = controller.back();
     private final Trigger manualScoreTrigger = controller.rightTrigger();
     private final Trigger manualPassTrigger = controller.leftTrigger();
+    public final Trigger evilTrigger = controller.start();
 
     private final Trigger disableIndexer = toggleSwitches.button(1);
     private final Trigger disableVision = toggleSwitches.button(2);
@@ -460,6 +461,9 @@ public class RobotContainer {
 
         zeroHoodTrigger.whileTrue(turret.zeroHoodSequence());
         zeroHoodTrigger.onFalse(turret.setGoal(TurretGoal.IDLE));
+
+        evilTrigger.onTrue(turret.setGoal(TurretGoal.EVIL));
+        evilTrigger.onFalse(turret.setGoal(TurretGoal.IDLE));
 
         switchIntakesTrigger.onTrue(intakes.switchIntakes());
         // intakes.switchIntakes().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));

@@ -827,11 +827,12 @@ public final class Constants {
         public static final Distance TOWER_WIDTH = Inches.of(51);
 
         public static final Distance EVIL_X_DISTANCE = Meters.of(18);
-        public static final Distance[] DRIVER_STATION_YS = {Meters.of(1), Meters.of(3), Meters.of(5)};
+        public static final Distance[] DRIVER_STATION_YS = {Meters.of(0.75), Meters.of(2.65), Meters.of(6)};
         public static final Translation3d[] DRIVER_STATIONS = {
-                new Translation3d(EVIL_X_DISTANCE, DRIVER_STATION_YS[0], Meters.zero()),
-                new Translation3d(EVIL_X_DISTANCE, DRIVER_STATION_YS[1], Meters.zero()),
-                new Translation3d(EVIL_X_DISTANCE, DRIVER_STATION_YS[2], Meters.zero())};
+            new Translation3d(EVIL_X_DISTANCE, DRIVER_STATION_YS[0], Meters.zero()),
+            new Translation3d(EVIL_X_DISTANCE, DRIVER_STATION_YS[1], Meters.zero()),
+            new Translation3d(EVIL_X_DISTANCE, DRIVER_STATION_YS[2], Meters.zero())
+        };
     }
 
     public static class AutoConstants {
