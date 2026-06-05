@@ -90,7 +90,8 @@ public class Turret extends SubsystemBase {
     public final Trigger turnaroundZoneMaxTrigger = new Trigger(this::inTurnaroundZoneMax).debounce(0.05);
     public final Trigger turnaroundZoneMinTrigger = new Trigger(this::inTurnaroundZoneMin).debounce(0.05);
 
-    public final LoggedDashboardChooser<Translation3d> evilTargetChooser = new LoggedDashboardChooser<Translation3d>("Who to be an asshole to");
+    public final LoggedDashboardChooser<Translation3d> evilTargetChooser =
+            new LoggedDashboardChooser<Translation3d>("Who to be an asshole to");
 
     @AutoLogOutput
     private double flywheelFudgeFactor = 1;
