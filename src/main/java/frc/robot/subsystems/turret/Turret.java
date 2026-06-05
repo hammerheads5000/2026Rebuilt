@@ -49,6 +49,7 @@ import frc.robot.util.VirtualPD;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class Turret extends SubsystemBase {
     private final TurretIO io;
@@ -88,6 +89,8 @@ public class Turret extends SubsystemBase {
 
     public final Trigger turnaroundZoneMaxTrigger = new Trigger(this::inTurnaroundZoneMax).debounce(0.05);
     public final Trigger turnaroundZoneMinTrigger = new Trigger(this::inTurnaroundZoneMin).debounce(0.05);
+
+    public final LoggedDashboardChooser<Translation3d> evilTargetChooser = new LoggedDashboardChooser<Translation3d>("Who to be an asshole to");
 
     @AutoLogOutput
     private double flywheelFudgeFactor = 1;
@@ -154,6 +157,10 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putData("Turret/ToF Fudge Up", increaseToFFudgeFactor());
         SmartDashboard.putData("Turret/ToF Fudge Down", decreaseToFFudgeFactor());
 
+        evilTargetChooser.addOption("Right", FieldConstants.DRIVER_STATIONS[0]);
+        evilTargetChooser.addDefaultOption("Center", FieldConstants.DRIVER_STATIONS[1]);
+        evilTargetChooser.addOption("Left", FieldConstants.DRIVER_STATIONS[2]);
+
         Logger.recordOutput("Turret/Shot", new ShotData(0, 0)); // log struct at start to avoid loop overruns
     }
 
@@ -169,6 +176,9 @@ public class Turret extends SubsystemBase {
                             break;
                         case PASSING:
                             setTarget(getPassingTarget(poseSupplier.get()), false);
+                            break;
+                        case EVIL:
+                            setTarget(evilTargetChooser.get());
                             break;
                         case IDLE:
                             io.stopFlywheel();
@@ -429,6 +439,9 @@ public class Turret extends SubsystemBase {
             case SCORING:
                 calculateShot(pose);
                 break;
+            case EVIL:
+                calculateShot(pose);
+                break;
             case PASSING:
                 calculateShot(pose);
                 setTarget(getPassingTarget(pose), false);
@@ -466,8 +479,8 @@ public class Turret extends SubsystemBase {
                     fieldSpeeds,
                     currentTarget,
                     LOOKAHEAD_ITERATIONS,
-                    goal == TurretGoal.PASSING ? PASSING_MAP : SHOT_MAP,
-                    goal == TurretGoal.PASSING ? PASS_TOF_MAP : TOF_MAP,
+                    goal == TurretGoal.SCORING ? SHOT_MAP : PASSING_MAP,
+                    goal == TurretGoal.SCORING ? TOF_MAP : PASS_TOF_MAP,
                     tofFudgeFactor,
                     pitchSupplier.get(),
                     rollSupplier.get());
@@ -480,7 +493,7 @@ public class Turret extends SubsystemBase {
 
         Translation2d robotToTarget = calculatedShot.target().toTranslation2d().minus(robotPose.getTranslation());
         Time timeOfFlight =
-                Seconds.of((goal == TurretGoal.PASSING ? PASS_TOF_MAP : TOF_MAP).get(robotToTarget.getNorm()));
+                Seconds.of((goal == TurretGoal.SCORING ? TOF_MAP : PASS_TOF_MAP).get(robotToTarget.getNorm()));
         AngularVelocity velocitySetpoint = getVelocitySetpoint(robotToTarget, fieldSpeeds, timeOfFlight);
 
         io.setTurnSetpoint(
@@ -553,6 +566,7 @@ public class Turret extends SubsystemBase {
         IDLE,
         TUNING,
         DUCKING,
+        EVIL,
         MANUAL_OVERRIDE,
         DISABLED
     }
