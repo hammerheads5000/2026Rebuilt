@@ -45,9 +45,9 @@ public class SystemChecks {
         return Commands.sequence(
                 turret.setTurnPosition(Degrees.of(0)),
                 Commands.waitSeconds(0.5),
-                turret.setTurnPosition(Degrees.of(45)),
+                turret.setTurnPosition(Degrees.of(180)),
                 Commands.waitSeconds(0.5),
-                turret.setTurnPosition(Degrees.of(-45)),
+                turret.setTurnPosition(Degrees.of(-180)),
                 Commands.waitSeconds(0.5),
                 turret.setTurnPosition(Degrees.of(0)));
     }
