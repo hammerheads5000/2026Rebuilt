@@ -42,7 +42,7 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlignToPoseCommand;
 import frc.robot.commands.SystemChecks;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.subsystems.Leds;
+// import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -92,7 +92,7 @@ public class RobotContainer {
     private final Indexer indexer;
     private final Superstructure superstructure;
     private final Vision vision;
-    public final Leds leds;
+    // public final Leds leds;
 
     // Controller
     private final CommandXboxController controller = new CommandXboxController(0);
@@ -308,7 +308,7 @@ public class RobotContainer {
 
         superstructure = new Superstructure(turret, indexer, drive::getPose, drive::getFieldSpeeds);
 
-        leds = new Leds();
+        // leds = new Leds();
 
         RobotController.setBrownoutVoltage(Volts.of(6));
 
