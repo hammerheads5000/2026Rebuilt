@@ -462,8 +462,8 @@ public class RobotContainer {
         zeroHoodTrigger.whileTrue(turret.zeroHoodSequence());
         zeroHoodTrigger.onFalse(turret.setGoal(TurretGoal.IDLE));
 
-        evilTrigger.onTrue(turret.setGoal(TurretGoal.EVIL));
-        evilTrigger.onFalse(turret.setGoal(TurretGoal.IDLE));
+        evilTrigger.onTrue(turret.setGoal(TurretGoal.EVIL).alongWith(indexer.setGoal(IndexerGoal.ACTIVATING)));
+        evilTrigger.onFalse(turret.setGoal(TurretGoal.IDLE).alongWith(indexer.setGoal(IndexerGoal.IDLE)));
 
         switchIntakesTrigger.onTrue(intakes.switchIntakes());
         // intakes.switchIntakes().getRequirements().stream().forEach((x) -> System.out.println(x.getName()));
