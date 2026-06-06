@@ -3,14 +3,13 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.controls.SolidColor;
 import com.ctre.phoenix6.controls.TwinkleAnimation;
 import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.signals.RGBWColor;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
  * Subsystem that controls an addressable LED strip using a CANdle.
@@ -20,25 +19,24 @@ public class LedsBetter extends SubsystemBase {
     private final CANdle m_candle = new CANdle(7, kCANBus);
 
     private final TwinkleAnimation m_slot0Animation = new TwinkleAnimation(8, 50)
-        .withSlot(0)
-        .withColor(new RGBWColor(255, 0, 0, 0))
-        .withMaxLEDsOnProportion(0.5)
-        .withFrameRate(Hertz.of(100));
+            .withSlot(0)
+            .withColor(new RGBWColor(255, 0, 0, 0))
+            .withMaxLEDsOnProportion(0.5)
+            .withFrameRate(Hertz.of(100));
 
     private final TwinkleAnimation m_slot1Animation = new TwinkleAnimation(51, 125)
-        .withSlot(1)
-        .withColor(new RGBWColor(1, 155, 2, 0))
-        .withMaxLEDsOnProportion(0.5)
-        .withFrameRate(Hertz.of(100));
+            .withSlot(1)
+            .withColor(new RGBWColor(1, 155, 2, 0))
+            .withMaxLEDsOnProportion(0.5)
+            .withFrameRate(Hertz.of(100));
 
     private final TwinkleAnimation m_slot2Animation = new TwinkleAnimation(126, 200)
-        .withSlot(2)
-        .withColor(new RGBWColor(255, 0, 0, 0))
-        .withMaxLEDsOnProportion(0.5)
-        .withFrameRate(Hertz.of(100));
+            .withSlot(2)
+            .withColor(new RGBWColor(255, 0, 0, 0))
+            .withMaxLEDsOnProportion(0.5)
+            .withFrameRate(Hertz.of(100));
 
-    private final SolidColor[] m_colors = new SolidColor[] {
-    };
+    private final SolidColor[] m_colors = new SolidColor[] {};
 
     public LedsBetter() {
         setDefaultCommand(updateLEDs());
@@ -51,12 +49,13 @@ public class LedsBetter extends SubsystemBase {
      */
     public Command updateLEDs() {
         return run(() -> {
-            for (var solidColor : m_colors) {
-                m_candle.setControl(solidColor);
-            }
-            m_candle.setControl(m_slot0Animation);
-            m_candle.setControl(m_slot1Animation);
-            m_candle.setControl(m_slot2Animation);
-        }).ignoringDisable(true);
+                    for (var solidColor : m_colors) {
+                        m_candle.setControl(solidColor);
+                    }
+                    m_candle.setControl(m_slot0Animation);
+                    m_candle.setControl(m_slot1Animation);
+                    m_candle.setControl(m_slot2Animation);
+                })
+                .ignoringDisable(true);
     }
 }
