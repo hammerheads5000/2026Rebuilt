@@ -42,6 +42,7 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlignToPoseCommand;
 import frc.robot.commands.SystemChecks;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.subsystems.LedsBetter;
 // import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -93,6 +94,7 @@ public class RobotContainer {
     private final Superstructure superstructure;
     private final Vision vision;
     // public final Leds leds;
+    private final LedsBetter leds = new LedsBetter();
 
     // Controller
     private final CommandXboxController controller = new CommandXboxController(0);
