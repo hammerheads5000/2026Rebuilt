@@ -42,6 +42,7 @@ import frc.robot.Constants.VisionConstants;
 import frc.robot.commands.AlignToPoseCommand;
 import frc.robot.commands.SystemChecks;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.LedsBetter;
 // import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.drive.Drive;
@@ -93,8 +94,8 @@ public class RobotContainer {
     private final Indexer indexer;
     private final Superstructure superstructure;
     private final Vision vision;
-    // public final Leds leds;
-    private final LedsBetter leds = new LedsBetter();
+    public final Leds leds;
+    // private final LedsBetter leds = new LedsBetter();
 
     // Controller
     private final CommandXboxController controller = new CommandXboxController(0);
@@ -310,7 +311,7 @@ public class RobotContainer {
 
         superstructure = new Superstructure(turret, indexer, drive::getPose, drive::getFieldSpeeds);
 
-        // leds = new Leds();
+        leds = new Leds();
 
         RobotController.setBrownoutVoltage(Volts.of(6));
 
@@ -603,12 +604,12 @@ public class RobotContainer {
         // if (!usePrebuiltAuto.get()) {
         //     return autoCreator.buildAuto(drive, vision, intakes, indexer, turret, climber, superstructure);
         // }
-        return autoChooser
-                .get()
-                .andThen(new AlignToPoseCommand(
-                        new Pose2d(8.248, 4.137, new Rotation2d()),
-                        new TunableControlConstants("idk", new ControlConstants().withPID(8, 1, 0)),
-                        new TunableControlConstants("idk1", new ControlConstants().withPID(5, 1, 0)),
-                        drive));
+        return autoChooser.get();
+                // .get()
+                // .andThen(new AlignToPoseCommand(
+                //         new Pose2d(8.248, 4.137, new Rotation2d()),
+                //         new TunableControlConstants("idk", new ControlConstants().withPID(8, 1, 0)),
+                //         new TunableControlConstants("idk1", new ControlConstants().withPID(5, 1, 0)),
+                //         drive));
     }
 }

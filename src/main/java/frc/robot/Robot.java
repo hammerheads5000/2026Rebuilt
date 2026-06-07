@@ -104,7 +104,7 @@ public class Robot extends LoggedRobot {
         CommandScheduler.getInstance().run();
         SmartDashboard.putData(CommandScheduler.getInstance());
         Logger.recordOutput("Commands", SmartDashboard.getStringArray("Scheduler/Names", new String[0]));
-        // robotContainer.leds.periodic();
+        robotContainer.leds.periodic();
         // Return to non-RT thread priority (do not modify the first argument)
         // Threads.setCurrentThreadPriority(false, 10);
     }
