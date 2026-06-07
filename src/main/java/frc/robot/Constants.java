@@ -611,7 +611,7 @@ public final class Constants {
                 .withMotionMagicAcceleration(RotationsPerSecondPerSecond.of(400));
 
         public static final Distance STOW_POS = Inches.of(0.2);
-        public static final Distance DEPLOY_POS = Inches.of(11.5);
+        public static final Distance DEPLOY_POS = Inches.of(11.25);
         public static final Distance MAX_POS = Inches.of(12.4);
         public static final Voltage SPIN_VOLTAGE = Volts.of(12);
         public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-5);
