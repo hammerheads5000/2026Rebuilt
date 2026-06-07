@@ -18,7 +18,6 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -39,11 +38,9 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.commands.AlignToPoseCommand;
 import frc.robot.commands.SystemChecks;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.Leds;
-import frc.robot.subsystems.LedsBetter;
 // import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -72,8 +69,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIO;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.util.FuelSim;
-import frc.robot.util.TunableControls.ControlConstants;
-import frc.robot.util.TunableControls.TunableControlConstants;
 import frc.robot.util.Zones;
 import java.util.List;
 import java.util.function.BooleanSupplier;
@@ -605,11 +600,11 @@ public class RobotContainer {
         //     return autoCreator.buildAuto(drive, vision, intakes, indexer, turret, climber, superstructure);
         // }
         return autoChooser.get();
-                // .get()
-                // .andThen(new AlignToPoseCommand(
-                //         new Pose2d(8.248, 4.137, new Rotation2d()),
-                //         new TunableControlConstants("idk", new ControlConstants().withPID(8, 1, 0)),
-                //         new TunableControlConstants("idk1", new ControlConstants().withPID(5, 1, 0)),
-                //         drive));
+        // .get()
+        // .andThen(new AlignToPoseCommand(
+        //         new Pose2d(8.248, 4.137, new Rotation2d()),
+        //         new TunableControlConstants("idk", new ControlConstants().withPID(8, 1, 0)),
+        //         new TunableControlConstants("idk1", new ControlConstants().withPID(5, 1, 0)),
+        //         drive));
     }
 }

@@ -62,7 +62,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 4.5
+                  "waitTime": 4.0
                 }
               },
               {
@@ -112,7 +112,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 4.5
+                  "waitTime": 4.0
                 }
               },
               {
@@ -146,7 +146,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2.5 Side Dot"
+            "pathName": "2.5 Center Dot"
           }
         }
       ]
