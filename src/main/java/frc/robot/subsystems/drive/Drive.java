@@ -8,6 +8,7 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.Constants.TurretConstants.MIN_PITCH_ANGLE;
 
 import com.pathplanner.lib.util.DriveFeedforwards;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -25,6 +26,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
@@ -320,6 +322,14 @@ public class Drive extends SubsystemBase {
     /** Returns the current odometry rotation. */
     public Rotation2d getRotation() {
         return getPose().getRotation();
+    }
+
+    public Angle getPitch() {
+        return gyroInputs.pitch.isNear(Radians.zero(), MIN_PITCH_ANGLE) ? MIN_PITCH_ANGLE : gyroInputs.pitch;
+    }
+
+    public Angle getRoll() {
+        return gyroInputs.roll.isNear(Radians.zero(), MIN_PITCH_ANGLE) ? MIN_PITCH_ANGLE : gyroInputs.roll;
     }
 
     /** Resets the current odometry pose. */

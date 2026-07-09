@@ -24,6 +24,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
@@ -166,7 +167,9 @@ public class TurretCalculator {
             int iterations,
             InterpolatingTreeMap<Double, ShotData> shotMap,
             InterpolatingDoubleTreeMap tofMap,
-            Time tofFudgeFactor) {
+            Time tofFudgeFactor,
+            Angle pitch,
+            Angle roll) {
         double distance = getDistanceToTarget(robot, target).in(Meters);
         ShotData shot = shotMap.get(distance);
         shot = new ShotData(shot.exitVelocity, shot.hoodAngle, target);
@@ -175,7 +178,10 @@ public class TurretCalculator {
 
         // Iterate the process, getting better time of flight estimations and updating the predicted target accordingly
         for (int i = 0; i < iterations; i++) {
-            predictedTarget = predictTargetPos(target, fieldSpeeds, timeOfFlight);
+            Translation3d rotatedTarget = predictedTarget.rotateAround(
+                    new Translation3d(robot.getTranslation()),
+                    new Rotation3d(roll, pitch, Radians.zero()).unaryMinus());
+            predictedTarget = predictTargetPos(rotatedTarget, fieldSpeeds, timeOfFlight);
             distance = getDistanceToTarget(robot, predictedTarget).in(Meters);
             shot = shotMap.get(distance);
             shot = new ShotData(shot.exitVelocity, shot.hoodAngle, predictedTarget);
