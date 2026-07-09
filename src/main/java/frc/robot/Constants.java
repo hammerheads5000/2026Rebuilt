@@ -456,7 +456,7 @@ public final class Constants {
         public static final Distance EXTRA_DUCK_DISTANCE = Inches.of(12);
         public static final Time DUCK_TIME = Seconds.of(0.4);
 
-        public static final Angle MIN_HOOD_ANGLE = Degrees.of(6.24);
+        public static final Angle MIN_HOOD_ANGLE = Degrees.of(6.24 - 0.5);
         public static final Angle MAX_HOOD_ANGLE = Degrees.of(47);
 
         public static final Current HOOD_STALL_CURRENT = Amps.of(10);
@@ -465,7 +465,7 @@ public final class Constants {
 
         public static final double FLYWHEEL_FUDGE_AMOUNT = 0.01;
         public static final Angle TURN_TRIM_AMOUNT = Degrees.of(0.5);
-        public static final Angle BASE_TRIM = Degrees.of(1); // trim turret 1 deg CCW to compensate for dye rotor
+        public static final Angle BASE_TRIM = Degrees.of(0); // trim turret 1 deg CCW to compensate for dye rotor
 
         public static final AngularVelocity FLYWHEEL_SCORING_OVERRIDE = RPM.of(3300);
         public static final Angle HOOD_SCORING_OVERRIDE = Degrees.of(30);
@@ -493,7 +493,7 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            final double multiplier = 0.99;
+            final double multiplier = 0.90;
             SHOT_MAP.put(6.3, new ShotData(RPM.of(3685 * 1.01 * multiplier), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.1);
 
@@ -661,8 +661,8 @@ public final class Constants {
         public static final CurrentLimitsConfigs FEED_CURRENT_LIMITS =
                 new CurrentLimitsConfigs().withSupplyCurrentLowerLimit(30).withStatorCurrentLimit(100);
 
-        public static final Voltage SPIN_VOLTAGE = Volts.of(7);
-        public static final Voltage FEED_VOLTAGE = Volts.of(8);
+        public static final Voltage SPIN_VOLTAGE = Volts.of(5);
+        public static final Voltage FEED_VOLTAGE = Volts.of(6);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(-2);
         public static final Voltage UNJAM_FEED_VOLTAGE = Volts.of(-8);
         public static final Time SPIN_RAMP = Seconds.of(0.5);

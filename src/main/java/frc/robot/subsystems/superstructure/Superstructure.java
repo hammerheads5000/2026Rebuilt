@@ -122,7 +122,9 @@ public class Superstructure extends SubsystemBase {
                                 this.indexer.setGoal(IndexerGoal.IDLE).asProxy())
                         .withName("Idle"));
 
-        underTrenchTrigger = Zones.TRENCH_DUCK_ZONES.willContain(poseSupplier, fieldSpeedsSupplier, DUCK_TIME).or(manualHoodDownTrigger);
+        underTrenchTrigger = Zones.TRENCH_DUCK_ZONES
+                .willContain(poseSupplier, fieldSpeedsSupplier, DUCK_TIME)
+                .or(manualHoodDownTrigger);
         behindTowerTrigger = Zones.TOWER_ZONES.contains(poseSupplier);
 
         underTrenchTrigger.and(DriverStation::isTeleop).onTrue(this.duck());

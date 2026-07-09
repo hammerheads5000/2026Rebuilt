@@ -28,7 +28,7 @@ public class GyroIOPigeon2 implements GyroIO {
     private final Queue<Double> yawTimestampQueue;
     private final StatusSignal<AngularVelocity> yawVelocity = pigeon.getAngularVelocityZWorld();
     private final StatusSignal<Angle> pitch = pigeon.getPitch();
-    private final StatusSignal<Angle> roll = pigeon.getPitch();
+    private final StatusSignal<Angle> roll = pigeon.getRoll();
 
     public GyroIOPigeon2() {
         if (SwerveConstants.PIGEON_CONFIGS != null) {
@@ -40,6 +40,8 @@ public class GyroIOPigeon2 implements GyroIO {
         pigeon.getConfigurator().setYaw(0.0);
         yaw.setUpdateFrequency(SwerveConstants.ODOMETRY_UPDATE_FREQ);
         yawVelocity.setUpdateFrequency(50.0);
+        roll.setUpdateFrequency(50.0);
+        pitch.setUpdateFrequency(50.0);
         // pigeon.optimizeBusUtilization();
         yawTimestampQueue = PhoenixOdometryThread.getInstance().makeTimestampQueue();
         yawPositionQueue = PhoenixOdometryThread.getInstance().registerSignal(yaw.clone());
@@ -47,7 +49,8 @@ public class GyroIOPigeon2 implements GyroIO {
 
     @Override
     public void updateInputs(GyroIOInputs inputs) {
-        inputs.connected = BaseStatusSignal.refreshAll(yaw, yawVelocity).equals(StatusCode.OK);
+        inputs.connected =
+                BaseStatusSignal.refreshAll(yaw, yawVelocity, roll, pitch).equals(StatusCode.OK);
         inputs.yawPosition = Rotation2d.fromDegrees(yaw.getValueAsDouble());
         inputs.yawVelocityRadPerSec = Units.degreesToRadians(yawVelocity.getValueAsDouble());
 

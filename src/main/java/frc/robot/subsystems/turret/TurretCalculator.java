@@ -175,12 +175,11 @@ public class TurretCalculator {
         shot = new ShotData(shot.exitVelocity, shot.hoodAngle, target);
         Time timeOfFlight = Seconds.of(tofMap.get(distance)).plus(tofFudgeFactor);
         Translation3d predictedTarget = target;
+        Translation3d rotatedTarget = target.rotateAround(
+                new Translation3d(robot.getTranslation()), new Rotation3d(roll, pitch, Radians.zero()).unaryMinus());
 
         // Iterate the process, getting better time of flight estimations and updating the predicted target accordingly
         for (int i = 0; i < iterations; i++) {
-            Translation3d rotatedTarget = predictedTarget.rotateAround(
-                    new Translation3d(robot.getTranslation()),
-                    new Rotation3d(roll, pitch, Radians.zero()).unaryMinus());
             predictedTarget = predictTargetPos(rotatedTarget, fieldSpeeds, timeOfFlight);
             distance = getDistanceToTarget(robot, predictedTarget).in(Meters);
             shot = shotMap.get(distance);
