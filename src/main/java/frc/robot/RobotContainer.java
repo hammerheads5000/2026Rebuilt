@@ -117,7 +117,8 @@ public class RobotContainer {
     private final Trigger speedUpTrigger = controller.rightTrigger();
     private final Trigger intakeReverseTrigger = controller.b();
     private final Trigger slowDownTrigger;
-    private final Trigger moveTurretToZero = controller.back();
+    private final Trigger moveTurretToZero = controller.start();
+    private final Trigger hoodDownTrigger = controller.back();
     //     private final Trigger climbTrigger = controller.y();
     //     private final Trigger extendTrigger = controller.start();
     //     private final Trigger stowTrigger = controller.back();
@@ -175,7 +176,12 @@ public class RobotContainer {
                 indexer = new Indexer(new IndexerIOTalonFX());
                 // indexer = new Indexer(new IndexerIO() {}, drive::getRotation);
                 turret = new Turret(
-                        new TurretIOTalonFX(), drive::getPose, drive::getFieldSpeeds, drive::getRequestedChassisSpeeds);
+                        new TurretIOTalonFX(),
+                        drive::getPose,
+                        drive::getFieldSpeeds,
+                        drive::getRequestedChassisSpeeds,
+                        drive::getPitch,
+                        drive::getRoll);
                 // turret = new Turret(new TurretIO() {}, drive::getPose, drive::getFieldSpeeds);
                 vision = new Vision(
                         drive::addVisionMeasurement,
@@ -200,7 +206,13 @@ public class RobotContainer {
                         new ModuleIOSim(SwerveConstants.BackLeft.MODULE_CONSTANTS),
                         new ModuleIOSim(SwerveConstants.BackRight.MODULE_CONSTANTS));
                 intakes = new Intakes(new IntakeIOSim(), new IntakeIOSim(), drive::getChassisSpeeds);
-                turret = new Turret(turretSim, drive::getPose, drive::getFieldSpeeds, drive::getRequestedChassisSpeeds);
+                turret = new Turret(
+                        turretSim,
+                        drive::getPose,
+                        drive::getFieldSpeeds,
+                        drive::getRequestedChassisSpeeds,
+                        drive::getPitch,
+                        drive::getRoll);
                 // vision = new Vision(
                 //         drive::addVisionMeasurement,
                 //         new VisionIOPhotonVisionSim(
@@ -263,7 +275,12 @@ public class RobotContainer {
                         new GyroIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
                 intakes = new Intakes(new IntakeIO() {}, new IntakeIO() {}, drive::getChassisSpeeds);
                 turret = new Turret(
-                        new TurretIO() {}, drive::getPose, drive::getFieldSpeeds, drive::getRequestedChassisSpeeds);
+                        new TurretIO() {},
+                        drive::getPose,
+                        drive::getFieldSpeeds,
+                        drive::getRequestedChassisSpeeds,
+                        drive::getPitch,
+                        drive::getRoll);
                 indexer = new Indexer(new IndexerIO() {});
                 vision = new Vision(
                         drive::addVisionMeasurement,
@@ -301,7 +318,7 @@ public class RobotContainer {
                 break;
         }
 
-        superstructure = new Superstructure(turret, indexer, drive::getPose, drive::getFieldSpeeds);
+        superstructure = new Superstructure(turret, indexer, drive::getPose, drive::getFieldSpeeds, hoodDownTrigger);
 
         leds = new Leds();
 

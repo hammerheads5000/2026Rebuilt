@@ -55,6 +55,8 @@ public class Turret extends SubsystemBase {
     private final TurretIOInputsAutoLogged inputs;
     private final Supplier<Pose2d> poseSupplier;
     private final Supplier<ChassisSpeeds> fieldSpeedsSupplier;
+    private final Supplier<Angle> pitchSupplier;
+    private final Supplier<Angle> rollSupplier;
 
     @AutoLogOutput
     Translation3d currentTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
@@ -112,12 +114,15 @@ public class Turret extends SubsystemBase {
             TurretIO io,
             Supplier<Pose2d> poseSupplier,
             Supplier<ChassisSpeeds> fieldSpeedsSupplier,
-            Supplier<ChassisSpeeds> requestedFieldSpeedsSupplier) {
+            Supplier<ChassisSpeeds> requestedFieldSpeedsSupplier,
+            Supplier<Angle> pitchSupplier,
+            Supplier<Angle> rollSupplier) {
         this.io = io;
         this.inputs = new TurretIOInputsAutoLogged();
         this.poseSupplier = poseSupplier;
         this.fieldSpeedsSupplier = fieldSpeedsSupplier;
-
+        this.pitchSupplier = pitchSupplier;
+        this.rollSupplier = rollSupplier;
         io.zeroHoodPosition();
         setTarget(FieldConstants.HUB_BLUE);
 
@@ -463,7 +468,9 @@ public class Turret extends SubsystemBase {
                     LOOKAHEAD_ITERATIONS,
                     goal == TurretGoal.PASSING ? PASSING_MAP : SHOT_MAP,
                     goal == TurretGoal.PASSING ? PASS_TOF_MAP : TOF_MAP,
-                    tofFudgeFactor);
+                    tofFudgeFactor,
+                    pitchSupplier.get(),
+                    rollSupplier.get());
         } else {
             calculatedShot = TurretCalculator.iterativeMovingShotFromFunnelClearance(
                     robotPose, fieldSpeeds, currentTarget, LOOKAHEAD_ITERATIONS);

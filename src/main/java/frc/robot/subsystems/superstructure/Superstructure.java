@@ -85,7 +85,8 @@ public class Superstructure extends SubsystemBase {
             Turret turret,
             Indexer indexer,
             Supplier<Pose2d> poseSupplier,
-            Supplier<ChassisSpeeds> fieldSpeedsSupplier) {
+            Supplier<ChassisSpeeds> fieldSpeedsSupplier,
+            Trigger manualHoodDownTrigger) {
         this.turret = turret;
         this.indexer = indexer;
         this.poseSupplier = poseSupplier;
@@ -121,7 +122,7 @@ public class Superstructure extends SubsystemBase {
                                 this.indexer.setGoal(IndexerGoal.IDLE).asProxy())
                         .withName("Idle"));
 
-        underTrenchTrigger = Zones.TRENCH_DUCK_ZONES.willContain(poseSupplier, fieldSpeedsSupplier, DUCK_TIME);
+        underTrenchTrigger = Zones.TRENCH_DUCK_ZONES.willContain(poseSupplier, fieldSpeedsSupplier, DUCK_TIME).or(manualHoodDownTrigger);
         behindTowerTrigger = Zones.TOWER_ZONES.contains(poseSupplier);
 
         underTrenchTrigger.and(DriverStation::isTeleop).onTrue(this.duck());

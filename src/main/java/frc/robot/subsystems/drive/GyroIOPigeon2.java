@@ -27,6 +27,8 @@ public class GyroIOPigeon2 implements GyroIO {
     private final Queue<Double> yawPositionQueue;
     private final Queue<Double> yawTimestampQueue;
     private final StatusSignal<AngularVelocity> yawVelocity = pigeon.getAngularVelocityZWorld();
+    private final StatusSignal<Angle> pitch = pigeon.getPitch();
+    private final StatusSignal<Angle> roll = pigeon.getPitch();
 
     public GyroIOPigeon2() {
         if (SwerveConstants.PIGEON_CONFIGS != null) {
@@ -54,6 +56,8 @@ public class GyroIOPigeon2 implements GyroIO {
         inputs.odometryYawPositions = yawPositionQueue.stream()
                 .map((Double value) -> Rotation2d.fromDegrees(value))
                 .toArray(Rotation2d[]::new);
+        inputs.pitch = pitch.getValue();
+        inputs.roll = roll.getValue();
         yawTimestampQueue.clear();
         yawPositionQueue.clear();
     }

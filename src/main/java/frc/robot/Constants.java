@@ -560,6 +560,8 @@ public final class Constants {
 
         public static final Time ACTIVE_PRESHOOT_TIME = Seconds.of(2);
         public static final Time ACTIVE_POSTSHOOT_TIME = Seconds.of(1);
+
+        public static final Angle MIN_PITCH_ANGLE = Degrees.of(10);
     }
 
     public static class IntakeConstants {
