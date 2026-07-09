@@ -117,7 +117,8 @@ public class RobotContainer {
     private final Trigger speedUpTrigger = controller.rightTrigger();
     private final Trigger intakeReverseTrigger = controller.b();
     private final Trigger slowDownTrigger;
-    private final Trigger moveTurretToZero = controller.back();
+    private final Trigger moveTurretToZero = controller.start();
+    private final Trigger hoodDownTrigger = controller.back();
     //     private final Trigger climbTrigger = controller.y();
     //     private final Trigger extendTrigger = controller.start();
     //     private final Trigger stowTrigger = controller.back();
@@ -317,7 +318,7 @@ public class RobotContainer {
                 break;
         }
 
-        superstructure = new Superstructure(turret, indexer, drive::getPose, drive::getFieldSpeeds);
+        superstructure = new Superstructure(turret, indexer, drive::getPose, drive::getFieldSpeeds, hoodDownTrigger);
 
         leds = new Leds();
 
