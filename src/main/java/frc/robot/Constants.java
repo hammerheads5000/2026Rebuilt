@@ -456,7 +456,7 @@ public final class Constants {
         public static final Distance EXTRA_DUCK_DISTANCE = Inches.of(12);
         public static final Time DUCK_TIME = Seconds.of(0.4);
 
-        public static final Angle MIN_HOOD_ANGLE = Degrees.of(6.24 - 0.5);
+        public static final Angle MIN_HOOD_ANGLE = Degrees.of(6.24);
         public static final Angle MAX_HOOD_ANGLE = Degrees.of(47);
 
         public static final Current HOOD_STALL_CURRENT = Amps.of(10);
@@ -491,9 +491,10 @@ public final class Constants {
         public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
 
         public static final InterpolatingDoubleTreeMap PASS_TOF_MAP = new InterpolatingDoubleTreeMap();
+        public static final double PITCH_ADJUST_MULTIPLIER = 1.5;
 
         static {
-            final double multiplier = 0.90;
+            final double multiplier = 0.95;
             SHOT_MAP.put(6.3, new ShotData(RPM.of(3685 * 1.01 * multiplier), Degrees.of(43)));
             TOF_MAP.put(6.3, 1.1);
 
@@ -561,7 +562,7 @@ public final class Constants {
         public static final Time ACTIVE_PRESHOOT_TIME = Seconds.of(2);
         public static final Time ACTIVE_POSTSHOOT_TIME = Seconds.of(1);
 
-        public static final Angle MIN_PITCH_ANGLE = Degrees.of(10);
+        public static final Angle MIN_PITCH_ANGLE = Degrees.of(4);
     }
 
     public static class IntakeConstants {

@@ -325,11 +325,11 @@ public class Drive extends SubsystemBase {
     }
 
     public Angle getPitch() {
-        return gyroInputs.pitch.isNear(Radians.zero(), MIN_PITCH_ANGLE) ? MIN_PITCH_ANGLE : gyroInputs.pitch;
+        return gyroInputs.pitch.isNear(Radians.zero(), MIN_PITCH_ANGLE) ? Radians.zero() : gyroInputs.pitch;
     }
 
     public Angle getRoll() {
-        return gyroInputs.roll.isNear(Radians.zero(), MIN_PITCH_ANGLE) ? MIN_PITCH_ANGLE : gyroInputs.roll;
+        return gyroInputs.roll.isNear(Radians.zero(), MIN_PITCH_ANGLE) ? Radians.zero() : gyroInputs.roll;
     }
 
     /** Resets the current odometry pose. */

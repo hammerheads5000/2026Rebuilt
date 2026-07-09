@@ -18,6 +18,7 @@ import static frc.robot.Constants.TurretConstants.DISTANCE_ABOVE_FUNNEL;
 import static frc.robot.Constants.TurretConstants.FLYWHEEL_RADIUS;
 import static frc.robot.Constants.TurretConstants.MAX_TURN_ANGLE;
 import static frc.robot.Constants.TurretConstants.MIN_TURN_ANGLE;
+import static frc.robot.Constants.TurretConstants.PITCH_ADJUST_MULTIPLIER;
 import static frc.robot.Constants.TurretConstants.ROBOT_TO_TURRET_TRANSFORM;
 
 import edu.wpi.first.math.MathUtil;
@@ -175,12 +176,21 @@ public class TurretCalculator {
         shot = new ShotData(shot.exitVelocity, shot.hoodAngle, target);
         Time timeOfFlight = Seconds.of(tofMap.get(distance)).plus(tofFudgeFactor);
         Translation3d predictedTarget = target;
-        Translation3d rotatedTarget = target.rotateAround(
-                new Translation3d(robot.getTranslation()), new Rotation3d(roll, pitch, Radians.zero()).unaryMinus());
+        Rotation3d robotRotation = new Rotation3d(roll, pitch, Radians.zero());
+        Translation3d rotatedTarget =
+                target.rotateAround(new Translation3d(robot.getTranslation()), robotRotation.unaryMinus());
+        robotRotation = new Rotation3d(roll, pitch, robot.getRotation().getMeasure()); // add in yaw
+        Translation3d robotDownDir = new Translation3d(0, 0, -1).rotateBy(robotRotation);
+        Translation3d gravityComponent = new Translation3d(0, 0, -1).minus(robotDownDir);
+        gravityComponent = gravityComponent.times(9.81 / 2.0 * PITCH_ADJUST_MULTIPLIER);
+        Logger.recordOutput("Turret/Grav", gravityComponent);
+        Logger.recordOutput("Turret/Down", robotDownDir);
 
         // Iterate the process, getting better time of flight estimations and updating the predicted target accordingly
         for (int i = 0; i < iterations; i++) {
-            predictedTarget = predictTargetPos(rotatedTarget, fieldSpeeds, timeOfFlight);
+            Translation3d displacedTarget =
+                    rotatedTarget.minus(gravityComponent.times(Math.pow(timeOfFlight.in(Seconds), 2)));
+            predictedTarget = predictTargetPos(displacedTarget, fieldSpeeds, timeOfFlight);
             distance = getDistanceToTarget(robot, predictedTarget).in(Meters);
             shot = shotMap.get(distance);
             shot = new ShotData(shot.exitVelocity, shot.hoodAngle, predictedTarget);
