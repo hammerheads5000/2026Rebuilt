@@ -61,6 +61,7 @@ import frc.robot.subsystems.superstructure.Superstructure;
 import frc.robot.subsystems.superstructure.Superstructure.Goal;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.Turret.TurretGoal;
+import frc.robot.subsystems.turret.TurretCalculator;
 import frc.robot.subsystems.turret.TurretIO;
 import frc.robot.subsystems.turret.TurretIOSim;
 import frc.robot.subsystems.turret.TurretIOTalonFX;
@@ -130,8 +131,8 @@ public class RobotContainer {
     private final Trigger disableTurret = toggleSwitches.button(3);
     private final Trigger disableLeftIntake = toggleSwitches.button(4);
     private final Trigger disableRightIntake = toggleSwitches.button(5);
-    private final Trigger manualOverrideTurret = toggleSwitches.button(8);
-    private final Trigger disableWallAvoidance = toggleSwitches.button(7);
+    private final Trigger keepHoodDown = toggleSwitches.button(8);
+    private final Trigger indexerMax = toggleSwitches.button(7);
     private final Trigger hubTagsOnly = toggleSwitches.button(8);
     private final Trigger hubShiftOverride = toggleSwitches.button(9);
     private final Trigger slowDrive = toggleSwitches.button(10);
@@ -173,7 +174,6 @@ public class RobotContainer {
                         // new IntakeIO() {},
                         new IntakeIOTalonFX(IntakeConstants.RIGHT_RACK_ID, IntakeConstants.RIGHT_SPIN_ID),
                         drive::getChassisSpeeds);
-                indexer = new Indexer(new IndexerIOTalonFX());
                 // indexer = new Indexer(new IndexerIO() {}, drive::getRotation);
                 turret = new Turret(
                         new TurretIOTalonFX(),
@@ -182,6 +182,10 @@ public class RobotContainer {
                         drive::getRequestedChassisSpeeds,
                         drive::getPitch,
                         drive::getRoll);
+                indexer = new Indexer(
+                        new IndexerIOTalonFX(),
+                        () -> TurretCalculator.getDistanceToTarget(drive.getPose(), turret.currentTarget),
+                        indexerMax.or(() -> turret.getGoal().equals(TurretGoal.PASSING)));
                 // turret = new Turret(new TurretIO() {}, drive::getPose, drive::getFieldSpeeds);
                 vision = new Vision(
                         drive::addVisionMeasurement,
@@ -197,8 +201,8 @@ public class RobotContainer {
 
             case SIM:
                 configureFuelSim();
-                indexer = new Indexer(new IndexerIOSim());
-                TurretIOSim turretSim = new TurretIOSim(fuelSim, () -> indexer.getGoal() == IndexerGoal.ACTIVE);
+                // BooleanSupplier indexerActive = () -> indexer.getGoal() == IndexerGoal.ACTIVE;
+                TurretIOSim turretSim = new TurretIOSim(fuelSim, () -> true);
                 drive = new Drive(
                         new GyroIO() {},
                         new ModuleIOSim(SwerveConstants.FrontLeft.MODULE_CONSTANTS),
@@ -213,6 +217,10 @@ public class RobotContainer {
                         drive::getRequestedChassisSpeeds,
                         drive::getPitch,
                         drive::getRoll);
+                indexer = new Indexer(
+                        new IndexerIOSim(),
+                        () -> TurretCalculator.getDistanceToTarget(drive.getPose(), turret.currentTarget),
+                        indexerMax.or(() -> turret.getGoal().equals(TurretGoal.PASSING)));
                 // vision = new Vision(
                 //         drive::addVisionMeasurement,
                 //         new VisionIOPhotonVisionSim(
@@ -281,7 +289,10 @@ public class RobotContainer {
                         drive::getRequestedChassisSpeeds,
                         drive::getPitch,
                         drive::getRoll);
-                indexer = new Indexer(new IndexerIO() {});
+                indexer = new Indexer(
+                        new IndexerIO() {},
+                        () -> TurretCalculator.getDistanceToTarget(drive.getPose(), turret.currentTarget),
+                        indexerMax.or(() -> turret.getGoal().equals(TurretGoal.PASSING)));
                 vision = new Vision(
                         drive::addVisionMeasurement,
                         drive::setPose,
@@ -318,7 +329,12 @@ public class RobotContainer {
                 break;
         }
 
-        superstructure = new Superstructure(turret, indexer, drive::getPose, drive::getFieldSpeeds, hoodDownTrigger);
+        superstructure = new Superstructure(
+                turret,
+                indexer,
+                drive::getPose,
+                drive::getFieldSpeeds,
+                hoodDownTrigger.or(zeroHood).or(keepHoodDown));
 
         leds = new Leds();
 
@@ -546,8 +562,7 @@ public class RobotContainer {
         disableTurret.whileTrue(turret.disable());
         disableLeftIntake.whileTrue(intakes.left.disable());
         disableRightIntake.whileTrue(intakes.right.disable());
-        manualOverrideTurret.whileTrue(turret.manualOverride());
-        disableWallAvoidance.whileTrue(teleopDrive.disableWallAvoidance());
+        keepHoodDown.whileTrue(turret.manualOverride());
         hubTagsOnly.whileTrue(vision.onlyUseHubTags());
         hubShiftOverride.whileTrue(superstructure.enableShiftOverride());
         slowDrive.whileTrue(teleopDrive.slowDownCommand());

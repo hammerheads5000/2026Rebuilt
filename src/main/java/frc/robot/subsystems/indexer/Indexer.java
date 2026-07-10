@@ -1,20 +1,25 @@
 package frc.robot.subsystems.indexer;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IndexerConstants.FEED_STALL_ANGULAR_VELOCITY;
 import static frc.robot.Constants.IndexerConstants.FEED_STALL_CURRENT;
-import static frc.robot.Constants.IndexerConstants.FEED_VOLTAGE;
+import static frc.robot.Constants.IndexerConstants.FEED_VOLTAGE_AT_1M;
+import static frc.robot.Constants.IndexerConstants.FEED_VOLTAGE_AT_4M;
 import static frc.robot.Constants.IndexerConstants.HOOK_STALL_ANGULAR_VELOCITY;
 import static frc.robot.Constants.IndexerConstants.HOOK_STALL_CURRENT;
 import static frc.robot.Constants.IndexerConstants.SPIN_RAMP;
-import static frc.robot.Constants.IndexerConstants.SPIN_VOLTAGE;
+import static frc.robot.Constants.IndexerConstants.SPIN_VOLTAGE_AT_1M;
+import static frc.robot.Constants.IndexerConstants.SPIN_VOLTAGE_AT_4M;
 import static frc.robot.Constants.IndexerConstants.UNJAM_FEED_VOLTAGE;
 import static frc.robot.Constants.IndexerConstants.UNJAM_SPIN_VOLTAGE;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,6 +33,8 @@ import frc.robot.Constants;
 import frc.robot.util.LoggedTunableNumber;
 import frc.robot.util.VirtualPD;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -36,9 +43,9 @@ public class Indexer extends SubsystemBase {
     private final IndexerIOInputsAutoLogged inputs = new IndexerIOInputsAutoLogged();
 
     private final LoggedTunableNumber spinVoltageTunable =
-            new LoggedTunableNumber("Indexer/Spin Voltage", SPIN_VOLTAGE.in(Volts));
+            new LoggedTunableNumber("Indexer/Spin Voltage", SPIN_VOLTAGE_AT_4M.in(Volts));
     private final LoggedTunableNumber feedVoltageTunable =
-            new LoggedTunableNumber("Indexer/Feed Voltage", FEED_VOLTAGE.in(Volts));
+            new LoggedTunableNumber("Indexer/Feed Voltage", FEED_VOLTAGE_AT_4M.in(Volts));
 
     private SlewRateLimiter spinVoltageLimiter = new SlewRateLimiter(spinVoltageTunable.get() / SPIN_RAMP.in(Seconds));
 
@@ -56,6 +63,9 @@ public class Indexer extends SubsystemBase {
 
     private final IndexerVisualizer visualizer;
 
+    private final Supplier<Distance> hubDistanceSupplier;
+    private final BooleanSupplier maxSpeedSupplier;
+
     private final Alert feedDisconnectedAlert = new Alert("Indexer Feed Motor Disconnected", AlertType.kError);
     private final Alert hookDisconnectedAlert = new Alert("Indexer Hook Motor Disconnected", AlertType.kError);
     private final Alert disabledAlert = new Alert("Indexer Disabled", AlertType.kWarning);
@@ -63,9 +73,11 @@ public class Indexer extends SubsystemBase {
     @AutoLogOutput
     private IndexerGoal goal = IndexerGoal.IDLE;
 
-    public Indexer(IndexerIO io) {
+    public Indexer(IndexerIO io, Supplier<Distance> hubDistanceSupplier, BooleanSupplier maxSpeedSupplier) {
         this.io = io;
         this.visualizer = new IndexerVisualizer();
+        this.hubDistanceSupplier = hubDistanceSupplier;
+        this.maxSpeedSupplier = maxSpeedSupplier;
 
         VirtualPD.registerMotor(() -> inputs.spinSupplyCurrent, "IndexerHook");
         VirtualPD.registerMotor(() -> inputs.feedSupplyCurrent, "IndexerFeed");
@@ -88,17 +100,36 @@ public class Indexer extends SubsystemBase {
                         ? "None"
                         : this.getCurrentCommand().getName());
 
-        if ((spinVoltageTunable.hasChanged(hashCode()) || feedVoltageTunable.hasChanged(hashCode()))
-                && (goal == IndexerGoal.ACTIVE || goal == IndexerGoal.ACTIVATING)) {
-            io.setSpinOutput(Volts.of(spinVoltageTunable.get()));
-            io.setFeedOutput(Volts.of(feedVoltageTunable.get()));
-            spinVoltageLimiter = new SlewRateLimiter(spinVoltageTunable.get() / SPIN_RAMP.in(Seconds));
+        if (goal == IndexerGoal.ACTIVE || goal == IndexerGoal.ACTIVATING) {
+            io.setSpinOutput(Volts.of(calculateSpinVolts()));
+            io.setFeedOutput(Volts.of(calculateFeedVolts()));
+            // spinVoltageLimiter = new SlewRateLimiter(spinVoltageTunable.get() / SPIN_RAMP.in(Seconds));
         }
 
         visualizer.update(inputs.spinVelocity);
 
         feedDisconnectedAlert.set(!inputs.feedMotorConnected && Constants.CURRENT_MODE != Constants.Mode.SIM);
         hookDisconnectedAlert.set(!inputs.spinMotorConnected && Constants.CURRENT_MODE != Constants.Mode.SIM);
+    }
+
+    private double calculateSpinVolts() {
+        return maxSpeedSupplier.getAsBoolean()
+                ? SPIN_VOLTAGE_AT_4M.in(Volts)
+                : MathUtil.interpolate(
+                        SPIN_VOLTAGE_AT_1M.in(Volts),
+                        SPIN_VOLTAGE_AT_4M.in(Volts),
+                        MathUtil.inverseInterpolate(
+                                1, 4, hubDistanceSupplier.get().in(Meters)));
+    }
+
+    private double calculateFeedVolts() {
+        return maxSpeedSupplier.getAsBoolean()
+                ? FEED_VOLTAGE_AT_4M.in(Volts)
+                : MathUtil.interpolate(
+                        FEED_VOLTAGE_AT_1M.in(Volts),
+                        FEED_VOLTAGE_AT_4M.in(Volts),
+                        MathUtil.inverseInterpolate(
+                                1, 4, hubDistanceSupplier.get().in(Meters)));
     }
 
     public Command setGoal(IndexerGoal newGoal) {
@@ -157,14 +188,14 @@ public class Indexer extends SubsystemBase {
         return Commands.sequence(
                         // this.runOnce(() -> io.setFeedOutput(UNJAM_FEED_VOLTAGE)),
                         // Commands.waitSeconds(0.1),
-                        this.runOnce(() -> io.setFeedOutput(Volts.of(feedVoltageTunable.get()))),
+                        this.runOnce(() -> io.setFeedOutput(Volts.of(calculateFeedVolts()))),
                         this.startRun(
                                         () -> spinVoltageLimiter.reset(0),
                                         () -> io.setSpinOutput(
-                                                Volts.of(spinVoltageLimiter.calculate(spinVoltageTunable.get()))))
+                                                Volts.of(spinVoltageLimiter.calculate(calculateSpinVolts()))))
                                 .withTimeout(SPIN_RAMP),
-                        this.runOnce(() ->
-                                io.setSpinOutput(Volts.of(spinVoltageLimiter.calculate(spinVoltageTunable.get())))))
+                        this.runOnce(
+                                () -> io.setSpinOutput(Volts.of(spinVoltageLimiter.calculate(calculateSpinVolts())))))
                 .finallyDo((interrupted) -> {
                     if (interrupted) {
                         io.stopFeed();
@@ -185,11 +216,11 @@ public class Indexer extends SubsystemBase {
                         }),
                         Commands.waitSeconds(0.2),
                         Commands.runOnce(() -> {
-                            io.setFeedOutput(Volts.of(feedVoltageTunable.get()));
+                            io.setFeedOutput(Volts.of(calculateFeedVolts()));
                             io.setSpinOutput(Volts.of(0));
                         }),
                         Commands.waitSeconds(0.1),
-                        Commands.runOnce(() -> io.setSpinOutput(Volts.of(spinVoltageTunable.get()))))
+                        Commands.runOnce(() -> io.setSpinOutput(Volts.of(calculateFeedVolts()))))
                 .finallyDo((interrupted) -> {
                     if (interrupted) {
                         io.stopFeed();

@@ -59,7 +59,7 @@ public class Turret extends SubsystemBase {
     private final Supplier<Angle> rollSupplier;
 
     @AutoLogOutput
-    Translation3d currentTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
+    public Translation3d currentTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue
             ? FieldConstants.HUB_BLUE
             : FieldConstants.HUB_RED;
 
