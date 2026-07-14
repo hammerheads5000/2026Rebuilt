@@ -19,6 +19,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GainSchedBehaviorValue;
@@ -575,6 +576,8 @@ public final class Constants {
         public static final double RIGHT_ROTOR_TO_PINION_RATIO = 50.0 / 17; // 50:17 belt
         public static final Distance PINION_PITCH_RADIUS = Inches.of(0.5);
 
+        public static final Distance DEPLOY_TOLERANCE = Inches.of(1);
+
         // public static final Slot0Configs RIGHT_RACK_GAINS = new Slot0Configs()
         //         .withKP(3.0)
         //         .withKD(0.1)
@@ -582,12 +585,14 @@ public final class Constants {
         //         .withKV(0.23)
         //         .withKS(0.4);
 
-        public static final Slot0Configs LEFT_RACK_GAINS = new Slot0Configs()
+        public static final Slot0Configs RACK_GAINS = new Slot0Configs()
                 .withKP(21)
                 .withKD(0.15)
                 .withKA(0.0)
                 .withKV(3.3)
                 .withKS(1.7);
+
+        public static final Slot1Configs RACK_HOLD_GAINS = new Slot1Configs().withKP(4);
 
         // public static final Slot1Configs RACK_DIFF_GAINS = new Slot1Configs().withKP(0.5);
 
@@ -620,7 +625,6 @@ public final class Constants {
         public static final Voltage REVERSE_SPIN_VOLTAGE = Volts.of(-5);
         public static final Voltage UNJAM_SPIN_VOLTAGE = Volts.of(10);
         public static final Distance STOW_TOLERANCE = Inches.of(1.5);
-        public static final Distance DEPLOY_TOLERANCE = Inches.of(1);
         public static final Distance DECOUPLE_DISTANCE = Inches.of(3);
 
         public static final Distance PRESS_STOP_SPIN = Inches.of(5);
@@ -628,6 +632,8 @@ public final class Constants {
         public static final Voltage PRESS_OUT_VOLTAGE = Volts.of(1.5);
         public static final Time PRESS_IN_TIME = Seconds.of(0.5);
         public static final Time PRESS_OUT_TIME = Seconds.of(0.1);
+
+        public static final Time REDEPLOY_TIME = Seconds.of(0.5);
 
         public static final LinearVelocity MIN_SWITCH_ROBOT_VELOCITY = MetersPerSecond.of(0.2);
 

@@ -12,10 +12,10 @@ import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
 import static frc.robot.Constants.CAN_FD_BUS;
 import static frc.robot.Constants.IntakeConstants.DEPLOY_POS;
-import static frc.robot.Constants.IntakeConstants.LEFT_RACK_GAINS;
 import static frc.robot.Constants.IntakeConstants.LEFT_ROTOR_TO_PINION_RATIO;
 import static frc.robot.Constants.IntakeConstants.PINION_PITCH_RADIUS;
 import static frc.robot.Constants.IntakeConstants.RACK_CURRENT_LIMITS;
+import static frc.robot.Constants.IntakeConstants.RACK_GAINS;
 import static frc.robot.Constants.IntakeConstants.RACK_MOTION_MAGIC;
 import static frc.robot.Constants.IntakeConstants.RIGHT_RACK_OUTPUT_CONFIGS;
 import static frc.robot.Constants.IntakeConstants.SPIN_CURRENT_LIMITS;
@@ -78,7 +78,7 @@ public class IntakeIOTalonFXDual implements IntakeIO {
         this.spinMotor = new TalonFX(spinID, Constants.CAN_FD_BUS);
 
         rackConfig = new TalonFXConfiguration()
-                .withSlot0(LEFT_RACK_GAINS)
+                .withSlot0(RACK_GAINS)
                 .withMotorOutput(RIGHT_RACK_OUTPUT_CONFIGS)
                 .withCurrentLimits(RACK_CURRENT_LIMITS)
                 .withMotionMagic(RACK_MOTION_MAGIC)

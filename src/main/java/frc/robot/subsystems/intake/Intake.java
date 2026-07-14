@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.DEPLOY_POS;
 import static frc.robot.Constants.IntakeConstants.DEPLOY_TOLERANCE;
-import static frc.robot.Constants.IntakeConstants.LEFT_RACK_GAINS;
 import static frc.robot.Constants.IntakeConstants.LEFT_ROTOR_TO_PINION_RATIO;
 import static frc.robot.Constants.IntakeConstants.MAX_POS;
 import static frc.robot.Constants.IntakeConstants.PRESS_IN_TIME;
@@ -16,9 +15,12 @@ import static frc.robot.Constants.IntakeConstants.PRESS_IN_VOLTAGE;
 import static frc.robot.Constants.IntakeConstants.PRESS_OUT_TIME;
 import static frc.robot.Constants.IntakeConstants.PRESS_OUT_VOLTAGE;
 import static frc.robot.Constants.IntakeConstants.PRESS_STOP_SPIN;
+import static frc.robot.Constants.IntakeConstants.RACK_GAINS;
+import static frc.robot.Constants.IntakeConstants.RACK_HOLD_GAINS;
 import static frc.robot.Constants.IntakeConstants.RACK_MOTION_MAGIC;
 import static frc.robot.Constants.IntakeConstants.RACK_STALL_CURRENT;
 import static frc.robot.Constants.IntakeConstants.RACK_STALL_VEL;
+import static frc.robot.Constants.IntakeConstants.REDEPLOY_TIME;
 import static frc.robot.Constants.IntakeConstants.REVERSE_SPIN_VOLTAGE;
 import static frc.robot.Constants.IntakeConstants.RIGHT_ROTOR_TO_PINION_RATIO;
 import static frc.robot.Constants.IntakeConstants.SPIN_STALL_ANGULAR_VELOCITY;
@@ -29,6 +31,7 @@ import static frc.robot.Constants.IntakeConstants.STOW_TOLERANCE;
 import static frc.robot.Constants.IntakeConstants.UNJAM_SPIN_VOLTAGE;
 import static frc.robot.Constants.IntakeConstants.ZEROING_VOLTAGE;
 
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
@@ -107,11 +110,11 @@ public class Intake extends SubsystemBase {
 
         double multiplier = side == IntakeSide.Right ? RIGHT_ROTOR_TO_PINION_RATIO / LEFT_ROTOR_TO_PINION_RATIO : 1;
 
-        rackKP = new LoggedTunableNumber("Intakes/" + name + "/kP", LEFT_RACK_GAINS.kP * multiplier);
-        rackKD = new LoggedTunableNumber("Intakes/" + name + "/kD", LEFT_RACK_GAINS.kD * multiplier);
-        rackKV = new LoggedTunableNumber("Intakes/" + name + "/kV", LEFT_RACK_GAINS.kV * multiplier);
-        rackKA = new LoggedTunableNumber("Intakes/" + name + "/kA", LEFT_RACK_GAINS.kA * multiplier);
-        rackKS = new LoggedTunableNumber("Intakes/" + name + "/kS", LEFT_RACK_GAINS.kS);
+        rackKP = new LoggedTunableNumber("Intakes/" + name + "/kP", RACK_GAINS.kP * multiplier);
+        rackKD = new LoggedTunableNumber("Intakes/" + name + "/kD", RACK_GAINS.kD * multiplier);
+        rackKV = new LoggedTunableNumber("Intakes/" + name + "/kV", RACK_GAINS.kV * multiplier);
+        rackKA = new LoggedTunableNumber("Intakes/" + name + "/kA", RACK_GAINS.kA * multiplier);
+        rackKS = new LoggedTunableNumber("Intakes/" + name + "/kS", RACK_GAINS.kS);
 
         rackDisconnectedAlert = new Alert(name + " Intake Rack Motor Disconnected!", AlertType.kError);
         spinDisconnectedAlert = new Alert(name + " Intake Spin Motor Disconnected!", AlertType.kError);
@@ -121,7 +124,7 @@ public class Intake extends SubsystemBase {
         rackStallTrigger = new Trigger(this::rackStalled).debounce(0.1);
         deployedTrigger = new Trigger(this::deployed)
                 .and(() -> this.goal == IntakeGoal.DEPLOYING || this.goal == IntakeGoal.DEPLOYED)
-                .debounce(0.05);
+                .debounce(REDEPLOY_TIME.in(Seconds), DebounceType.kFalling);
         stowedTrigger = new Trigger(this::stowed)
                 .and(() -> this.goal == IntakeGoal.STOWING || this.goal == IntakeGoal.STOWED)
                 .debounce(0.05);
@@ -131,6 +134,9 @@ public class Intake extends SubsystemBase {
                 .and(() -> this.goal != IntakeGoal.ZEROING && this.goal != IntakeGoal.IDLE)
                 .onTrue(unjam());
         deployedTrigger.onTrue(setGoal(IntakeGoal.DEPLOYED));
+        deployedTrigger.onFalse(setGoal(IntakeGoal.DEPLOYING)
+                .onlyIf(() -> goal == IntakeGoal.DEPLOYED)
+                .withInterruptBehavior(InterruptionBehavior.kCancelSelf));
         stowedTrigger.and(() -> this.goal == IntakeGoal.STOWING).onTrue(setGoal(IntakeGoal.STOWED));
 
         SmartDashboard.putData("Overrides/" + side.name() + " Intake", disable());
@@ -220,9 +226,17 @@ public class Intake extends SubsystemBase {
                     this.goal = goal;
                     switch (goal) {
                         case DEPLOYED:
-                            // io.stopRack();
+                            io.setRackPID(RACK_HOLD_GAINS.kP, 0, 0, 0, 0, 0, 0);
                             break;
                         case DEPLOYING:
+                            io.setRackPID(
+                                    rackKP.get(),
+                                    rackKD.get(),
+                                    rackKV.get(),
+                                    rackKA.get(),
+                                    rackKS.get(),
+                                    rackMaxVel.get(),
+                                    rackMaxAcc.get());
                             io.setSpinOutput(Volts.of(spinVoltage.get()));
                             io.setRackPosition(Inches.of(deployPos.get()));
                             break;

@@ -10,11 +10,11 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
-import static frc.robot.Constants.IntakeConstants.LEFT_RACK_GAINS;
 import static frc.robot.Constants.IntakeConstants.LEFT_RACK_OUTPUT_CONFIGS;
 import static frc.robot.Constants.IntakeConstants.LEFT_ROTOR_TO_PINION_RATIO;
 import static frc.robot.Constants.IntakeConstants.PINION_PITCH_RADIUS;
 import static frc.robot.Constants.IntakeConstants.RACK_CURRENT_LIMITS;
+import static frc.robot.Constants.IntakeConstants.RACK_GAINS;
 import static frc.robot.Constants.IntakeConstants.RACK_MOTION_MAGIC;
 import static frc.robot.Constants.IntakeConstants.RIGHT_RACK_ID;
 import static frc.robot.Constants.IntakeConstants.RIGHT_RACK_OUTPUT_CONFIGS;
@@ -74,7 +74,7 @@ public class IntakeIOTalonFX implements IntakeIO {
         this.spinMotor = new TalonFX(spinID, Constants.CAN_FD_BUS);
 
         double ratio = rackID == RIGHT_RACK_ID ? RIGHT_ROTOR_TO_PINION_RATIO : LEFT_ROTOR_TO_PINION_RATIO;
-        Slot0Configs gains = LEFT_RACK_GAINS;
+        Slot0Configs gains = RACK_GAINS;
 
         if (rackID == RIGHT_RACK_ID) {
             gains.kP *= RIGHT_ROTOR_TO_PINION_RATIO / LEFT_ROTOR_TO_PINION_RATIO;
